@@ -468,7 +468,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
                 dominantBaseline="central"
                 fontSize="30"
                 fontWeight="800"
-                className="fill-brand-ink font-sans"
+                className="fill-brand-accent font-sans"
               >
                 Time&rsquo;s up!
               </text>
