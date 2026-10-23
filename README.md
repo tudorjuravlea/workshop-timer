@@ -113,10 +113,9 @@ things are worth knowing:
 
 ### Try it live
 
-[**Product Makers**](https://productmakers.ro) runs this timer at every workshop,
-in their own colours. It is the deployment this project was extracted from, so it
-is a sibling rather than a copy, but the clock, the dial and the phone remote are
-the same ones documented here.
+The [**Product Makers**](https://productmakers.ro) community adapted this timer
+for their trainings and workshops, with full branding and colors. Test it to see
+how it works live.
 
 **[Open the timer](https://productmakers.ro/timer.html)**  
 Press `R` on the page, then open
