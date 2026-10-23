@@ -499,7 +499,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
             className={cn(
               "transition-shadow focus-within:ring-2 focus-within:ring-brand-on-ground/60",
               plinth &&
-                "bg-brand-face px-[clamp(0.5rem,1.4vh,1rem)] py-[clamp(0.1rem,0.45vh,0.35rem)]",
+                "bg-brand-face px-[clamp(0.5rem,1.4vh,1rem)] py-[clamp(0.1rem,0.45vh,0.35rem)] rounded-[clamp(0.5rem,1.4vh,1rem)]",
               finished && "opacity-80"
             )}
           >
