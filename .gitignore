@@ -16,3 +16,4 @@ next-env.d.ts
 
 # Local record of the session that built this. Working notes, not product.
 .session/
+.omc/
