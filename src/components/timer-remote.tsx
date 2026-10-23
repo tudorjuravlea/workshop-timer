@@ -356,7 +356,7 @@ function TimerRemote() {
               uses: it absorbs whatever the fixed controls below leave over, so
               one layout fits a small phone and a large one with no breakpoint
               guesses. */}
-          <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-6">
+          <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-3">
             <div
               className={cn(
                 "focus-within:ring-2 focus-within:ring-brand-on-ground/60",
@@ -405,8 +405,28 @@ function TimerRemote() {
                 autoComplete="off"
                 spellCheck={false}
                 aria-label="Countdown length, as minutes and seconds"
-                style={{ width: `${fieldText.length + 0.4}ch` }}
-                className="block bg-transparent text-center font-display text-[clamp(3rem,15vw,5rem)] leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
+                // SIZED FROM THE STRING, not from a fixed clamp.
+                //
+                // The phone has one job and the clock is it, so the digits
+                // should fill the width. A single font size cannot: the
+                // readout is "20:00" for most of a session and "00:59:94" in
+                // the last minute, and a size that fills the width with five
+                // characters sends eight of them off both edges. So the size
+                // divides the available width by the character count, and the
+                // readout stays edge to edge as it changes shape.
+                //
+                // 0.645 is the per-character advance in ems, measured on the
+                // real face rather than guessed: the figures are tabular, so
+                // every character in this string has the same advance, and the
+                // `ch` unit used for the width is the slightly wider
+                // proportional zero, which keeps the box a hair clear of the
+                // ink. The vh ceiling is there for a short, wide screen, where
+                // width is not the binding constraint.
+                style={{
+                  width: `${fieldText.length + 0.1}ch`,
+                  fontSize: `min(calc((100vw - 1.5rem) / ${(fieldText.length * 0.645).toFixed(3)}), 24vh)`,
+                }}
+                className="block bg-transparent text-center font-display leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
               />
             </div>
           </div>

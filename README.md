@@ -1,215 +1,173 @@
-# Workshop Timer
+<div align="center">
 
-A countdown for the front of a room — workshops, jams, demo rounds — with a
-phone remote so the facilitator can stand with the room instead of beside the
-laptop. White label: the colours, the faces and the marks come from a brand
-file, and no component knows which brand it is wearing.
+# workshop-timer
 
-The fade-away chrome and the phone remote are modelled on
-[html-deck-kit](https://github.com/adyrugina/html-deck-kit), which does the same
-two things for a slide deck. The relay is where this one deliberately diverges —
-see **The phone remote** below.
+**A countdown for the front of a room, and a phone to drive it with.**
 
-```bash
-npm install
-npm run dev          # http://localhost:3000
-```
+Built for workshops, jams and demo rounds. White label by design: the colours,
+the faces and the marks come from a brand file, so no component knows whose
+timer it is.
+
+<img src="docs/at-rest.png" alt="A black screen with a large white dial. A red-orange wedge covers a third of the face, which is numbered 5 to 55. Below it the readout says 20:00." width="820">
+
+</div>
 
 ---
 
-## The clock
+## What makes it different
 
-- **The dial measures an hour, not a percentage.** It is a kitchen timer or
-  Time Timer–style dial: the face is always ONE HOUR and the wedge is the
-  slice of that hour still to come, so fifteen minutes reads as a quarter turn
-  without anyone reading a number. A duration over an hour is therefore
-  not a bug — the wedge sits full until the clock drops under sixty minutes,
-  exactly as the physical object behaves.
-- **It is deliberately not a clock.** Sixty marks rather than twelve, and the
-  edge that moves runs anticlockwise. Both are on purpose; see the comments in
-  `src/components/timer-dial.tsx` before changing either.
-- **The controls fade.** They appear when you move and leave 2.6 seconds after
-  you stop, taking the mouse pointer with them — a parked arrow on a projection
-  is as loud as a button. Under `prefers-reduced-motion` they never hide.
-- **The last minute** switches the readout to hundredths, lights the rim in the
-  accent, shakes the face, ticks each second and strikes a gong at zero. All of
-  it off under reduced motion; the gong and the ticks are synthesised, so the
-  app ships no audio file.
-- **Keys:** `Space` start/pause, `F` full screen, `R` phone remote.
-- **The duration is in the URL fragment:** `/#25`, `/#7:30`, `/#1:05:00`. The
-  field takes the same grammar, and a bare number means minutes.
+**The dial measures an hour, not a percentage.** Like a kitchen timer, the face
+is always one hour and the wedge is the slice of that hour still to come, so
+fifteen minutes reads as a quarter turn from the back of the room with nobody
+reading a number. The numerals tell you where the edge will land.
 
-## The phone remote
+**The controls get out of the way.** They appear when you move and leave 2.6
+seconds after you stop, taking the mouse pointer with them. On a projector a
+parked arrow is as loud as a button.
 
-Press `R` on the screen. A receipt feeds out from under the controls with an
-address and a five-character code; open that address on a phone and type the
-code. From then on either device drives the clock and both follow.
+**It keeps time against a deadline, not a counter.** A browser throttles timers
+in a background tab, and a clock that subtracts 100ms per tick quietly loses
+minutes while you present in another window. This one recomputes from a wall
+clock every tick, so it cannot drift.
 
-The relay **carries state, not commands**: a reply says how much time is left,
+<img src="docs/controls.png" alt="The same timer with a black control bar across the middle: Start, Reset, plus one minute, preset lengths from 5 to 60, sound, full screen and phone." width="820">
+
+Three keys, because the laptop is usually across the room: `Space` to start or
+pause, `F` for full screen, `R` for the phone. Set the length by typing into the
+readout, by preset, or in the link itself (`/#25`, `/#7:30`).
+
+The last minute switches the readout to hundredths, lights the rim, shakes the
+face, ticks each second and strikes a gong at zero. All of it goes quiet under
+`prefers-reduced-motion`, and the sound is synthesised, so the app ships no
+audio file.
+
+## Drive it from your phone
+
+Press `R`. A receipt feeds out from under the controls with an address and a
+five character code. Open that address on a phone, type the code, and either
+device drives the clock while both follow.
+
+<img src="docs/pairing.png" alt="The control bar with a pale receipt fed out beneath it, showing an address, a five character code, and the words PHONE CONNECTED." width="820">
+
+<table>
+<tr>
+<td width="230"><img src="docs/remote.png" alt="A phone showing Connected to the screen, a grid of minute buttons, the readout 20:00, and large Start and Reset buttons." width="210"></td>
+<td>
+
+The relay carries **state, not commands**. A reply says how much time is left,
 and each side rebuilds its own deadline from that against its own clock. No
 absolute timestamp ever crosses the wire, so a phone whose clock is a minute
-out cannot retime the room. A missed poll costs nothing and both devices keep
-counting correctly while the relay is unreachable.
+out cannot retime the room, and a missed poll costs nothing.
 
-Two consequences, accepted rather than overlooked: the relay is **server
-memory**, so a deploy drops any live pairing (press `R` again — the countdown
-on screen never stops), and it would not be shared if the service ever ran
-**more than one instance**. If you need it to survive either, keep the view
-shape in `src/lib/timer-room.ts` and change only where the Map lives.
+The code lives in the phone's URL fragment, so a locked phone or a reloaded tab
+reconnects without typing it again. One pairing survives the gong and runs timer
+after timer all day.
 
----
+</td>
+</tr>
+</table>
 
-## Branding
+## Make it yours
 
-One schema, two ways to apply it.
+Everything a brand can change is a CSS custom property, so a new brand is a JSON
+file and never a patch.
 
-### 1. A brand that ships with the deployment
+<img src="docs/rebranded.png" alt="The same timer on a cream background with a deep orange wedge, showing 45:00." width="820">
 
-Put a JSON file in `brands/` and name it:
+**Ship a brand with the deployment.** Put a file in `brands/` and name it:
 
 ```bash
-TIMER_BRAND=acme          # reads brands/acme.json
-TIMER_BRAND=https://acme.com/brand.json
+TIMER_BRAND=example                        # reads brands/example.json
+TIMER_BRAND=https://acme.com/brand.json    # or fetched once at startup
 ```
 
-Applied on the server, before the first byte — no query string, no flash.
-`brands/example.json` is there to copy.
+Applied on the server before the first byte: no query string, no flash.
 
-### 2. A brand in the URL
+**Or brand it from the URL**, for a one off that is not worth hosting a file
+for:
 
 ```
 /?brand=https://acme.com/brand.json
 /?accent=%23ff3b00&ground=%23101010&name=Acme
 ```
 
-The file is fetched **by the browser**, so its host must send
-`Access-Control-Allow-Origin` (every CDN and GitHub raw already does). Nothing
-is proxied through this server, deliberately: a proxy here would fetch
-arbitrary addresses from inside whatever network the deployment sits in.
+Copy [`brands/example.json`](brands/example.json) to see every field. Three
+things are worth knowing:
 
-The loose parameters are `ground`, `groundFrom`, `groundTo`, `glow`, `accent`,
-`face`, `ink`, `panel`, `receipt`, plus `name` and `logo`. They are applied
-before the first paint, so a branded link does not flash. `ground` on its own
-sets all three gradient stops and the glow, which gives a flat field.
-
-Both at once is allowed and the parameters win. `TIMER_BRAND_FROM_URL=off`
-refuses the lot, for a deployment that must only ever appear one way.
-
-### The brand file
-
-Every field is optional and falls back to the built-in brand, so a file that
-sets three colours inherits a working instrument for the rest.
-
-```jsonc
-{
-  "name": "Acme",
-  "colors": {
-    "groundFrom": "#26262a",   // the 135° gradient behind everything
-    "ground":     "#141416",
-    "groundTo":   "#08080a",
-    "glow":       "#3a2b26",   // the orbs; set it to the ground to kill them
-    "face":       "#fbfbf9",   // the dial, and the plinth under the readout
-    "accent":     "#ff3b00",   // TIME: the wedge and the digits. One accent.
-    "ink":        "#15181d",   // text and tick marks on `face`
-    "ink2":       "#454c57",
-    "panel":      "#0d0d0f",   // the floating control plate
-    "onPanel":    "#ffffff",
-    "onGround":   "#ffffff",   // the few words set on the ground
-    "receipt":    "#eef0f6",   // the pairing receipt's paper
-    "receiptEdge":"#c7ccdb"    // its bottom edge: a darker tone of the paper
-  },
-  "logo": { "src": "/logo.svg", "alt": "Acme", "href": "https://acme.com", "invert": false },
-  "watermark": { "src": "/mark.svg", "opacity": 0.08 },
-  "fonts": {
-    "body": "'Overused Grotesk', Helvetica, Arial, sans-serif",
-    "display": "'Overused Grotesk', Helvetica, Arial, sans-serif",
-    "mono": "'Overused Grotesk', Helvetica, Arial, sans-serif",
-    "stylesheet": "https://cdn.jsdelivr.net/npm/@sarap422/font-overused-grotesk@1.1.5/font-face.css"
-  }
-}
-```
-
-`logo: null` and `watermark: null` switch those off; with no logo the brand's
-`name` is set quietly in the corner instead, so a white-label deployment still
-says whose room it is without shipping an asset.
-
-**Three constraints worth knowing before you choose colours.**
-
-1. **`face` must be clearly brighter than `ground`.** The dial is read from the
-   back of a room, and the rim light is light escaping from behind the face. A
-   pale ground under a white face gives you neither.
-2. **`accent` carries the only information on the page.** It is the wedge and
-   the digits and nothing else. Put a second colour in the field and the two
-   argue; the default ground is near-black for exactly that reason.
-   You do not have to protect the readout yourself: the timer measures
-   `accent` against `ground` and, below 3:1, puts a bright plate behind the
-   digits. On a dark field the number sits straight on the page; on a
-   saturated one the plate appears. The version this was extracted from ran
-   orange on a saturated blue at 1.95:1, which is where that rule comes from.
-3. **Colours are hex, and only hex.** Anything else is dropped with a warning.
-   These values are interpolated into a `<style>` element and may arrive from a
-   query string, so a value that could contain a semicolon could write
-   arbitrary CSS into the page. Hex removes the question. Font stacks are
-   restricted to plain family names for the same reason, and every URL must be
-   http(s) or a local path.
-
-A brand file is third-party data. The worst a hostile one can do is choose
-ugly colours.
-
-### Fonts
-
-The default brand pulls Overused Grotesk from jsDelivr. For a deployment that
-must work with no outbound network, put the files in `public/`, write your own
-`@font-face` stylesheet beside them and point `fonts.stylesheet` at that path.
-Every stack ends in a system fallback, so a stylesheet that fails to load
-degrades rather than breaks.
-
-The countdown relies on **tabular figures** (`font-variant-numeric`) so the
-digits do not jitter as they change. Check that any face you choose has them.
+1. **`face` must be brighter than `ground`.** The dial is read from the back of
+   a room and the rim light is light escaping past the face.
+2. **`accent` carries the only information on the page.** You do not have to
+   protect the readout yourself: the app measures accent against ground and
+   drops in a bright plate behind the digits only when contrast falls below
+   3:1. It does the same for text set on the ground.
+3. **Colours are hex, and only hex.** These values reach a `<style>` element and
+   can arrive from a query string, so anything that could carry a semicolon
+   could write arbitrary CSS into the page. Hex removes the question.
 
 ---
 
-## Layout
+<table>
+<tr>
+<td width="330"><img src="docs/live-product-makers.png" alt="The same timer in blue with an orange wedge, on the Product Makers website." width="310"></td>
+<td>
 
-```
-src/app/            /  the clock · /remote  the phone · /api/timer/room/*  the relay
-src/components/     the screen, the phone, the dial, the fading chrome, the brand provider
-src/lib/            brand schema + resolver, clock arithmetic, the relay, the synthesised audio
-brands/             brand files, named by TIMER_BRAND
-```
+### Try it live
 
-`npm run lint` is the only formatting authority here; there is no Prettier
-config and the code has no semicolons.
+[**Product Makers**](https://productmakers.ro) runs this timer at every workshop,
+in their own colours. It is the deployment this project was extracted from, so it
+is a sibling rather than a copy, but the clock, the dial and the phone remote are
+the same ones documented here.
 
-## Deploying
+**[Open the timer](https://productmakers.ro/timer.html)**  
+Press `R` on the page, then open
+**[the remote](https://productmakers.ro/timer.html/remote)** on your phone and
+type the code. Two devices, one clock.
 
-Any host that runs Node — the relay needs a server, and there must be exactly
-one instance of it (see above). Set `TIMER_BRAND` and nothing else.
+Add `#5` to the address for a five minute countdown.
 
-Framing is allowed from any site (`frame-ancestors *` in `next.config.ts`), so
-the clock can go in Notion, Miro or a Google Site. `Permissions-Policy`
-deliberately leaves `fullscreen` and `screen-wake-lock` alone, because the
-timer needs both.
+</td>
+</tr>
+</table>
 
 ---
+
+## Running it
+
+```bash
+npm install
+npm run dev     # http://localhost:3000
+```
+
+Node 20.9 or newer. No database, no accounts, no API keys.
+
+## Hosting
+
+**It needs a Node host**, not a static file host. The pairing relay is a server
+route, and the pages render per request so `TIMER_BRAND` means what you expect
+at runtime. Railway, Render, Fly, a VPS or a container all work.
+
+**Run exactly one instance.** The relay keeps live pairings in memory, which
+buys it zero infrastructure and costs it two things, both accepted rather than
+overlooked: a deploy drops any pairing in flight, and two instances would put
+the screen and the phone on different containers. The countdown on screen never
+stops either way, and one press of `R` opens a new room. If you need it to
+survive either, keep the shape of the view in `src/lib/timer-room.ts` and change
+only where the map lives.
+
+**Framing is allowed from anywhere**, so the clock can live inside Notion, Miro
+or a Google Site. `Permissions-Policy` deliberately leaves `fullscreen` and
+`screen-wake-lock` alone, because the timer needs both: it keeps the laptop from
+blanking halfway through a session.
 
 ## Credits
 
-The fade-away chrome — controls that appear on movement and take the mouse
-pointer with them when they go — and the idea of driving a projected screen
-from a phone both come from
-**[html-deck-kit](https://github.com/adyrugina/html-deck-kit)**, which does
-them for slide decks.
-
-The relay is the deliberate departure. A deck has no clock, so it relays taps
-and discards stale ones; a countdown has one, so this relays **state** and
-nothing it sends can go stale.
+The fade away chrome and the idea of driving a projected screen from a phone
+both come from **[html-deck-kit](https://github.com/adyrugina/html-deck-kit)**,
+which does them for slide decks. The relay is the deliberate departure: a deck
+has no clock, so it relays taps and throws away stale ones; a countdown has one,
+so this relays state, and nothing it sends can go stale.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). Use it, fork it, rebrand it, sell it; just keep
-the notice.
-
-`package.json` carries `"private": true`, which only stops an accidental
-`npm publish`. It has nothing to do with the licence: this is an application,
-not a package.
+MIT, see [LICENSE](LICENSE). Use it, fork it, rebrand it, sell it; just keep the
+notice.

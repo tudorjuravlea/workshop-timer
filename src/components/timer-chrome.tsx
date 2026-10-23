@@ -425,13 +425,13 @@ function TimerHints({ fullscreen, remote }: TimerHintsProps) {
         fullscreen && "hidden"
       )}
     >
-      {remote.pairing && <p className="label text-brand-on-ground/45">Pairing&hellip;</p>}
+      {remote.pairing && <p className="label text-brand-on-ground/60">Pairing&hellip;</p>}
       {remote.dropped && (
-        <p className="label text-brand-on-ground/45">
+        <p className="label text-brand-on-ground/60">
           Remote dropped. Press R to pair again.
         </p>
       )}
-      <p className="label flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/45">
+      <p className="label flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/60">
         <span>
           <Key>Space</Key> start or pause
         </span>

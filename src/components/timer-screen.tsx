@@ -572,7 +572,7 @@ function BrandMark() {
 
   if (!logo) {
     return name ? (
-      <span className="label text-brand-on-ground/55">{name}</span>
+      <span className="label text-brand-on-ground/65">{name}</span>
     ) : null
   }
 

@@ -1,7 +1,7 @@
 {
   "_comment": "A worked example to copy. Note the one relationship the instrument depends on: `face` must be clearly BRIGHTER than `ground`, because the dial is read from the back of a room and the backlight behind it is light escaping past the rim. A pale ground under a white face gives you neither.",
 
-  "name": "Studio Nord",
+  "name": "Workshop Timer",
 
   "colors": {
     "groundFrom": "#4a3a33",

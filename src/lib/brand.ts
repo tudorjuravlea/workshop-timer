@@ -276,11 +276,31 @@ export function parseBrand(
   return { name: text(raw.name, base.name), colors, logo, watermark, fonts }
 }
 
+/** The text colour for the few words set directly on the ground, CHECKED
+ *  against the ground rather than taken on trust.
+ *
+ *  A brand that moves its ground and forgets this one is the obvious mistake,
+ *  and it is silent: `onGround` defaults to white, so a light ground leaves
+ *  the wordmark and the key legend as white-on-cream — present in the DOM,
+ *  invisible on the wall. Found exactly that way, by rendering a light brand
+ *  and looking at it.
+ *
+ *  So below 4.5:1 the declared colour is dropped for whichever of it and `ink`
+ *  actually reads. A brand that sets a working colour is never second-guessed;
+ *  one that sets an impossible colour gets a legible page instead of a
+ *  correct-looking stylesheet. */
+function readableOnGround(colors: BrandColors): string {
+  const declared = contrastRatio(colors.onGround, colors.ground)
+  if (declared >= 4.5) return colors.onGround
+  return contrastRatio(colors.ink, colors.ground) > declared ? colors.ink : colors.onGround
+}
+
 /** The custom properties a brand sets, ready to put on an element or in a
  *  rule. */
 export function brandVars(brand: Brand): Record<string, string> {
   const vars: Record<string, string> = {}
   for (const key of COLOR_KEYS) vars[COLOR_VARS[key]] = brand.colors[key]
+  vars[COLOR_VARS.onGround] = readableOnGround(brand.colors)
   vars["--brand-font-body"] = brand.fonts.body
   vars["--brand-font-display"] = brand.fonts.display
   vars["--brand-font-mono"] = brand.fonts.mono
@@ -373,6 +393,7 @@ export const INLINE_COLOR_PARAMS: Record<string, Array<keyof BrandColors>> = {
   accent: ["accent"],
   face: ["face"],
   ink: ["ink"],
+  onGround: ["onGround"],
   panel: ["panel"],
   receipt: ["receipt"],
 }
