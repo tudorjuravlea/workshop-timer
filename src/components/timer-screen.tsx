@@ -402,6 +402,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
   const plinth = needsPlinth(brand)
   const started = running || remainingMs < durationMs
   const urgent = running && remainingMs > 0 && remainingMs <= 60_000
+  const intense = urgent && remainingMs <= 30_000
 
   return (
     <main
@@ -489,6 +490,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
             lit={started}
             spinning={running}
             urgent={urgent}
+            intense={intense}
             className={cn(
               "h-full max-h-full w-full transition-opacity duration-500",
               finished && "opacity-0"
