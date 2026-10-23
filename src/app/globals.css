@@ -28,6 +28,15 @@
   --font-display: var(--brand-font-display, system-ui, sans-serif);
   --font-mono: var(--brand-font-mono, ui-monospace, Menlo, monospace);
 
+  /* Fixed steps rather than multiples of one base. 12px is a control, 20px is
+     the panel that holds controls, 28px and up is a sheet.
+
+     The panel's 20px is not a taste call: it is the 12px on its own buttons
+     plus the 8px of padding it insets them by, so the panel's corner runs
+     CONCENTRIC with the buttons' instead of merely enclosing them. A tighter
+     radius on the outside turns the corner sharper than the button inside it
+     and leaves a wedge of fill at each one. */
+  --radius-lg: 0.75rem;
   --radius-2xl: 1.25rem;
   --radius-3xl: 1.75rem;
 

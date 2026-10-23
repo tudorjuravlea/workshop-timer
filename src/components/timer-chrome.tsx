@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils"
  *  so nothing in here competes with the clock. `min-h-11` holds a 44px tap
  *  target, which is the smallest a finger reliably hits. */
 const CONTROL =
-  "inline-flex min-h-11 shrink-0 items-center gap-2 px-3.5 py-2 text-sm font-semibold transition-colors hover:bg-brand-on-panel/10 focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none"
+  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors hover:bg-brand-on-panel/10 focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none"
 
 /** The app's one caption treatment (`globals.css`), in ink: a label over a
  *  value being read off an instrument. */
@@ -178,7 +178,7 @@ function TimerChrome({
       aria-pressed={p * 60 === durationSeconds}
       aria-label={`${p} ${p === 1 ? "minute" : "minutes"}`}
       className={cn(
-        "min-h-11 min-w-11 px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
+        "min-h-11 min-w-11 rounded-lg px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
         p * 60 === durationSeconds
           ? "bg-brand-face text-brand-ink"
           : "text-brand-on-panel hover:bg-brand-on-panel/15"
@@ -230,7 +230,15 @@ function TimerChrome({
             page: a tint reads as a smear once the thing behind it is white. */}
         <div
           className={cn(
-            "flex max-w-full flex-col items-center gap-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20"
+            "flex max-w-full flex-col items-center gap-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20",
+            // Rounded, and concentric with the controls inside it (see the
+            // radius scale in `globals.css`). The foot goes SQUARE the moment
+            // a receipt is out: the paper is a sibling directly below, not a
+            // layer behind, so a rounded bottom edge would leave the two
+            // corners open and show the bright dial through them, right above
+            // the sheet's own straight top edge. Flat there makes the join a
+            // slot, which is what paper actually comes out of.
+            remote.code ? "rounded-t-2xl" : "rounded-2xl"
           )}
         >
           {/* The lengths get a row of their own, above the controls: every
@@ -338,7 +346,7 @@ function TimerChrome({
             nothing but a shadow holding its lower edge, and a shadow is not
             structure. Ink text on it, always. */}
         {remote.code && (
-          <div className="overflow-hidden">
+          <div className="overflow-hidden rounded-b-2xl">
             <div className="receipt-feed border-b-4 border-brand-receipt-edge bg-brand-receipt px-5 pt-4 pb-5">
               {/* One sentence of why, then the two things somebody actually
                   reads off the screen, each under its own label.

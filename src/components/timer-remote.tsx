@@ -374,7 +374,7 @@ function TimerRemote() {
             <div
               className={cn(
                 "focus-within:ring-2 focus-within:ring-brand-on-ground/60",
-                needsPlinth(brand) && "bg-brand-face px-3 py-1",
+                needsPlinth(brand) && "rounded-lg bg-brand-face px-3 py-1",
                 finished && "opacity-80"
               )}
             >
