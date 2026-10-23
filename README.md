@@ -4,9 +4,7 @@
 
 **A workshop countdown timer for facilitators and trainers, with a phone remote. White-label. Make it yours.**
 
-Built for workshops, jams and demo rounds. White label by design: the colours,
-the faces and the marks come from a brand file, so no component knows whose
-timer it is.
+Built for workshops, trainings, hackathons, jams and demo rounds. White label by design. Customize it and make it yours.
 
 <img src="docs/at-rest.png" alt="A black screen with a large white dial. A red-orange wedge covers a third of the face, which is numbered 5 to 55. Below it the readout says 20:00." width="820">
 
