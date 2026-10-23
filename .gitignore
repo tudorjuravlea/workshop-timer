@@ -13,3 +13,6 @@ next-env.d.ts
 # Claude Code session scaffolding (dev-server launch config, port picked to
 # avoid a clash on this machine) — not part of the project.
 .claude/
+
+# Local record of the session that built this. Working notes, not product.
+.session/
