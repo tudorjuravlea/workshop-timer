@@ -14,7 +14,7 @@ import {
 } from "lucide-react"
 
 import { usePrefersReducedMotion } from "@/components/use-reduced-motion"
-import { PRESETS, SHORT_PRESETS } from "@/lib/timer-clock"
+import { PRESETS } from "@/lib/timer-clock"
 import { cn } from "@/lib/utils"
 
 // The controls, gathered into one panel that shows itself when you move and
@@ -235,9 +235,9 @@ function TimerChrome({
         >
           {/* The lengths get a row of their own, above the controls: every
               chip in it is a number of minutes, smallest first, so the row
-              reads as one scale from a quick check-in to the full hour. */}
+              reads as one scale from a quick check-in to a full hour. */}
           <div className="flex max-w-full flex-wrap items-center justify-center gap-1">
-            {[...SHORT_PRESETS, ...PRESETS].map(presetChip)}
+            {PRESETS.map(presetChip)}
           </div>
 
           <div className="flex max-w-full flex-wrap items-center justify-center gap-x-1 gap-y-1">

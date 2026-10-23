@@ -3,8 +3,9 @@
 import * as React from "react"
 
 import { useBrand } from "@/components/brand-provider"
+import { FinishConfetti } from "@/components/finish-confetti"
 import { TimerChrome, TimerHints, useIdleChrome } from "@/components/timer-chrome"
-import { DIAL_SECONDS, TimerDial } from "@/components/timer-dial"
+import { TimerDial } from "@/components/timer-dial"
 import { useTimerRemote } from "@/components/use-timer-remote"
 import { Watermark } from "@/components/watermark"
 import { playGong, playTick } from "@/lib/timer-audio"
@@ -22,11 +23,10 @@ import { cn } from "@/lib/utils"
 
 // A countdown for the front of a room: workshops, jams, demo rounds.
 //
-// The dial measures an hour, not a percentage — the face is always ONE HOUR
-// and the wedge is the slice of that hour still to come, so 15 minutes reads
-// as a quarter turn without anyone having to read a number. That is also why a
-// duration over an hour is not wrong here: the wedge simply sits full until the
-// clock drops under 60 minutes, exactly as the physical object behaves.
+// The dial is the whole countdown: it starts full at any length and empties as
+// the time goes, so the room reads how much of THIS exercise is left without
+// anyone having to read a number. A minute added past the chosen length keeps
+// the wedge full until the clock drops back under it.
 //
 // The whole thing is deadline-driven rather than decrement-driven: a browser
 // throttles timers in a background tab, and a counter that subtracts 100ms per
@@ -46,6 +46,8 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
   const [durationMs, setDurationMs] = React.useState(defaultMinutes * 60_000)
   const [remainingMs, setRemainingMs] = React.useState(defaultMinutes * 60_000)
   const [running, setRunning] = React.useState(false)
+  // How many times the countdown has reached zero here; each one is a burst.
+  const [bursts, setBursts] = React.useState(0)
   const [muted, setMuted] = React.useState(false)
   // While the field has focus it holds raw keystrokes, not a formatted clock —
   // reformatting mid-typing would fight the caret. null means "not editing".
@@ -160,6 +162,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
       if (left <= 0) {
         setRemainingMs(0)
         setRunning(false)
+        setBursts((n) => n + 1)
         if (!muted && audioRef.current) playGong(audioRef.current)
         return false
       }
@@ -381,7 +384,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
   const fieldText =
     draft ?? (fine ? formatClockHundredths(remainingMs) : formatClock(remainingMs))
   const durationSeconds = Math.round(durationMs / 1000)
-  const fraction = Math.min(remainingMs / 1000, DIAL_SECONDS) / DIAL_SECONDS
+  const fraction = Math.min(remainingMs, durationMs) / durationMs
 
   // The backlight is on once the clock has been touched, turns only while it
   // runs, and goes up a gear in the last minute. No angle is computed here:
@@ -416,6 +419,9 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <Watermark className="h-[140%] w-auto min-w-[180%] object-cover" />
       </div>
+      {/* Over the ground and under everything else, so the paper comes from
+          behind the dial rather than across it. */}
+      <FinishConfetti bursts={bursts} />
 
       {/* The brand mark, and the only thing up here. It does not fade with the
           controls: it is identity, not a control, and a projected clock is
@@ -437,15 +443,46 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
             itself: an <svg> carries an intrinsic aspect ratio, which stops
             `flex-1` from handing it the full leftover height. The box takes the
             space, the drawing fills it and centres itself. */}
-        <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
+          {/* A solid disc the size of the face, under it, which is what the
+              room sees once the time is up: the dial fades away and leaves the
+              face blank but for the words. It also stops the confetti behind
+              from showing through the fading dial. Same viewBox and box as the
+              dial, so it lands exactly where the face does. */}
+          <svg
+            viewBox="0 0 200 200"
+            aria-hidden
+            className={cn(
+              "absolute inset-0 size-full overflow-visible",
+              // The dial carries its own shadow; the disc takes it over only
+              // once the dial has gone, or the two would stack.
+              finished && "drop-shadow-[0_20px_50px_rgb(0_0_0/0.35)]"
+            )}
+          >
+            <circle cx="100" cy="100" r="94" className="fill-brand-face" />
+            {finished && (
+              <text
+                x="100"
+                y="100"
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize="30"
+                fontWeight="800"
+                className="fill-brand-accent font-sans"
+              >
+                Time&rsquo;s up!
+              </text>
+            )}
+          </svg>
           <TimerDial
             fraction={fraction}
+            durationSeconds={durationSeconds}
             lit={started}
             spinning={running}
             urgent={urgent}
             className={cn(
               "h-full max-h-full w-full transition-opacity duration-500",
-              finished && "opacity-60"
+              finished && "opacity-0"
             )}
           />
         </div>
