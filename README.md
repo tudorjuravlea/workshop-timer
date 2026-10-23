@@ -2,6 +2,10 @@
 
 # workshop-timer
 
+```
+░▒▓█  W0RKSH0P::71MΞR  █▓▒░
+```
+
 **A workshop countdown timer for facilitators and trainers, with a phone remote. White-label. Make it yours.**
 
 Built for workshops, trainings, hackathons, jams and demos. White label by design. Customize it and make it yours.
