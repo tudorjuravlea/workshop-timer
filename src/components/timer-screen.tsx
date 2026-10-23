@@ -11,6 +11,7 @@ import { Watermark } from "@/components/watermark"
 import { playGong, playTick } from "@/lib/timer-audio"
 import { needsPlinth } from "@/lib/brand"
 import {
+  DEFAULT_MINUTES,
   MAX_SECONDS,
   durationFromHash,
   formatClock,
@@ -40,7 +41,7 @@ import { cn } from "@/lib/utils"
 // live in a panel that appears when you move and leaves when you stop, which
 // is why there is no separate full-screen layout: see `timer-chrome.tsx`.
 
-function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
+function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: number }) {
   const brand = useBrand()
 
   const [durationMs, setDurationMs] = React.useState(defaultMinutes * 60_000)

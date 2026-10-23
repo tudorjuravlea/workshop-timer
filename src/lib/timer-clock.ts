@@ -17,6 +17,10 @@
  *  used to: numbered in fives, 45's halfway (22′30″) falls between two. */
 export const PRESETS = [1, 2, 4, 6, 8, 10, 14, 20, 30, 40, 50, 60, 90] as const
 
+/** What a fresh screen, a phone that has not heard from it yet, and a room
+ *  opened without a length all start on. One of `PRESETS`, so a chip is lit. */
+export const DEFAULT_MINUTES = 10
+
 export const MAX_MINUTES = 180
 export const MIN_SECONDS = 1
 export const MAX_SECONDS = MAX_MINUTES * 60
