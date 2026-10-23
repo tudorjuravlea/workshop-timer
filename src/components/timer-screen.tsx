@@ -8,7 +8,7 @@ import { TimerChrome, TimerHints, useIdleChrome } from "@/components/timer-chrom
 import { TimerDial } from "@/components/timer-dial"
 import { useTimerRemote } from "@/components/use-timer-remote"
 import { Watermark } from "@/components/watermark"
-import { playGong, playTick } from "@/lib/timer-audio"
+import { TICK_STYLES, playGong, playTick, startRoomTone } from "@/lib/timer-audio"
 import { needsPlinth } from "@/lib/brand"
 import {
   DEFAULT_MINUTES,
@@ -56,6 +56,10 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
 
   const deadlineRef = React.useRef(0)
   const audioRef = React.useRef<AudioContext | null>(null)
+  // Which clock ticks: counts fresh starts, so each new timer takes the next
+  // style in `TICK_STYLES` and a pause and resume keeps the one it had.
+  const tickRunRef = React.useRef(-1)
+  const runningRef = React.useRef(false)
 
   // The pairing line names the host this screen is actually served from, so it
   // reads correctly on localhost, behind a reverse proxy and on a public
@@ -84,6 +88,9 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
     setDraft(null)
     setDurationMs(next.durationMs)
     setRemainingMs(next.remainingMs)
+    if (next.running && !runningRef.current && next.remainingMs >= next.durationMs) {
+      tickRunRef.current += 1
+    }
     if (next.running && next.remainingMs > 0) {
       deadlineRef.current = Date.now() + next.remainingMs
       setRunning(true)
@@ -183,11 +190,20 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
     return () => window.clearInterval(id)
   }, [running, muted, fine])
 
-  // The last minute's ticking, scheduled on the AUDIO clock a little ahead of
-  // itself rather than fired from the render loop. A `setInterval` drifts by
-  // tens of milliseconds under load and the ticks would audibly wander; the
-  // audio thread does not. Every 250ms this hands over any tick falling in the
-  // next 600ms, and remembers which ones it has already placed.
+  React.useEffect(() => {
+    runningRef.current = running
+  }, [running])
+
+  // The ticking, scheduled on the AUDIO clock a little ahead of itself rather
+  // than fired from the render loop. A `setInterval` drifts by tens of
+  // milliseconds under load and the ticks would audibly wander; the audio
+  // thread does not. Every 250ms this hands over any tick falling in the next
+  // 600ms, and remembers which ones it has already placed.
+  //
+  // One clock ticks every second until the last minute, chosen per timer.
+  // The last minute is a watch that speeds up: every second to 30 left, every
+  // half second to 10, every quarter second to zero. Every tick sits on a
+  // whole fraction of the time LEFT, so each step up lands on the beat.
   //
   // The gong is deliberately NOT scheduled here. It sounds at the instant the
   // clock stops, which is the instant this effect tears down, and a cleanup
@@ -196,19 +212,27 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
   // late costs nothing.
   React.useEffect(() => {
     const ctx = audioRef.current
-    if (!running || muted || !fine || !ctx) return
-    const pending: OscillatorNode[] = []
+    if (!running || muted || !ctx) return
+    const style = TICK_STYLES[Math.max(0, tickRunRef.current) % TICK_STYLES.length]
+    const step = (left: number) => (left > 30_000 ? 1000 : left > 10_000 ? 500 : 250)
+    let pending: { node: AudioScheduledSourceNode; at: number }[] = []
     const placed = new Set<number>()
+    let beat = 0
     const pump = () => {
       const now = Date.now()
       const audioNow = ctx.currentTime
-      for (let second = 1; second <= 60; second++) {
-        if (placed.has(second)) continue
-        const due = deadlineRef.current - second * 1000
-        if (due <= now || due > now + 600) continue
-        placed.add(second)
-        pending.push(...playTick(ctx, audioNow + (due - now) / 1000))
+      const deadline = deadlineRef.current
+      // Keyed by when the tick is due, not by the time left it marks, so a
+      // minute added mid-run cannot place a second tick on the same instant.
+      for (let left = Math.floor((deadline - now) / 250) * 250; left > 0 && left >= deadline - now - 600; left -= 250) {
+        const due = deadline - left
+        if (left % step(left) !== 0 || due < now || placed.has(due)) continue
+        placed.add(due)
+        const at = audioNow + (due - now) / 1000
+        for (const node of playTick(ctx, at, left > 60_000 ? style : "watch", beat++)) pending.push({ node, at })
       }
+      // Forget what has already sounded, or an hour of ticks is kept alive.
+      pending = pending.filter((p) => p.at > audioNow - 1)
     }
     pump()
     const id = window.setInterval(pump, 250)
@@ -216,13 +240,21 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
       window.clearInterval(id)
       // Stopping a node that has already finished is a no-op; stopping one
       // whose start time is still in the future means it never sounds, which
-      // is exactly what pausing should do to the rest of the minute.
-      for (const node of pending) {
+      // is exactly what pausing should do to the rest of the run.
+      for (const { node } of pending) {
         try {
           node.stop()
         } catch {}
       }
     }
+  }, [running, muted])
+
+  // The grandfather clock's room, under its ticks until the watch takes over.
+  React.useEffect(() => {
+    const ctx = audioRef.current
+    if (!running || muted || fine || !ctx) return
+    if (TICK_STYLES[Math.max(0, tickRunRef.current) % TICK_STYLES.length] !== "grandfather") return
+    return startRoomTone(ctx)
   }, [running, muted, fine])
 
   // Keep the screen awake while counting down — a timer that blanks halfway
@@ -247,6 +279,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
 
   const start = React.useCallback(() => {
     ensureAudio()
+    if (remainingMs <= 0 || remainingMs >= durationMs) tickRunRef.current += 1
     deadlineRef.current = Date.now() + (remainingMs > 0 ? remainingMs : durationMs)
     if (remainingMs <= 0) setRemainingMs(durationMs)
     setRunning(true)

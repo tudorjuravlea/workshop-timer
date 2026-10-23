@@ -44,8 +44,10 @@ Three keys, because the laptop is usually across the room: `Space` to start or
 pause, `F` for full screen, `R` for the phone. Set the length by typing into the
 readout, by preset, or in the link itself (`/#25`, `/#7:30`). It opens at ten minutes.
 
-The last minute switches the readout to hundredths, lights the rim, shakes the
-face, ticks each second and strikes a gong at zero. All of it goes quiet under
+A quiet clock ticks while the time runs: antique, grandfather or digital, a
+different one for each timer. The last minute switches to a watch that ticks
+faster and faster, the readout to hundredths, lights the rim, shakes the face
+and strikes a gong at zero. All of it goes quiet under
 `prefers-reduced-motion`, and the sound is synthesised, so the app ships no
 audio file.
 
