@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { useBrand } from "@/components/brand-provider"
+import { FinishConfetti } from "@/components/finish-confetti"
 import { TimerChrome, TimerHints, useIdleChrome } from "@/components/timer-chrome"
 import { TimerDial } from "@/components/timer-dial"
 import { useTimerRemote } from "@/components/use-timer-remote"
@@ -45,6 +46,8 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
   const [durationMs, setDurationMs] = React.useState(defaultMinutes * 60_000)
   const [remainingMs, setRemainingMs] = React.useState(defaultMinutes * 60_000)
   const [running, setRunning] = React.useState(false)
+  // How many times the countdown has reached zero here; each one is a burst.
+  const [bursts, setBursts] = React.useState(0)
   const [muted, setMuted] = React.useState(false)
   // While the field has focus it holds raw keystrokes, not a formatted clock —
   // reformatting mid-typing would fight the caret. null means "not editing".
@@ -159,6 +162,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
       if (left <= 0) {
         setRemainingMs(0)
         setRunning(false)
+        setBursts((n) => n + 1)
         if (!muted && audioRef.current) playGong(audioRef.current)
         return false
       }
@@ -415,6 +419,9 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <Watermark className="h-[140%] w-auto min-w-[180%] object-cover" />
       </div>
+      {/* Over the ground and under everything else, so the paper comes from
+          behind the dial rather than across it. */}
+      <FinishConfetti bursts={bursts} />
 
       {/* The brand mark, and the only thing up here. It does not fade with the
           controls: it is identity, not a control, and a projected clock is
@@ -436,7 +443,14 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
             itself: an <svg> carries an intrinsic aspect ratio, which stops
             `flex-1` from handing it the full leftover height. The box takes the
             space, the drawing fills it and centres itself. */}
-        <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
+          {/* A solid disc the size of the face, under it. The finished dial
+              fades, and without this the confetti behind it shows through the
+              face instead of coming out from under it. Same viewBox and box as
+              the dial, so it lands exactly where the face does. */}
+          <svg viewBox="0 0 200 200" aria-hidden className="absolute inset-0 size-full">
+            <circle cx="100" cy="100" r="94" className="fill-brand-ground" />
+          </svg>
           <TimerDial
             fraction={fraction}
             durationSeconds={durationSeconds}

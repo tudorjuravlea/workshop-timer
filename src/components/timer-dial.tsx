@@ -34,21 +34,23 @@ const round3 = (v: number) => Number(v.toFixed(3))
 const TICK_OUTER = 90
 
 /** Round spacings for the marks, in seconds. The scale takes the smallest that
- *  leaves at most sixty marks, so a one-minute dial ticks every second and an
- *  hour ticks every minute, as the hour face always did. */
-const TICK_STEPS = [1, 2, 5, 10, 15, 20, 30, 60, 120, 300]
+ *  leaves at most sixty marks AND lands a mark under every number, so a
+ *  one-minute dial ticks every second and an hour ticks every minute, as the
+ *  hour face always did. */
+const TICK_STEPS = [1, 2, 5, 10, 15, 20, 30, 60, 180, 300, 900]
 const MAX_TICKS = 60
 
 /** How far apart the numbers sit, by length: seconds for a minute, half
- *  minutes up to two, every minute up to ten, every five up to the hour. Each
- *  band keeps the count at eleven or fewer, which is what the hour face
- *  carried, and keeps every number in one short unit. */
+ *  minutes up to two, every minute up to fourteen, every five up to the hour,
+ *  every fifteen beyond it. Each band keeps the count to thirteen or fewer and
+ *  every number in one short unit. Fourteen is the last length numbered by the
+ *  minute because thirteen numbers still clear each other at this radius, and
+ *  numbered in fives it would have no number at its halfway, 7′. */
 function numeralStep(durationSeconds: number): number {
   if (durationSeconds <= 60) return 10
   if (durationSeconds <= 120) return 30
-  if (durationSeconds <= 600) return 60
+  if (durationSeconds <= 14 * 60) return 60
   if (durationSeconds <= 3600) return 300
-  if (durationSeconds <= 7200) return 600
   return 900
 }
 
@@ -77,9 +79,10 @@ const NUMERAL_RADIUS = 69
  *  ruler stops at its length rather than at its next centimetre. */
 export function dialScale(durationSeconds: number) {
   const total = Math.max(1, Math.round(durationSeconds))
-  const tickStep =
-    TICK_STEPS.find((step) => total / step <= MAX_TICKS) ?? TICK_STEPS[TICK_STEPS.length - 1]
   const labelStep = numeralStep(total)
+  const tickStep =
+    TICK_STEPS.find((step) => total / step <= MAX_TICKS && labelStep % step === 0) ??
+    labelStep
   const angle = (seconds: number) => (seconds / total) * 2 * Math.PI
 
   const ticks = []

@@ -11,10 +11,11 @@
 // Everything here is pure and has no React in it, so the route handlers can
 // import it without pulling a client component onto the server.
 
-/** Every length the chips offer, in minutes, smallest first. Even up to ten,
- *  so each one has a number at the halfway mark on its dial; fives above ten,
- *  so the dial's five-minute numbers end exactly at the top. */
-export const PRESETS = [1, 2, 4, 6, 8, 10, 15, 20, 30, 45, 60] as const
+/** Every length the chips offer, in minutes, smallest first. All but 45 put a
+ *  number at the halfway mark on their dial (see `dialScale`), so "half the
+ *  time is gone" can be read off the face; 45's halfway, 22′30″, falls between
+ *  its fives. */
+export const PRESETS = [1, 2, 4, 6, 8, 10, 14, 20, 30, 45, 60, 90] as const
 
 export const MAX_MINUTES = 180
 export const MIN_SECONDS = 1
