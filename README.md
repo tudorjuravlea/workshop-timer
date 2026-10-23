@@ -47,7 +47,7 @@ readout, by preset, or in the link itself (`/#25`, `/#7:30`). It opens at ten mi
 A quiet clock ticks once a minute, then every second for the last two minutes
 and twice a second for the last one. The final 35 seconds are a watch, speeding
 up into a gong. The last minute also switches the readout to
-hundredths, lights the rim and shakes the face. The movement stops under `prefers-reduced-motion`
+hundredths and shakes the face. The movement stops under `prefers-reduced-motion`
 and the sound button silences the rest. The sound is synthesised, so the app
 ships no audio file.
 
@@ -105,7 +105,7 @@ Copy [`brands/example.json`](brands/example.json) to see every field. Three
 things are worth knowing:
 
 1. **`face` must be brighter than `ground`.** The dial is read from the back of
-   a room and the rim light is light escaping past the face.
+   a room.
 2. **`accent` carries the only information on the page.** You do not have to
    protect the readout yourself: the app measures accent against ground and
    drops in a bright plate behind the digits only when contrast falls below

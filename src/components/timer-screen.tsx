@@ -395,14 +395,8 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
   const durationSeconds = Math.round(durationMs / 1000)
   const fraction = Math.min(remainingMs, durationMs) / durationMs
 
-  // The backlight is on once the clock has been touched, turns only while it
-  // runs, and goes up a gear in the last minute. No angle is computed here:
-  // at a turn a second the rotation belongs to a CSS keyframe, not to a value
-  // re-rendered ten times a second.
   const plinth = needsPlinth(brand)
-  const started = running || remainingMs < durationMs
   const urgent = running && remainingMs > 0 && remainingMs <= 60_000
-  const intense = urgent && remainingMs <= 30_000
 
   return (
     <main
@@ -487,10 +481,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
           <TimerDial
             fraction={fraction}
             durationSeconds={durationSeconds}
-            lit={started}
-            spinning={running}
             urgent={urgent}
-            intense={intense}
             className={cn(
               "h-full max-h-full w-full transition-opacity duration-500",
               finished && "opacity-0"
