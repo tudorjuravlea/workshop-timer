@@ -6,7 +6,7 @@ import { Pause, Play, RotateCcw } from "lucide-react"
 import { useBrand } from "@/components/brand-provider"
 import { Watermark } from "@/components/watermark"
 import { needsPlinth } from "@/lib/brand"
-import { PRESETS, SHORT_PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
+import { PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
 import { type RelayResult, readRoom, writeRoom } from "@/lib/timer-relay-client"
 // Type only: the relay module imports node:crypto and must never be bundled
 // for a browser. Keep this an `import type`.
@@ -29,7 +29,7 @@ const CODE_LENGTH = 5
 /** Every length the grid offers, smallest first, and how many sit in a row.
  *  The column count drives both the grid and the extra minute's span, so the
  *  two can never disagree about where a row ends. */
-const LENGTHS = [...SHORT_PRESETS, ...PRESETS]
+const LENGTHS = PRESETS
 const GRID_COLUMNS = 4
 
 /** What the dot at the top is saying. Four states, because "it is not working"

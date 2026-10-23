@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { useBrand } from "@/components/brand-provider"
 import { TimerChrome, TimerHints, useIdleChrome } from "@/components/timer-chrome"
-import { DIAL_SECONDS, TimerDial } from "@/components/timer-dial"
+import { TimerDial } from "@/components/timer-dial"
 import { useTimerRemote } from "@/components/use-timer-remote"
 import { Watermark } from "@/components/watermark"
 import { playGong, playTick } from "@/lib/timer-audio"
@@ -22,11 +22,10 @@ import { cn } from "@/lib/utils"
 
 // A countdown for the front of a room: workshops, jams, demo rounds.
 //
-// The dial measures an hour, not a percentage — the face is always ONE HOUR
-// and the wedge is the slice of that hour still to come, so 15 minutes reads
-// as a quarter turn without anyone having to read a number. That is also why a
-// duration over an hour is not wrong here: the wedge simply sits full until the
-// clock drops under 60 minutes, exactly as the physical object behaves.
+// The dial is the whole countdown: it starts full at any length and empties as
+// the time goes, so the room reads how much of THIS exercise is left without
+// anyone having to read a number. A minute added past the chosen length keeps
+// the wedge full until the clock drops back under it.
 //
 // The whole thing is deadline-driven rather than decrement-driven: a browser
 // throttles timers in a background tab, and a counter that subtracts 100ms per
@@ -381,7 +380,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
   const fieldText =
     draft ?? (fine ? formatClockHundredths(remainingMs) : formatClock(remainingMs))
   const durationSeconds = Math.round(durationMs / 1000)
-  const fraction = Math.min(remainingMs / 1000, DIAL_SECONDS) / DIAL_SECONDS
+  const fraction = Math.min(remainingMs, durationMs) / durationMs
 
   // The backlight is on once the clock has been touched, turns only while it
   // runs, and goes up a gear in the last minute. No angle is computed here:
@@ -440,6 +439,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
         <div className="flex min-h-0 w-full flex-1 items-center justify-center">
           <TimerDial
             fraction={fraction}
+            durationSeconds={durationSeconds}
             lit={started}
             spinning={running}
             urgent={urgent}

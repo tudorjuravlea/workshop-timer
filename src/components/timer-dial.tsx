@@ -7,21 +7,22 @@ import { cn } from "@/lib/utils"
 // render this rather than a drawing of one. Two copies of a clock drift the
 // first time the wedge colour or the tick spacing changes.
 //
-// It is a kitchen timer or Time Timer–style dial: the face is always ONE HOUR
-// and the wedge is the slice of that hour still to come, so a quarter turn
-// reads as fifteen minutes without anyone reading a number. `fraction` is therefore remaining ÷ 3600s,
-// not remaining ÷ duration. A duration over an hour is consequently not a bug:
-// the wedge sits full until the clock drops under sixty minutes, exactly as the
-// physical object behaves.
-
-export const DIAL_SECONDS = 60 * 60
-
-// Sixty marks, one per minute of the hour the face represents, with every
-// fifth one longer and heavier — the arrangement a stopwatch uses, and the
-// reason it reads as an instrument rather than as a clock: a clock face has
-// twelve things on it, a stopwatch has sixty.
+// The face is the WHOLE countdown, whatever its length: the wedge starts full
+// and empties as the time goes, so a one-minute pitch round and a one-hour
+// exercise both start as a full dial and both read "half gone" at six o'clock.
+// Until 2026-10-23 the face was always one hour, like a kitchen timer; that made
+// a quarter turn mean fifteen minutes, but left a one-minute timer as a sliver
+// too thin to read. `fraction` is remaining ÷ duration. Time added past the
+// chosen length keeps the wedge full until the clock drops back under it,
+// rather than redrawing the scale while the room is watching.
 //
-// They are ROUNDED, which is the load-bearing part. `Math.sin`/`Math.cos` are
+// The scale is drawn per length, in round units, so the marks always mean
+// something you could say out loud ("every ten seconds"). A fixed sixty marks
+// would make a seven-minute dial tick every seven seconds, and no number could
+// sit on a mark. The marks are hairlines; the ones carrying a number are
+// longer, the way a stopwatch tells its fives apart, and twelve is longest.
+//
+// Coordinates are ROUNDED, which is the load-bearing part. `Math.sin`/`Math.cos` are
 // not bit-identical between Node and V8 in the browser, so an unrounded
 // coordinate serialises as 35.91412011995155 on the server and ...56 on the
 // client, and React throws away the whole tree with a hydration mismatch that
@@ -32,53 +33,89 @@ const round3 = (v: number) => Number(v.toFixed(3))
 /** Where the marks end, just inside the face at r=94. */
 const TICK_OUTER = 90
 
-const TICKS = Array.from({ length: 60 }, (_, i) => {
-  const a = (i * Math.PI) / 30
-  const sin = Math.sin(a)
-  const cos = Math.cos(a)
-  const top = i === 0
-  const major = i % 5 === 0
-  const inner = top ? 78 : major ? 81 : 84.5
-  return {
-    x1: round3(100 + inner * sin),
-    y1: round3(100 - inner * cos),
-    x2: round3(100 + TICK_OUTER * sin),
-    y2: round3(100 - TICK_OUTER * cos),
-    major,
-    top,
-  }
-})
+/** Round spacings for the marks, in seconds. The scale takes the smallest that
+ *  leaves at most sixty marks, so a one-minute dial ticks every second and an
+ *  hour ticks every minute, as the hour face always did. */
+const TICK_STEPS = [1, 2, 5, 10, 15, 20, 30, 60, 120, 300]
+const MAX_TICKS = 60
 
-/** The minute scale: 5 to 55, every fifth mark.
- *
- *  WHICH NUMBER GOES WHERE IS NOT A CHOICE. The wedge opens clockwise from 12
- *  by the fraction of the hour still to come, so the edge that moves sits at
- *  six degrees per remaining minute, measured clockwise. Twenty minutes left
- *  puts the edge a third of the way round, at four o'clock — so "20" has to be
- *  printed at four o'clock, and the numbers therefore ascend CLOCKWISE. Laying
- *  them out the other way would give a face where the figure under the edge is
- *  never the figure on the clock.
- *
- *  They sit at r=69, inside the wedge rather than outside the face, so the
- *  edge sweeps across them and you read the time where the colour stops. That
- *  costs nothing in legibility: ink on the accent and ink on the face both
- *  clear 5:1, which is the reason the numerals are ink in the first place
- *  rather than a second use of the accent.
- *
- *  Rounded at module scope, for the same hydration reason as the ticks. */
+/** How far apart the numbers sit, by length: seconds for a minute, half
+ *  minutes up to two, every minute up to ten, every five up to the hour. Each
+ *  band keeps the count at eleven or fewer, which is what the hour face
+ *  carried, and keeps every number in one short unit. */
+function numeralStep(durationSeconds: number): number {
+  if (durationSeconds <= 60) return 10
+  if (durationSeconds <= 120) return 30
+  if (durationSeconds <= 600) return 60
+  if (durationSeconds <= 3600) return 300
+  if (durationSeconds <= 7200) return 600
+  return 900
+}
+
+/** Written the way the chips write a length: 30″, 4′, 1′30″. */
+function formatMark(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  if (m === 0) return `${s}″`
+  return s === 0 ? `${m}′` : `${m}′${s}″`
+}
+
+/** The numbers sit at r=69, inside the wedge rather than outside the face, so
+ *  the edge sweeps across them and you read the time where the colour stops.
+ *  That costs nothing in legibility: ink on the accent and ink on the face
+ *  both clear 5:1, which is the reason the numerals are ink in the first place
+ *  rather than a second use of the accent. */
 const NUMERAL_RADIUS = 69
 
-const NUMERALS = Array.from({ length: 11 }, (_, i) => {
-  const minute = (i + 1) * 5
-  const a = (minute * Math.PI) / 30
-  return {
-    minute,
-    x: round3(100 + NUMERAL_RADIUS * Math.sin(a)),
-    y: round3(100 - NUMERAL_RADIUS * Math.cos(a)),
-  }
-})
+/** The marks and numbers for a countdown of this length.
+ *
+ *  WHICH NUMBER GOES WHERE IS NOT A CHOICE. The wedge opens clockwise from 12
+ *  by the fraction still to come, so with four minutes left of eight the edge
+ *  sits at six o'clock — and "4′" has to be printed at six o'clock. The numbers
+ *  therefore ascend CLOCKWISE, each at its share of the whole turn. A length
+ *  that is not a whole number of steps simply ends on a shorter gap, the way a
+ *  ruler stops at its length rather than at its next centimetre. */
+export function dialScale(durationSeconds: number) {
+  const total = Math.max(1, Math.round(durationSeconds))
+  const tickStep =
+    TICK_STEPS.find((step) => total / step <= MAX_TICKS) ?? TICK_STEPS[TICK_STEPS.length - 1]
+  const labelStep = numeralStep(total)
+  const angle = (seconds: number) => (seconds / total) * 2 * Math.PI
 
-/** The remaining slice of the hour, as an SVG wedge starting at 12 o'clock and
+  const ticks = []
+  for (let t = 0; t < total; t += tickStep) {
+    const a = angle(t)
+    const sin = Math.sin(a)
+    const cos = Math.cos(a)
+    const top = t === 0
+    const major = t % labelStep === 0
+    const inner = top ? 78 : major ? 81 : 84.5
+    ticks.push({
+      seconds: t,
+      x1: round3(100 + inner * sin),
+      y1: round3(100 - inner * cos),
+      x2: round3(100 + TICK_OUTER * sin),
+      y2: round3(100 - TICK_OUTER * cos),
+      major,
+      top,
+    })
+  }
+
+  const numerals = []
+  for (let t = labelStep; t < total; t += labelStep) {
+    const a = angle(t)
+    numerals.push({
+      seconds: t,
+      label: formatMark(t),
+      x: round3(100 + NUMERAL_RADIUS * Math.sin(a)),
+      y: round3(100 - NUMERAL_RADIUS * Math.cos(a)),
+    })
+  }
+
+  return { ticks, numerals }
+}
+
+/** The remaining slice of the countdown, as an SVG wedge starting at 12 o'clock and
  *  opening CLOCKWISE. Angles are clock angles (clockwise from 12), so a point
  *  sits at (cx + r·sin φ, cy − r·cos φ). An empty string at zero, which is how
  *  the wedge disappears when the time runs out.
@@ -110,7 +147,9 @@ export function wedgePath(
   return `M ${cx} ${cy} L ${cx} ${cy - r} A ${r} ${r} 0 ${largeArc} 1 ${x.toFixed(3)} ${y.toFixed(3)} Z`
 }
 
-/** @param fraction remaining seconds ÷ 3600, clamped by the caller.
+/** @param fraction remaining ÷ duration, clamped by the caller.
+ *  @param durationSeconds the length the face is drawn for; the marks and
+ *    numbers are laid out from it.
  *  @param lit draw the backlight at all. Off leaves the resting dial and the
  *    link-preview card exactly as they were.
  *  @param spinning turn it. A lit but still backlight is a paused clock.
@@ -118,17 +157,20 @@ export function wedgePath(
  *    shakes. */
 function TimerDial({
   fraction,
+  durationSeconds,
   lit = false,
   spinning = false,
   urgent = false,
   className,
 }: {
   fraction: number
+  durationSeconds: number
   lit?: boolean
   spinning?: boolean
   urgent?: boolean
   className?: string
 }) {
+  const { ticks, numerals } = dialScale(durationSeconds)
   return (
     <svg
       viewBox="0 0 200 200"
@@ -234,9 +276,9 @@ function TimerDial({
           hides them. Hairlines for the minutes, enough weight on the fives to
           count by, and the most on twelve, which is where every reading on
           this face starts and ends. */}
-      {TICKS.map((t, i) => (
+      {ticks.map((t) => (
         <line
-          key={i}
+          key={t.seconds}
           x1={t.x1}
           y1={t.y1}
           x2={t.x2}
@@ -258,9 +300,9 @@ function TimerDial({
       <path d={wedgePath(fraction, 100, 100, 80)} className="fill-brand-accent" />
       {/* Drawn AFTER the wedge, so the figures stay readable where the colour
           has reached them. */}
-      {NUMERALS.map((n) => (
+      {numerals.map((n) => (
         <text
-          key={n.minute}
+          key={n.seconds}
           x={n.x}
           y={n.y}
           textAnchor="middle"
@@ -269,7 +311,7 @@ function TimerDial({
           fontWeight="600"
           className="fill-brand-ink font-sans"
         >
-          {n.minute}
+          {n.label}
         </text>
       ))}
       <circle cx="100" cy="100" r="6" className="fill-brand-ink" />

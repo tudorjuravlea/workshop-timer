@@ -11,12 +11,10 @@
 // Everything here is pure and has no React in it, so the route handlers can
 // import it without pulling a client component onto the server.
 
-export const PRESETS = [5, 7, 10, 15, 20, 23, 30, 45, 60] as const
-
-/** A second, finer row for the short stretches inside a session: a quick
- *  check-in, a stretch, a round of one-minute pitches. Kept apart from
- *  `PRESETS` because both surfaces lay them out as a row of their own. */
-export const SHORT_PRESETS = [1, 2, 3, 4] as const
+/** Every length the chips offer, in minutes, smallest first. Even up to ten,
+ *  so each one has a number at the halfway mark on its dial; fives above ten,
+ *  so the dial's five-minute numbers end exactly at the top. */
+export const PRESETS = [1, 2, 4, 6, 8, 10, 15, 20, 30, 45, 60] as const
 
 export const MAX_MINUTES = 180
 export const MIN_SECONDS = 1
