@@ -2,7 +2,7 @@
 
 # workshop-timer
 
-**A countdown for the front of a room, and a phone to drive it with.**
+**A workshop countdown timer for facilitators and trainers, with a phone remote. White-label. Make it yours.**
 
 Built for workshops, jams and demo rounds. White label by design: the colours,
 the faces and the marks come from a brand file, so no component knows whose
