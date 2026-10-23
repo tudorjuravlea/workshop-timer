@@ -32,7 +32,7 @@ in a background tab, and a clock that subtracts 100ms per tick quietly loses
 minutes while you present in another window. This one recomputes from a wall
 clock every tick, so it cannot drift.
 
-<img src="docs/controls.png" alt="The same timer with a black control bar across the middle: Start, Reset, plus one minute, preset lengths from 5 to 60, sound, full screen and phone." width="820">
+<img src="docs/controls.png" alt="The same timer with a black control bar across the middle: a row of preset lengths from 1 to 60 minutes, and below it Start, Reset, plus one minute, sound, full screen and phone." width="820">
 
 Three keys, because the laptop is usually across the room: `Space` to start or
 pause, `F` for full screen, `R` for the phone. Set the length by typing into the

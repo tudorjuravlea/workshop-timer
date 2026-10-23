@@ -6,7 +6,7 @@ import { Pause, Play, RotateCcw } from "lucide-react"
 import { useBrand } from "@/components/brand-provider"
 import { Watermark } from "@/components/watermark"
 import { needsPlinth } from "@/lib/brand"
-import { PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
+import { PRESETS, SHORT_PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
 import { type RelayResult, readRoom, writeRoom } from "@/lib/timer-relay-client"
 // Type only: the relay module imports node:crypto and must never be bundled
 // for a browser. Keep this an `import type`.
@@ -26,6 +26,11 @@ import { cn } from "@/lib/utils"
 const POLL_MS = 1000
 const PEER_TIMEOUT_MS = 4000
 const CODE_LENGTH = 5
+/** Every length the grid offers, smallest first, and how many sit in a row.
+ *  The column count drives both the grid and the extra minute's span, so the
+ *  two can never disagree about where a row ends. */
+const LENGTHS = [...SHORT_PRESETS, ...PRESETS]
+const GRID_COLUMNS = 4
 
 /** What the dot at the top is saying. Four states, because "it is not working"
  *  has four different answers and only one of them is the phone's fault.
@@ -310,22 +315,27 @@ function TimerRemote() {
         </form>
       ) : (
         <>
-          {/* Eight cells in two rows of four, above the clock rather than
-              below it. Seven presets will not divide evenly into rows, so the
-              extra minute is the eighth: it belongs with them anyway, since
-              everything in this grid is a number of minutes, and it squares
-              the block off. */}
+          {/* Every length in rows of four, above the clock rather than below
+              it, smallest first, then the extra minute: it belongs with them,
+              since everything in this grid is a number of minutes. The
+              lengths rarely divide evenly into rows, so the extra minute
+              stretches across whatever the last row has left and the block
+              stays square. */}
           <div className="relative z-10 shrink-0 px-5 pb-1">
             <p className="label mb-2 text-brand-on-ground/60">
               Minutes
             </p>
-            <div className="grid grid-cols-4 gap-2">
-              {PRESETS.map((p) => (
+            <div
+              className="grid gap-2"
+              style={{ gridTemplateColumns: `repeat(${GRID_COLUMNS}, minmax(0, 1fr))` }}
+            >
+              {LENGTHS.map((p) => (
                 <button
                   key={p}
                   type="button"
                   onClick={() => send({ kind: "duration", durationMs: p * 60_000 }, `p${p}`)}
                   aria-pressed={p * 60 === durationSeconds}
+                  aria-label={`${p} ${p === 1 ? "minute" : "minutes"}`}
                   className={cn(
                     "min-h-12 text-base font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
                     p * 60 === durationSeconds
@@ -334,20 +344,24 @@ function TimerRemote() {
                     flash === `p${p}` && "brightness-75"
                   )}
                 >
-                  {p}
+                  {p}′
                 </button>
               ))}
               {/* Filled rather than outlined, because it DOES something where
-                  the other seven only say what the clock is set to. */}
+                  the others only say what the clock is set to. Its span is
+                  worked out from the count, not written down, so adding or
+                  removing a length cannot leave a hole in the last row. */}
               <button
                 type="button"
                 onClick={() => send({ kind: "add", ms: 60_000 }, "add")}
+                aria-label="Add one minute"
+                style={{ gridColumn: `span ${GRID_COLUMNS - (LENGTHS.length % GRID_COLUMNS)}` }}
                 className={cn(
                   "min-h-12 bg-brand-on-ground/15 text-base font-bold text-brand-on-ground ring-1 ring-brand-on-ground/30 transition-[filter] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
                   flash === "add" && "brightness-75"
                 )}
               >
-                +1
+                +1′
               </button>
             </div>
           </div>
