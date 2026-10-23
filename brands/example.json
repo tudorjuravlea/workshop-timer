@@ -1,0 +1,31 @@
+{
+  "_comment": "A worked example to copy. Note the one relationship the instrument depends on: `face` must be clearly BRIGHTER than `ground`, because the dial is read from the back of a room and the backlight behind it is light escaping past the rim. A pale ground under a white face gives you neither.",
+
+  "name": "Studio Nord",
+
+  "colors": {
+    "groundFrom": "#4a3a33",
+    "ground": "#332722",
+    "groundTo": "#1f1816",
+    "glow": "#6b4a3a",
+    "face": "#fdfbf7",
+    "accent": "#ff4a1c",
+    "ink": "#1c1714",
+    "ink2": "#4c433d",
+    "panel": "#191310",
+    "onPanel": "#ffffff",
+    "onGround": "#ffffff",
+    "receipt": "#f4efe9",
+    "receiptEdge": "#d3c7b9"
+  },
+
+  "logo": null,
+  "watermark": null,
+
+  "fonts": {
+    "body": "Archivo, system-ui, sans-serif",
+    "display": "Archivo, system-ui, sans-serif",
+    "mono": "'JetBrains Mono', ui-monospace, monospace",
+    "stylesheet": "https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=JetBrains+Mono:wght@500;700&display=swap"
+  }
+}

@@ -1,0 +1,15 @@
+/node_modules
+/.next/
+/out/
+/build
+.DS_Store
+*.pem
+npm-debug.log*
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+
+# Claude Code session scaffolding (dev-server launch config, port picked to
+# avoid a clash on this machine) — not part of the project.
+.claude/
