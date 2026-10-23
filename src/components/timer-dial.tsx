@@ -54,12 +54,11 @@ function numeralStep(durationSeconds: number): number {
   return 900
 }
 
-/** Written the way the chips write a length: 30″, 4′, 1′30″. */
-function formatMark(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  if (m === 0) return `${s}″`
-  return s === 0 ? `${m}′` : `${m}′${s}″`
+/** Written the way the chips write a length, in ONE unit per dial: seconds up
+ *  to two minutes (30″ 60″ 90″), whole minutes beyond (4′, 15′). A mixed mark
+ *  such as 1′30″ is the busiest thing on a face and reads slowest. */
+function formatMark(seconds: number, totalSeconds: number): string {
+  return totalSeconds <= 120 ? `${seconds}″` : `${seconds / 60}′`
 }
 
 /** The numbers sit at r=69, inside the wedge rather than outside the face, so
@@ -109,7 +108,7 @@ export function dialScale(durationSeconds: number) {
     const a = angle(t)
     numerals.push({
       seconds: t,
-      label: formatMark(t),
+      label: formatMark(t, total),
       x: round3(100 + NUMERAL_RADIUS * Math.sin(a)),
       y: round3(100 - NUMERAL_RADIUS * Math.cos(a)),
     })
