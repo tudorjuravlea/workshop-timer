@@ -47,9 +47,9 @@ readout, by preset, or in the link itself (`/#25`, `/#7:30`). It opens at ten mi
 A quiet clock ticks while the time runs: antique, grandfather or digital, a
 different one for each timer. The last minute switches to a watch that ticks
 faster and faster, the readout to hundredths, lights the rim, shakes the face
-and strikes a gong at zero. All of it goes quiet under
-`prefers-reduced-motion`, and the sound is synthesised, so the app ships no
-audio file.
+and strikes a gong at zero. The movement stops under `prefers-reduced-motion`
+and the sound button silences the rest. The sound is synthesised, so the app
+ships no audio file.
 
 ## Drive it from your phone
 
