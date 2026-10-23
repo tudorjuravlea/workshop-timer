@@ -6,6 +6,7 @@ import {
   Minimize,
   Pause,
   Play,
+  Plus,
   RotateCcw,
   Smartphone,
   Volume2,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react"
 
 import { usePrefersReducedMotion } from "@/components/use-reduced-motion"
-import { PRESETS } from "@/lib/timer-clock"
+import { PRESETS, SHORT_PRESETS } from "@/lib/timer-clock"
 import { cn } from "@/lib/utils"
 
 // The controls, gathered into one panel that shows itself when you move and
@@ -26,7 +27,7 @@ import { cn } from "@/lib/utils"
 // not there; and full screen stops being a second layout, since there is
 // nothing left to hide when the page is projected.
 
-/** Every control wears the same clothes: a label, a trailing symbol, no fill,
+/** Every control wears the same clothes: a leading symbol, a label, no fill,
  *  so nothing in here competes with the clock. `min-h-11` holds a 44px tap
  *  target, which is the smallest a finger reliably hits. */
 const CONTROL =
@@ -169,6 +170,26 @@ function TimerChrome({
   onToggleRemote,
   remoteHost,
 }: TimerChromeProps) {
+  const presetChip = (p: number) => (
+    <button
+      key={p}
+      type="button"
+      onClick={() => onChoose(p)}
+      aria-pressed={p * 60 === durationSeconds}
+      aria-label={`${p} ${p === 1 ? "minute" : "minutes"}`}
+      className={cn(
+        "min-h-11 min-w-11 px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
+        p * 60 === durationSeconds
+          ? "bg-brand-face text-brand-ink"
+          : "text-brand-on-panel hover:bg-brand-on-panel/15"
+      )}
+    >
+      {/* The prime is the minute mark, so each chip carries its own unit and
+          the row needs no "min" label trailing after it. */}
+      {p}′
+    </button>
+  )
+
   return (
     // A panel over the middle of the screen, not a row at the foot of the
     // column. Two things follow from floating it: the dial keeps the whole page
@@ -209,107 +230,89 @@ function TimerChrome({
             page: a tint reads as a smear once the thing behind it is white. */}
         <div
           className={cn(
-            "flex max-w-full flex-wrap items-center justify-center gap-x-1 gap-y-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20"
+            "flex max-w-full flex-col items-center gap-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20"
           )}
         >
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={onToggle}
-              // The primary action keeps full-strength ink while the rest sit
-              // at 70%: same treatment, but Start is still the one you can
-              // find from the back of the room.
-              className={cn(CONTROL, "text-brand-on-panel")}
-            >
-              {running ? "Pause" : finished ? "Start again" : "Start"}
-              {running ? <Pause className="size-5" /> : <Play className="size-5" />}
-            </button>
-            <button
-              type="button"
-              onClick={onReset}
-              className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
-            >
-              Reset
-              <RotateCcw className="size-5" />
-            </button>
-            {/* The only control in this panel without a trailing symbol,
-                because it already starts with one. A plus icon after "+1 min"
-                says the same thing twice. */}
-            <button
-              type="button"
-              onClick={onAddMinute}
-              className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
-            >
-              +1 min
-            </button>
+          {/* The lengths get a row of their own, above the controls: every
+              chip in it is a number of minutes, smallest first, so the row
+              reads as one scale from a quick check-in to the full hour. */}
+          <div className="flex max-w-full flex-wrap items-center justify-center gap-1">
+            {[...SHORT_PRESETS, ...PRESETS].map(presetChip)}
           </div>
 
-          <Divider />
-
-          <div className="flex flex-wrap items-center justify-center gap-1">
-            {PRESETS.map((p) => (
+          <div className="flex max-w-full flex-wrap items-center justify-center gap-x-1 gap-y-1">
+            <div className="flex items-center">
               <button
-                key={p}
                 type="button"
-                onClick={() => onChoose(p)}
-                aria-pressed={p * 60 === durationSeconds}
+                onClick={onToggle}
+                // The primary action keeps full-strength ink while the rest sit
+                // at 70%: same treatment, but Start is still the one you can
+                // find from the back of the room.
+                className={cn(CONTROL, "text-brand-on-panel")}
+              >
+                {running ? <Pause className="size-5" /> : <Play className="size-5" />}
+                {running ? "Pause" : finished ? "Start again" : "Start"}
+              </button>
+              <button
+                type="button"
+                onClick={onReset}
+                className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
+              >
+                <RotateCcw className="size-5" />
+                Reset
+              </button>
+              {/* The plus is the symbol rather than a character in the label,
+                  so this control wears the same clothes as the others. */}
+              <button
+                type="button"
+                onClick={onAddMinute}
+                aria-label="Add one minute"
+                className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
+              >
+                <Plus className="size-5" />1 min
+              </button>
+            </div>
+
+            <Divider />
+
+            <div className="flex items-center">
+              <button
+                type="button"
+                onClick={onToggleMuted}
+                aria-pressed={muted}
+                className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
+              >
+                {muted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
+                {muted ? "Sound off" : "Sound on"}
+              </button>
+              <button
+                type="button"
+                onClick={onToggleFullscreen}
+                aria-pressed={fullscreen}
+                className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
+              >
+                {fullscreen ? (
+                  <Minimize className="size-5" />
+                ) : (
+                  <Maximize className="size-5" />
+                )}
+                {fullscreen ? "Leave full screen" : "Full screen"}
+              </button>
+              <button
+                type="button"
+                onClick={onToggleRemote}
+                aria-pressed={remote.code !== null}
                 className={cn(
-                  "min-h-11 px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
-                  p * 60 === durationSeconds
-                    ? "bg-brand-face text-brand-ink"
-                    : "text-brand-on-panel hover:bg-brand-on-panel/15"
+                  CONTROL,
+                  remote.code
+                    ? "text-brand-on-panel"
+                    : "text-brand-on-panel/70 hover:text-brand-on-panel"
                 )}
               >
-                {p}
+                <Smartphone className="size-5" />
+                Phone
               </button>
-            ))}
-            <span
-              aria-hidden
-              className="pr-1 pl-0.5 text-sm font-semibold text-brand-on-panel/70"
-            >
-              min
-            </span>
-          </div>
-
-          <Divider />
-
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={onToggleMuted}
-              aria-pressed={muted}
-              className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
-            >
-              {muted ? "Sound off" : "Sound on"}
-              {muted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
-            </button>
-            <button
-              type="button"
-              onClick={onToggleFullscreen}
-              aria-pressed={fullscreen}
-              className={cn(CONTROL, "text-brand-on-panel/70 hover:text-brand-on-panel")}
-            >
-              {fullscreen ? "Leave full screen" : "Full screen"}
-              {fullscreen ? (
-                <Minimize className="size-5" />
-              ) : (
-                <Maximize className="size-5" />
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={onToggleRemote}
-              aria-pressed={remote.code !== null}
-              className={cn(
-                CONTROL,
-                remote.code
-                  ? "text-brand-on-panel"
-                  : "text-brand-on-panel/70 hover:text-brand-on-panel"
-              )}
-            >
-              Phone
-              <Smartphone className="size-5" />
-            </button>
+            </div>
           </div>
         </div>
 
