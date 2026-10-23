@@ -1,6 +1,6 @@
 import { randomInt } from "node:crypto"
 
-import { MAX_SECONDS, clampMs } from "@/lib/timer-clock"
+import { DEFAULT_MINUTES, MAX_SECONDS, clampMs } from "@/lib/timer-clock"
 
 // The relay behind the phone remote: a handful of live countdowns held
 // in memory, each addressed by a short code the screen shows and the phone
@@ -152,7 +152,7 @@ export function createRoom(seed: {
 }): TimerRoom {
   const now = Date.now()
   sweep(now)
-  const durationMs = clampMs(seed.durationMs) ?? 15 * 60_000
+  const durationMs = clampMs(seed.durationMs) ?? DEFAULT_MINUTES * 60_000
   const restingMs = Math.min(durationMs, Math.max(0, Math.round(seed.remainingMs)))
   const running = seed.running && restingMs > 0
   const code = newCode()

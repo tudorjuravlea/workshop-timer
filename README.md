@@ -1,6 +1,6 @@
-<div align="center">
-
 # workshop-timer
+
+<div align="center">
 
 ```
 ░▒▓█  W0RKSH0P::71MΞR  █▓▒░
@@ -10,7 +10,7 @@
 
 Built for workshops, trainings, hackathons, jams and demos. White label by design. Customize it and make it yours.
 
-<img src="docs/at-rest.png" alt="A black screen with a large white dial. A red-orange wedge covers a third of the face, which is numbered 5 to 55. Below it the readout says 20:00." width="820">
+<img src="docs/at-rest.png" alt="A black screen with a large white dial, two thirds of it red-orange. Below it the readout says 06:30." width="820">
 
 </div>
 
@@ -18,10 +18,16 @@ Built for workshops, trainings, hackathons, jams and demos. White label by desig
 
 ## What makes it different
 
-**The dial measures an hour, not a percentage.** Like a kitchen timer, the face
-is always one hour and the wedge is the slice of that hour still to come, so
-fifteen minutes reads as a quarter turn from the back of the room with nobody
-reading a number. The numerals tell you where the edge will land.
+**Every length fills the dial.** One minute or ninety, the dial starts full and
+empties as the time runs, so the back row can see how much is left without
+reading a number.
+
+<img src="docs/lengths.png" alt="Three dials side by side: a 2 minute timer with 01:30 left, a 10 minute timer with 04:00 left, and a 90 minute timer with 1:00:00 left." width="820">
+
+**Nobody misses the end.** A gong, a big red *Time's up!*, and a burst of
+confetti.
+
+<img src="docs/finish.png" alt="The dial replaced by a white disc reading Time's up! in red, with red and white confetti bursting out around it. The readout says 00:00:00." width="820">
 
 **The controls get out of the way.** They appear when you move and leave 2.6
 seconds after you stop, taking the mouse pointer with them. On a projector a
@@ -32,11 +38,11 @@ in a background tab, and a clock that subtracts 100ms per tick quietly loses
 minutes while you present in another window. This one recomputes from a wall
 clock every tick, so it cannot drift.
 
-<img src="docs/controls.png" alt="The same timer with a black control bar across the middle: a row of preset lengths from 1 to 60 minutes, and below it Start, Reset, plus one minute, sound, full screen and phone." width="820">
+<img src="docs/controls.png" alt="The same timer with a black control bar across the middle: a row of lengths from 1 to 90 minutes, and below it Start, Reset, plus one minute, sound, full screen and phone." width="820">
 
 Three keys, because the laptop is usually across the room: `Space` to start or
 pause, `F` for full screen, `R` for the phone. Set the length by typing into the
-readout, by preset, or in the link itself (`/#25`, `/#7:30`).
+readout, by preset, or in the link itself (`/#25`, `/#7:30`). It opens at ten minutes.
 
 The last minute switches the readout to hundredths, lights the rim, shakes the
 face, ticks each second and strikes a gong at zero. All of it goes quiet under
@@ -53,7 +59,7 @@ device drives the clock while both follow.
 
 <table>
 <tr>
-<td width="230"><img src="docs/remote.png" alt="A phone showing Connected to the screen, a grid of minute buttons, the readout 20:00, and large Start and Reset buttons." width="210"></td>
+<td width="230"><img src="docs/remote.png" alt="A phone showing Connected to the screen, a grid of lengths, the readout 10:00, and large Start and Reset buttons." width="210"></td>
 <td>
 
 The relay carries **state, not commands**. A reply says how much time is left,
@@ -74,7 +80,7 @@ after timer all day.
 Everything a brand can change is a CSS custom property, so a new brand is a JSON
 file and never a patch.
 
-<img src="docs/rebranded.png" alt="The same timer on a cream background with a deep orange wedge, showing 45:00." width="820">
+<img src="docs/rebranded.png" alt="The same timer on a cream background with a deep orange wedge, showing 18:00." width="820">
 
 **Ship a brand with the deployment.** Put a file in `brands/` and name it:
 

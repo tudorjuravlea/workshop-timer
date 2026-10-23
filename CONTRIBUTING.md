@@ -40,10 +40,9 @@ depend on, which will rewrite whole files around your three lines.
 
 ## Things worth knowing before you change them
 
-**The dial is an hour, not a percentage.** The face always represents sixty
-minutes and the wedge is the slice still to come, so a duration over an hour is
-not a bug: the wedge sits full until the clock drops under sixty. Please do not
-"fix" this.
+**The dial is always the whole countdown.** Its marks and numbers come from
+`dialScale` in `src/components/timer-dial.tsx`, for any length. Change the rule
+there rather than special-casing a length.
 
 **The clock is deadline driven, never a counter.** Every tick recomputes from a
 wall clock rather than subtracting from a total, because browsers throttle

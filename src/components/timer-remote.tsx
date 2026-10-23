@@ -6,7 +6,7 @@ import { Pause, Play, RotateCcw } from "lucide-react"
 import { useBrand } from "@/components/brand-provider"
 import { Watermark } from "@/components/watermark"
 import { needsPlinth } from "@/lib/brand"
-import { PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
+import { DEFAULT_MINUTES, PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
 import { type RelayResult, readRoom, writeRoom } from "@/lib/timer-relay-client"
 // Type only: the relay module imports node:crypto and must never be bundled
 // for a browser. Keep this an `import type`.
@@ -57,8 +57,8 @@ function TimerRemote() {
   const [entry, setEntry] = React.useState("")
   const [link, setLink] = React.useState<Link | null>(null)
 
-  const [durationMs, setDurationMs] = React.useState(15 * 60_000)
-  const [remainingMs, setRemainingMs] = React.useState(15 * 60_000)
+  const [durationMs, setDurationMs] = React.useState(DEFAULT_MINUTES * 60_000)
+  const [remainingMs, setRemainingMs] = React.useState(DEFAULT_MINUTES * 60_000)
   const [running, setRunning] = React.useState(false)
   const [flash, setFlash] = React.useState<string | null>(null)
   // Raw keystrokes while the field has focus, the live clock the rest of the
