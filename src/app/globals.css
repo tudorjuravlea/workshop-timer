@@ -123,6 +123,10 @@
 .dial-urgent {
   animation: dial-urgent 0.85s ease-in-out infinite;
 }
+/* The last thirty seconds breathe twice as fast. */
+.dial-urgent.dial-intense {
+  animation-duration: 0.45s;
+}
 
 @keyframes dial-shake {
   0%,

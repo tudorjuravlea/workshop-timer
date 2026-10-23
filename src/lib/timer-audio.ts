@@ -86,26 +86,137 @@ export function playGong(ctx: AudioContext, at: number = ctx.currentTime): void 
   strike(ctx, at, master)
 }
 
-/** One second gone, in the last minute. Two sines rather than one: the high
- *  one is the click you hear, the low one is the body that stops it sounding
- *  like a smoke alarm. Returns its nodes so a pause can cancel the ones that
- *  have not sounded yet. */
-export function playTick(ctx: AudioContext, at: number): OscillatorNode[] {
-  const voices: ReadonlyArray<[number, number, number]> = [
-    [1680, 0.1, 0.035],
-    [840, 0.06, 0.05],
+/** What ticks when, by the time LEFT, in milliseconds; null for silence.
+ *
+ *  An antique clock once a minute while there is plenty of time, every second
+ *  in the last two minutes, twice a second in the last one; then, for the final
+ *  35 seconds, a watch at the same twice a second, every quarter second from
+ *  10, into the gong. The pace only ever rises. Every tick sits on a whole
+ *  fraction of the time left, so each change of pace lands on the beat.
+ *
+ *  Levels are set by ear for a whole session: the clock peaks around -17 dBFS
+ *  so it sits under a facilitator's voice, and the watch around -11, louder,
+ *  because the end is the one part that is meant to be noticed. */
+export function tickFor(leftMs: number): "antique" | "watch" | null {
+  if (leftMs <= 0) return null
+  const on = (step: number) => leftMs % step === 0
+  if (leftMs > 120_000) return on(60_000) ? "antique" : null
+  if (leftMs > 60_000) return on(1000) ? "antique" : null
+  if (leftMs > 35_000) return on(500) ? "antique" : null
+  if (leftMs > 10_000) return on(500) ? "watch" : null
+  return on(250) ? "watch" : null
+}
+
+type Voice = AudioScheduledSourceNode
+
+const noiseCache = new WeakMap<BaseAudioContext, AudioBuffer>()
+/** One second of white noise per context, reused by every tick: a fresh buffer
+ *  per tick would be sixty allocations a minute for the same random numbers. */
+function noise(ctx: BaseAudioContext): AudioBuffer {
+  let buffer = noiseCache.get(ctx)
+  if (!buffer) {
+    buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate)
+    const data = buffer.getChannelData(0)
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+    noiseCache.set(ctx, buffer)
+  }
+  return buffer
+}
+
+/** A burst of noise shaped by `filter`, `attack` seconds in and `decay` out.
+ *  Starts at a random point in the buffer so no two ticks are the same grain. */
+function burst(
+  ctx: BaseAudioContext,
+  at: number,
+  out: AudioNode,
+  { type, frequency, q = 0.7, peak, attack, decay }: {
+    type: BiquadFilterType
+    frequency: number
+    q?: number
+    peak: number
+    attack: number
+    decay: number
+  }
+): Voice {
+  const source = ctx.createBufferSource()
+  source.buffer = noise(ctx)
+  const filter = ctx.createBiquadFilter()
+  filter.type = type
+  filter.frequency.value = frequency
+  filter.Q.value = q
+  const gain = ctx.createGain()
+  gain.gain.setValueAtTime(0, at)
+  gain.gain.linearRampToValueAtTime(peak, at + attack)
+  gain.gain.exponentialRampToValueAtTime(0.0001, at + attack + decay)
+  source.connect(filter).connect(gain).connect(out)
+  source.start(at, Math.random() * 0.8)
+  source.stop(at + attack + decay + 0.02)
+  return source
+}
+
+/** A sine that rings and dies: a resonance of whatever was struck. */
+function ring(
+  ctx: BaseAudioContext,
+  at: number,
+  out: AudioNode,
+  { frequency, peak, attack, decay, type = "sine" }: {
+    frequency: number
+    peak: number
+    attack: number
+    decay: number
+    type?: OscillatorType
+  }
+): Voice {
+  const osc = ctx.createOscillator()
+  osc.type = type
+  osc.frequency.value = frequency
+  const gain = ctx.createGain()
+  gain.gain.setValueAtTime(0, at)
+  gain.gain.linearRampToValueAtTime(peak, at + attack)
+  gain.gain.exponentialRampToValueAtTime(0.0001, at + attack + decay)
+  osc.connect(gain).connect(out)
+  osc.start(at)
+  osc.stop(at + attack + decay + 0.02)
+  return osc
+}
+
+/** A small antique clock: a dry escapement snap with a metallic edge, and the
+ *  faint chatter of the gear train behind it. Everything is gone inside 40ms. */
+function antique(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
+  const out = ctx.destination
+  const tock = beat % 2 === 1 ? 0.93 : 1
+  const voices = [
+    burst(ctx, at, out, { type: "highpass", frequency: 2600, peak: 0.128, attack: 0.0004, decay: 0.006 }),
+    ring(ctx, at, out, { frequency: 2310 * tock, peak: 0.02, attack: 0.0006, decay: 0.03 }),
+    ring(ctx, at, out, { frequency: 3570 * tock, peak: 0.014, attack: 0.0006, decay: 0.02 }),
+    ring(ctx, at, out, { frequency: 5130 * tock, peak: 0.008, attack: 0.0006, decay: 0.012 }),
   ]
-  return voices.map(([frequency, peak, decay]) => {
-    const osc = ctx.createOscillator()
-    osc.type = "sine"
-    osc.frequency.value = frequency
-    const gain = ctx.createGain()
-    gain.gain.setValueAtTime(0, at)
-    gain.gain.linearRampToValueAtTime(peak, at + 0.002)
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + decay)
-    osc.connect(gain).connect(ctx.destination)
-    osc.start(at)
-    osc.stop(at + decay + 0.02)
-    return osc
+  // The gear train: three tiny grains just after the snap, each quieter.
+  ;[0.009, 0.015, 0.022].forEach((offset, i) => {
+    voices.push(burst(ctx, at + offset, out, { type: "bandpass", frequency: 1900, q: 2.5, peak: 0.02 / (i + 1), attack: 0.0004, decay: 0.002 }))
   })
+  return voices
+}
+
+/** The final seconds: a wristwatch held close, all front edge and no tail, so a
+ *  rhythm that speeds up stays a rhythm rather than smearing into a buzz. */
+function watch(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
+  const out = ctx.destination
+  const tock = beat % 2 === 1 ? 0.94 : 1
+  return [
+    burst(ctx, at, out, { type: "highpass", frequency: 4800, peak: 0.33, attack: 0.0002, decay: 0.004 }),
+    ring(ctx, at, out, { frequency: 3820 * tock, peak: 0.07, attack: 0.0003, decay: 0.009 }),
+    ring(ctx, at, out, { frequency: 1910 * tock, peak: 0.04, attack: 0.0003, decay: 0.012 }),
+  ]
+}
+
+/** One tick of `style` at `at`. `beat` counts ticks, so alternate ones can be
+ *  the tock. Returns its sources so a pause can cancel the ones still to come. */
+export function playTick(
+  ctx: BaseAudioContext,
+  at: number,
+  style: "antique" | "watch",
+  beat: number
+): Voice[] {
+  return style === "antique" ? antique(ctx, at, beat) : watch(ctx, at, beat)
 }
