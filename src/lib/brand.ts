@@ -26,7 +26,7 @@ export type BrandColors = {
   /** The dial's face, and the plinth under the readout. The brightest surface
    *  on the page, which is what makes the clock the thing you see first. */
   face: string
-  /** TIME. The wedge and the digits, and the backlight in the last minute.
+  /** TIME. The wedge and the digits.
    *  One accent, used nowhere else. */
   accent: string
   /** Text and tick marks on `face`. */

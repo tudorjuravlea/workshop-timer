@@ -1,5 +1,3 @@
-import type * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 // The clock face itself, kept in its own file so anything else that wants to
@@ -152,150 +150,29 @@ export function wedgePath(
 /** @param fraction remaining ÷ duration, clamped by the caller.
  *  @param durationSeconds the length the face is drawn for; the marks and
  *    numbers are laid out from it.
- *  @param lit draw the backlight at all. Off leaves the resting dial and the
- *    link-preview card exactly as they were.
- *  @param spinning turn it. A lit but still backlight is a paused clock.
- *  @param urgent inside the last minute: faster, breathing, and the whole face
- *    shakes.
- *  @param intense inside the last thirty seconds: the light at full strength,
- *    a wide bloom behind it, breathing twice as fast. */
+ *  @param urgent inside the last minute: the whole face shakes. */
 function TimerDial({
   fraction,
   durationSeconds,
-  lit = false,
-  spinning = false,
   urgent = false,
-  intense = false,
   className,
 }: {
   fraction: number
   durationSeconds: number
-  lit?: boolean
-  spinning?: boolean
   urgent?: boolean
-  intense?: boolean
   className?: string
 }) {
   const { ticks, numerals } = dialScale(durationSeconds)
-  // How strong the light is: the run, the last minute, the last thirty
-  // seconds. Each step is brighter and wider than the one before, so the
-  // light only ever builds towards zero.
-  const glow = intense
-    ? { ring: 1, ringWidth: 3, half: 1, halfWidth: 5.5 }
-    : urgent
-      ? { ring: 0.9, ringWidth: 2.4, half: 0.85, halfWidth: 4 }
-      : { ring: 0.8, ringWidth: 2.2, half: 0.7, halfWidth: 3.5 }
   return (
     <svg
       viewBox="0 0 200 200"
       aria-hidden
       className={cn(
-        // The backlight is drawn wider than the face and has to escape the
-        // viewBox to read as light behind an object rather than a ring painted
-        // on one. The page's own `overflow-hidden` is the backstop.
-        "overflow-visible drop-shadow-[0_20px_50px_rgb(0_0_0/0.35)]",
+        "drop-shadow-[0_20px_50px_rgb(0_0_0/0.35)]",
         urgent && "dial-shake",
         className
       )}
     >
-      <defs>
-        {/* Two blurs, because the ring and the brightening are doing different
-            jobs. The ring wants a tight one, or a 2px stroke spread over 16
-            units stops being a ring at all and becomes a wash. The brighter
-            side wants a wide one, so it has no edge to give it away as a
-            second shape drawn on top. Both need a filter region far larger
-            than one bbox; the default would clip the bloom into a square. */}
-        <filter id="dial-ring" x="-200%" y="-200%" width="500%" height="500%">
-          <feGaussianBlur stdDeviation="1.4" />
-        </filter>
-        <filter id="dial-glow" x="-200%" y="-200%" width="500%" height="500%">
-          <feGaussianBlur stdDeviation="4" />
-        </filter>
-        <filter id="dial-bloom" x="-200%" y="-200%" width="500%" height="500%">
-          <feGaussianBlur stdDeviation="9" />
-        </filter>
-      </defs>
-
-      {/* THE BACKLIGHT, and it is drawn first because that is the whole trick:
-          it sits BEHIND the white face, at a radius a little larger, so the
-          opaque face swallows the inner half of the bloom and only the part
-          that escapes past the rim is ever seen. Painted on top at the same
-          radius it reads as a ring someone drew on the dial; painted behind it
-          reads as a lamp.
-
-          A thin even ring holds the whole contour, and half of it is carried
-          a little brighter, so the dial reads as lit from one side and that
-          side goes round. Anything shorter than half reads as an object
-          travelling rather than as light.
-
-          The brand's BRIGHT tone for most of the run and its ACCENT in the
-          last minute, and holding the accent back is the point: the moment it
-          appears is itself the warning, before the pulse or the shake have
-          said anything. */}
-      {lit && (
-        // Two groups, not two classes on one. `animation` is a shorthand, so
-        // the pulse and the spin on the same element are one property and the
-        // last rule wins: the last minute quietly STOPPED the rotation and
-        // only breathed. And the play-state is set inline rather than with a
-        // utility, because `.dial-spin` is unlayered CSS and beats anything
-        // Tailwind emits into a layer — pausing the clock left the light
-        // turning.
-        <g className={cn(urgent && "dial-urgent", intense && "dial-intense")}>
-          {/* The last thirty seconds: a wide bloom all the way round, so the
-              whole dial seems to give off light rather than one side of it. */}
-          {intense && (
-            <circle
-              cx="100"
-              cy="100"
-              r="97"
-              fill="none"
-              strokeWidth="8"
-              opacity={0.75}
-              className="stroke-brand-accent"
-              filter="url(#dial-bloom)"
-            />
-          )}
-          <g
-            className="dial-spin"
-            style={
-              {
-                "--dial-spin-duration": urgent ? "0.4s" : "1s",
-                animationPlayState: spinning ? "running" : "paused",
-              } as React.CSSProperties
-            }
-          >
-            {/* The ring: the whole contour, thin and even. */}
-            <circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              strokeWidth={glow.ringWidth}
-              opacity={glow.ring}
-              className={urgent ? "stroke-brand-accent" : "stroke-brand-on-ground"}
-              filter="url(#dial-ring)"
-            />
-            {/* And one side of it, a little brighter. Half the circumference,
-                not a lobe: a short arc reads as an object travelling round the
-                ring, where half of it reads as the ring being lit from one
-                side. The gap between this opacity and the ring's is what
-                "slightly" means here — far enough apart to see, close enough
-                that it never separates into a second thing. */}
-            <circle
-              cx="100"
-              cy="100"
-              r="96"
-              fill="none"
-              strokeWidth={glow.halfWidth}
-              strokeLinecap="round"
-              strokeDasharray="302 302"
-              opacity={glow.half}
-              className={urgent ? "stroke-brand-accent" : "stroke-brand-on-ground"}
-              filter="url(#dial-glow)"
-            />
-          </g>
-        </g>
-      )}
       {/* Three roles, one colour each: the GROUND is the field, the FACE is
           the dial, the ACCENT is time. Putting the wedge on the face is what
           lets the accent be a saturated colour at all — a saturated accent on a

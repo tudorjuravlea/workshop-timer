@@ -85,49 +85,10 @@
   animation: receipt-feed 0.55s var(--ease-out-pm) both;
 }
 
-/* ── The dial's backlight ───────────────────────────────────────────────────
-   One turn a second, and the only thing on this page driven by CSS rather
-   than by the clock's own tick. At this speed the React render loop is the
-   wrong tool: it updates ten times a second, which is ten frames per
-   revolution, and the glow strobes instead of turning. A keyframe runs it at
-   the compositor's rate and costs no renders at all. The phase is therefore
-   not tied to the countdown, which is fine — at a turn a second it is a sign
-   of life, not a reading anybody takes. */
-@keyframes dial-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.dial-spin {
-  /* `view-box` makes the origin the dial's own centre rather than the bounding
-     box of the glow, which would wobble as the dash moves. */
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: dial-spin var(--dial-spin-duration, 1s) linear infinite;
-}
-
 /* ── The last minute ────────────────────────────────────────────────────────
-   The backlight breathes and the face shakes, both on transforms and opacity
-   only, and both off entirely for anyone who has asked for less movement — at
-   which point the clock still reads correctly, because neither of these
-   carries information the digits do not. */
-@keyframes dial-urgent {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-.dial-urgent {
-  animation: dial-urgent 0.85s ease-in-out infinite;
-}
-/* The last thirty seconds breathe twice as fast. */
-.dial-urgent.dial-intense {
-  animation-duration: 0.45s;
-}
-
+   The face shakes, on transforms only, and not at all for anyone who has asked
+   for less movement — at which point the clock still reads correctly, because
+   the shake carries no information the digits do not. */
 @keyframes dial-shake {
   0%,
   100% {
@@ -152,8 +113,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .receipt-feed,
-  .dial-spin,
-  .dial-urgent,
   .dial-shake {
     animation: none;
   }
