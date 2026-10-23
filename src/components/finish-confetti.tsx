@@ -69,19 +69,7 @@ const fireworks: Pattern = (fire, colors) => {
   return () => window.clearInterval(id)
 }
 
-/** Stars thrown up from under the readout in three quick shots. */
-const stars: Pattern = (fire, colors, lift) => {
-  const shot = () => {
-    const shared = { origin: { x: 0.5, y: 1.05 }, angle: 90, spread: 90, gravity: 0.7, decay: 0.93, colors }
-    fire({ ...shared, particleCount: 40, startVelocity: 58 * lift, scalar: 1.4, shapes: ["star"] })
-    fire({ ...shared, particleCount: 20, startVelocity: 50 * lift, scalar: 0.7, shapes: ["circle"] })
-  }
-  shot()
-  const timers = [180, 360].map((ms) => window.setTimeout(shot, ms))
-  return () => timers.forEach((id) => window.clearTimeout(id))
-}
-
-const PATTERNS: Pattern[] = [fountain, cannons, fireworks, stars]
+const PATTERNS: Pattern[] = [fountain, cannons, fireworks]
 
 /** @param bursts how many times the countdown has finished. Every increase
  *    fires the next pattern; the first render fires nothing. */
@@ -91,28 +79,33 @@ export function FinishConfetti({ bursts }: { bursts: number }) {
   const fireRef = React.useRef<confetti.CreateTypes | null>(null)
   const shown = React.useRef(bursts)
 
+  // Started on mount, so the worker is already running when the first finish
+  // arrives; created lazily on that finish, the first burst came out visibly
+  // thinner than the same pattern the second time. A worker-backed canvas can
+  // hand its drawing over only once, so the ref guards against the
+  // development double-mount trying twice (refs survive it).
   React.useEffect(() => {
-    if (bursts === shown.current) return
-    shown.current = bursts
-    const canvas = canvasRef.current
-    if (!canvas) return
-    // Created on the first finish, not on mount: a worker-backed canvas can
-    // hand its drawing over only once, and a development double-mount would
-    // otherwise try twice.
-    fireRef.current ??= confetti.create(canvas, {
+    if (!canvasRef.current) return
+    fireRef.current ??= confetti.create(canvasRef.current, {
       resize: true,
       useWorker: true,
       disableForReducedMotion: true,
     })
+    return () => fireRef.current?.reset()
+  }, [])
+
+  React.useEffect(() => {
+    if (bursts === shown.current) return
+    shown.current = bursts
+    const canvas = canvasRef.current
     const fire = fireRef.current
+    if (!canvas || !fire) return
     // The library's speeds are in pixels, so on a tall projector a burst
     // tuned on a laptop would never clear the dial. Scale them with height.
     const lift = Math.max(1, canvas.clientHeight / 760)
     const pattern = PATTERNS[(bursts - 1) % PATTERNS.length]
     return pattern((o) => void fire(o), [colors.accent, colors.accent, colors.face], lift)
   }, [bursts, colors.accent, colors.face])
-
-  React.useEffect(() => () => fireRef.current?.reset(), [])
 
   return <canvas ref={canvasRef} aria-hidden className="pointer-events-none absolute inset-0 size-full" />
 }

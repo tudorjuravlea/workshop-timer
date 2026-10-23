@@ -444,12 +444,35 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
             `flex-1` from handing it the full leftover height. The box takes the
             space, the drawing fills it and centres itself. */}
         <div className="relative flex min-h-0 w-full flex-1 items-center justify-center">
-          {/* A solid disc the size of the face, under it. The finished dial
-              fades, and without this the confetti behind it shows through the
-              face instead of coming out from under it. Same viewBox and box as
-              the dial, so it lands exactly where the face does. */}
-          <svg viewBox="0 0 200 200" aria-hidden className="absolute inset-0 size-full">
-            <circle cx="100" cy="100" r="94" className="fill-brand-ground" />
+          {/* A solid disc the size of the face, under it, which is what the
+              room sees once the time is up: the dial fades away and leaves the
+              face blank but for the words. It also stops the confetti behind
+              from showing through the fading dial. Same viewBox and box as the
+              dial, so it lands exactly where the face does. */}
+          <svg
+            viewBox="0 0 200 200"
+            aria-hidden
+            className={cn(
+              "absolute inset-0 size-full overflow-visible",
+              // The dial carries its own shadow; the disc takes it over only
+              // once the dial has gone, or the two would stack.
+              finished && "drop-shadow-[0_20px_50px_rgb(0_0_0/0.35)]"
+            )}
+          >
+            <circle cx="100" cy="100" r="94" className="fill-brand-face" />
+            {finished && (
+              <text
+                x="100"
+                y="100"
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontSize="30"
+                fontWeight="800"
+                className="fill-brand-ink font-sans"
+              >
+                Time&rsquo;s up!
+              </text>
+            )}
           </svg>
           <TimerDial
             fraction={fraction}
@@ -459,7 +482,7 @@ function TimerScreen({ defaultMinutes = 15 }: { defaultMinutes?: number }) {
             urgent={urgent}
             className={cn(
               "h-full max-h-full w-full transition-opacity duration-500",
-              finished && "opacity-60"
+              finished && "opacity-0"
             )}
           />
         </div>
