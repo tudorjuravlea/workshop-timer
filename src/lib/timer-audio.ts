@@ -90,9 +90,9 @@ export function playGong(ctx: AudioContext, at: number = ctx.currentTime): void 
  *
  *  An antique clock once a minute while there is plenty of time, every second
  *  in the last two minutes, twice a second in the last one; then, for the final
- *  35 seconds, a watch: every second, every half second from 30, every quarter
- *  second from 10, into the gong. Every tick sits on a whole fraction of the
- *  time left, so each change of pace lands on the beat.
+ *  35 seconds, a watch at the same twice a second, every quarter second from
+ *  10, into the gong. The pace only ever rises. Every tick sits on a whole
+ *  fraction of the time left, so each change of pace lands on the beat.
  *
  *  Levels are set by ear for a whole session: the clock peaks around -17 dBFS
  *  so it sits under a facilitator's voice, and the watch around -11, louder,
@@ -103,7 +103,6 @@ export function tickFor(leftMs: number): "antique" | "watch" | null {
   if (leftMs > 120_000) return on(60_000) ? "antique" : null
   if (leftMs > 60_000) return on(1000) ? "antique" : null
   if (leftMs > 35_000) return on(500) ? "antique" : null
-  if (leftMs > 30_000) return on(1000) ? "watch" : null
   if (leftMs > 10_000) return on(500) ? "watch" : null
   return on(250) ? "watch" : null
 }

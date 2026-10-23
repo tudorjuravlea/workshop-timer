@@ -45,8 +45,8 @@ pause, `F` for full screen, `R` for the phone. Set the length by typing into the
 readout, by preset, or in the link itself (`/#25`, `/#7:30`). It opens at ten minutes.
 
 A quiet clock ticks once a minute, then every second for the last two minutes
-and twice a second for the last one. The final 35 seconds are a watch ticking
-faster and faster into a gong. The last minute also switches the readout to
+and twice a second for the last one. The final 35 seconds are a watch, speeding
+up into a gong. The last minute also switches the readout to
 hundredths, lights the rim and shakes the face. The movement stops under `prefers-reduced-motion`
 and the sound button silences the rest. The sound is synthesised, so the app
 ships no audio file.
