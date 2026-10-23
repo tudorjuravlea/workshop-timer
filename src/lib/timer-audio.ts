@@ -86,15 +86,27 @@ export function playGong(ctx: AudioContext, at: number = ctx.currentTime): void 
   strike(ctx, at, master)
 }
 
-/** The three clocks a countdown can tick with, one per timer in turn. The last
- *  minute always belongs to `watch`, whichever clock ran before it.
+/** What ticks when, by the time LEFT, in milliseconds; null for silence.
  *
- *  Levels are set by ear for a whole session: the clocks peak around -17 to
- *  -25 dBFS so they sit under a facilitator's voice for forty minutes, and the
- *  watch around -11, louder than any of them, because the last minute is
- *  the one part that is meant to be noticed. */
-export const TICK_STYLES = ["antique", "grandfather", "digital"] as const
-export type TickStyle = (typeof TICK_STYLES)[number]
+ *  An antique clock once a minute while there is plenty of time, every second
+ *  in the last two minutes, twice a second in the last one; then, for the final
+ *  35 seconds, a watch: every second, every half second from 30, every quarter
+ *  second from 10, into the gong. Every tick sits on a whole fraction of the
+ *  time left, so each change of pace lands on the beat.
+ *
+ *  Levels are set by ear for a whole session: the clock peaks around -17 dBFS
+ *  so it sits under a facilitator's voice, and the watch around -11, louder,
+ *  because the end is the one part that is meant to be noticed. */
+export function tickFor(leftMs: number): "antique" | "watch" | null {
+  if (leftMs <= 0) return null
+  const on = (step: number) => leftMs % step === 0
+  if (leftMs > 120_000) return on(60_000) ? "antique" : null
+  if (leftMs > 60_000) return on(1000) ? "antique" : null
+  if (leftMs > 35_000) return on(500) ? "antique" : null
+  if (leftMs > 30_000) return on(1000) ? "watch" : null
+  if (leftMs > 10_000) return on(500) ? "watch" : null
+  return on(250) ? "watch" : null
+}
 
 type Voice = AudioScheduledSourceNode
 
@@ -169,39 +181,6 @@ function ring(
   return osc
 }
 
-const roomCache = new WeakMap<BaseAudioContext, AudioNode>()
-/** The hall the grandfather clock stands in: a generated impulse response,
- *  dark and about a second long, so each tick comes back off the walls. Built
- *  once per context and shared, because a convolver per tick would cost far
- *  more than the tick. */
-function room(ctx: BaseAudioContext): AudioNode {
-  let input = roomCache.get(ctx)
-  if (!input) {
-    const length = Math.floor(ctx.sampleRate * 1.1)
-    const ir = ctx.createBuffer(2, length, ctx.sampleRate)
-    for (let channel = 0; channel < 2; channel++) {
-      const data = ir.getChannelData(channel)
-      for (let i = 0; i < length; i++) {
-        const t = i / ctx.sampleRate
-        // Silence for the first few milliseconds, as the nearest wall is a
-        // few metres away, then a tail that falls about 60dB over the second.
-        data[i] = t < 0.012 ? 0 : (Math.random() * 2 - 1) * Math.exp(-6.5 * t)
-      }
-    }
-    const convolver = ctx.createConvolver()
-    convolver.buffer = ir
-    const dark = ctx.createBiquadFilter()
-    dark.type = "lowpass"
-    dark.frequency.value = 1800
-    const wet = ctx.createGain()
-    wet.gain.value = 0.55
-    convolver.connect(dark).connect(wet).connect(ctx.destination)
-    input = convolver
-    roomCache.set(ctx, input)
-  }
-  return input
-}
-
 /** A small antique clock: a dry escapement snap with a metallic edge, and the
  *  faint chatter of the gear train behind it. Everything is gone inside 40ms. */
 function antique(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
@@ -220,48 +199,7 @@ function antique(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
   return voices
 }
 
-/** A grandfather clock across the hall: a soft wooden knock with its high end
- *  rolled off, and most of what arrives is the room. Slightly lower on the
- *  tock, the way a pendulum's two beats are never quite the same. */
-function grandfather(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
-  const tock = beat % 2 === 1 ? 0.9 : 1
-  const soft = ctx.createBiquadFilter()
-  soft.type = "lowpass"
-  soft.frequency.value = 1500
-  const dry = ctx.createGain()
-  dry.gain.value = 0.5
-  soft.connect(dry).connect(ctx.destination)
-  soft.connect(room(ctx))
-  return [
-    burst(ctx, at, soft, { type: "lowpass", frequency: 1200, peak: 0.22, attack: 0.006, decay: 0.03 }),
-    ring(ctx, at, soft, { frequency: 190 * tock, peak: 0.09, attack: 0.005, decay: 0.12 }),
-    ring(ctx, at, soft, { frequency: 410 * tock, peak: 0.06, attack: 0.005, decay: 0.08 }),
-    ring(ctx, at, soft, { frequency: 760 * tock, peak: 0.035, attack: 0.005, decay: 0.05 }),
-  ]
-}
-
-/** A bedside digital clock: the same short, rounded beep every second, low
- *  enough not to pierce, identical each time so it loops without a seam. */
-function digital(ctx: BaseAudioContext, at: number): Voice[] {
-  const round = ctx.createBiquadFilter()
-  round.type = "lowpass"
-  round.frequency.value = 2400
-  round.connect(ctx.destination)
-  const osc = ctx.createOscillator()
-  osc.type = "square"
-  osc.frequency.value = 520
-  const gain = ctx.createGain()
-  gain.gain.setValueAtTime(0, at)
-  gain.gain.linearRampToValueAtTime(0.045, at + 0.002)
-  gain.gain.setValueAtTime(0.045, at + 0.045)
-  gain.gain.linearRampToValueAtTime(0, at + 0.055)
-  osc.connect(gain).connect(round)
-  osc.start(at)
-  osc.stop(at + 0.06)
-  return [osc]
-}
-
-/** The last minute: a wristwatch held close, all front edge and no tail, so a
+/** The final seconds: a wristwatch held close, all front edge and no tail, so a
  *  rhythm that speeds up stays a rhythm rather than smearing into a buzz. */
 function watch(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
   const out = ctx.destination
@@ -278,50 +216,8 @@ function watch(ctx: BaseAudioContext, at: number, beat: number): Voice[] {
 export function playTick(
   ctx: BaseAudioContext,
   at: number,
-  style: TickStyle | "watch",
+  style: "antique" | "watch",
   beat: number
 ): Voice[] {
-  if (style === "antique") return antique(ctx, at, beat)
-  if (style === "grandfather") return grandfather(ctx, at, beat)
-  if (style === "digital") return digital(ctx, at)
-  return watch(ctx, at, beat)
-}
-
-/** The grandfather clock's room between its ticks: a low, quiet bed of air,
- *  faded in and out so it never clicks. Returns the function that stops it. */
-export function startRoomTone(ctx: BaseAudioContext): () => void {
-  const length = ctx.sampleRate * 2
-  const buffer = ctx.createBuffer(1, length, ctx.sampleRate)
-  const data = buffer.getChannelData(0)
-  // Brown noise, the low rumble of a room, and the loop's ends brought to
-  // zero together so it repeats without a seam.
-  let last = 0
-  for (let i = 0; i < length; i++) {
-    last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02
-    data[i] = last * 3.5
-  }
-  const fade = Math.floor(ctx.sampleRate * 0.05)
-  for (let i = 0; i < fade; i++) {
-    data[i] *= i / fade
-    data[length - 1 - i] *= i / fade
-  }
-  const source = ctx.createBufferSource()
-  source.buffer = buffer
-  source.loop = true
-  const low = ctx.createBiquadFilter()
-  low.type = "lowpass"
-  low.frequency.value = 500
-  const gain = ctx.createGain()
-  const now = ctx.currentTime
-  gain.gain.setValueAtTime(0, now)
-  gain.gain.linearRampToValueAtTime(0.05, now + 0.6)
-  source.connect(low).connect(gain).connect(ctx.destination)
-  source.start(now)
-  return () => {
-    const t = ctx.currentTime
-    gain.gain.cancelScheduledValues(t)
-    gain.gain.setValueAtTime(gain.gain.value, t)
-    gain.gain.linearRampToValueAtTime(0, t + 0.3)
-    source.stop(t + 0.35)
-  }
+  return style === "antique" ? antique(ctx, at, beat) : watch(ctx, at, beat)
 }
