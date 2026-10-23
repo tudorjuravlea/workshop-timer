@@ -1,6 +1,6 @@
-<div align="center">
-
 # workshop-timer
+
+<div align="center">
 
 ```
 ░▒▓█  W0RKSH0P::71MΞR  █▓▒░
