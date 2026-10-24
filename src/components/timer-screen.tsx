@@ -528,7 +528,11 @@ function TimerScreen({
           />
         </div>
 
-        <div className="flex shrink-0 flex-col items-center gap-1">
+        {/* The field takes the same measure as the key hints below it, so the
+            two read as one column. It keeps that width in full screen, where
+            the hints are hidden — which is why it is a declared measure the two
+            share rather than the field being told to match them. */}
+        <div className="flex w-[min(var(--timer-measure),100%)] shrink-0 flex-col items-center gap-1">
           {/* The plate behind the digits appears only when the brand's accent
               cannot carry on the brand's own ground — see `needsPlinth`. On a
               dark field it does carry, and the number sits straight on the
@@ -537,7 +541,7 @@ function TimerScreen({
           <div
             data-timer-plate={plinth ? "on" : "off"}
             className={cn(
-              "transition-shadow duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-within:ring-2 focus-within:ring-brand-on-ground/60",
+              "w-full transition-shadow duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-within:ring-2 focus-within:ring-brand-on-ground/60",
               plinth &&
                 "bg-brand-face px-[clamp(0.5rem,1.4vh,1rem)] py-[clamp(0.1rem,0.45vh,0.35rem)] rounded-[clamp(0.5rem,1.4vh,1rem)]",
               finished && "opacity-80"
@@ -593,7 +597,7 @@ function TimerScreen({
               // clamp step; `ch` is exact here because the face is tabular.
               style={{ width: `${fieldText.length + 0.4}ch` }}
               className={cn(
-                "block bg-transparent text-center timer-font-display text-[clamp(2rem,7.5vh,5.5rem)] leading-none font-semibold tracking-[-0.03em] tabular-nums outline-none read-only:cursor-default",
+                "mx-auto block bg-transparent text-center timer-font-display text-[clamp(2rem,7.5vh,5.5rem)] leading-none font-extrabold tracking-[-0.03em] tabular-nums outline-none read-only:cursor-default",
                 plinth ? "text-brand-accent-face" : "text-brand-accent"
               )}
             />

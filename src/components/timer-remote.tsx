@@ -471,7 +471,7 @@ function TimerRemote({
                   fontSize: `min(calc((100vw - 1.5rem) / ${(fieldText.length * 0.645).toFixed(3)}), 24vh)`,
                 }}
                 className={cn(
-                  "block bg-transparent text-center timer-font-display leading-none font-semibold tracking-[-0.03em] tabular-nums outline-none read-only:cursor-default",
+                  "block bg-transparent text-center timer-font-display leading-none font-extrabold tracking-[-0.03em] tabular-nums outline-none read-only:cursor-default",
                   needsPlinth(brand) ? "text-brand-accent-face" : "text-brand-accent"
                 )}
               />
