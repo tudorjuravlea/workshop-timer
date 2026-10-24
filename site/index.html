@@ -584,6 +584,29 @@
   footer .li-cta { border-color: var(--line-on-dark); }
   footer .li-cta:hover { border-color: var(--accent); }
   @media (max-width: 900px) { footer .li-cta { padding: 0 3px 0 22px; } footer .li-cta .nav-cta-label { display: inline; } }
+
+  /* hero buttons: the portfolio's .btn, copied from Portfolio/site/src/styles/base.css.
+     Hover floods the disc's accent across the capsule, lifts it 1px, bolds the
+     label and tips the arrow 45deg; press sinks it back. */
+  .pbtn { --disc: 44px; position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 12px; border-radius: 999px;
+    height: 52px; padding: 0 3px 0 22px; font-weight: 500; font-size: var(--text-body); text-decoration: none; border: 1px solid transparent; cursor: pointer;
+    transition: transform var(--t-hover-exit) var(--ease-out), background-color var(--t-hover-exit) var(--ease-out),
+      border-color var(--t-hover-exit) var(--ease-out), color 300ms var(--ease-out); }
+  .pbtn:hover { transform: translateY(-1px); color: var(--on-accent); }
+  .pbtn:active { transform: translateY(0) scale(.98); }
+  .pbtn::before { content: ''; position: absolute; top: 50%; right: 3px; width: var(--disc); height: var(--disc); border-radius: 999px;
+    background: var(--accent); transform: translateY(-50%); transition: transform 300ms var(--ease-out); }
+  .pbtn:hover::before { transform: translateY(-50%) scale(12); }
+  .pbtn-label, .pbtn-disc { position: relative; z-index: 1; }
+  .pbtn-disc { display: grid; place-items: center; flex: none; width: var(--disc); height: var(--disc); border-radius: 999px; background: var(--accent); color: var(--on-accent); }
+  .pbtn-disc svg { width: 20px; height: 20px; transition: transform 300ms var(--ease-out); }
+  .pbtn:hover .pbtn-disc svg { transform: rotate(45deg); }
+  .pbtn:hover .pbtn-label { font-weight: 700; }
+  .pbtn-primary { background: var(--ink); color: var(--paper); box-shadow: 0 14px 32px -10px rgba(18,18,18,.35); }
+  .pbtn-ghost { background: #fff; border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--ink); box-shadow: 0 4px 16px -6px rgba(18,18,18,.08); }
+  .pbtn-ghost:hover { border-color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .pbtn, .pbtn::before, .pbtn-disc svg { transition: none; } }
+  @media (max-width: 760px) { .ctas .pbtn { justify-content: space-between; } }
 </style>
 
 </head>
@@ -606,8 +629,8 @@
         <h1 style="margin-top:18px">Stop shouting <span class="serif shout">“Only 2 mooore miiiiinuutees!”</span></h1>
         <p class="lead"><span class="ln">A workshop countdown timer for facilitators and trainers,</span> <span class="ln">with a phone remote. Adapt it to your brand.</span></p>
         <div class="ctas">
-          <a class="btn-dark" href="#install">Make it yours <span class="disc">↓</span></a>
-          <a class="btn-ghost" href="https://productmakers.ro/timer.html" style="text-decoration:none">Try it live ↗</a>
+          <a class="pbtn pbtn-primary" href="#install"><span class="pbtn-label">Make it yours</span><span class="pbtn-disc" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          <a class="pbtn pbtn-ghost" href="https://productmakers.ro/timer.html"><span class="pbtn-label">Try it live</span><span class="pbtn-disc" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
         </div>
       </div>
       <div>
