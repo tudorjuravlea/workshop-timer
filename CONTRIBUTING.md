@@ -7,7 +7,7 @@ changes are quick.
 
 1. Fork the repo and create a branch off `main`.
 2. Make the change.
-3. Run the three checks below.
+3. Run the four checks below.
 4. Open a pull request.
 
 `main` is protected: it takes pull requests only, and it cannot be force-pushed
@@ -31,9 +31,14 @@ address rather than `localhost` when you test pairing on a real device.
 npm run lint
 npm run typecheck
 npm run build
+npm run check:brands
 ```
 
-All three must pass. `npm run lint` is the only formatting authority here:
+All four must pass, and GitHub runs them on every pull request.
+`check:brands` parses every file in `brands/` and checks the promises a brand
+relies on: text on the ground and the digits stay readable, and a face a brand
+names is the face it gets. It needs Node 24. If you add a brand file, add it to
+the `PLATE` table in `scripts/check-brands.mjs`. `npm run lint` is the only formatting authority here:
 there is no Prettier config, and the code has no semicolons. Please match the
 surrounding style by hand rather than running a formatter the project does not
 depend on, which will rewrite whole files around your three lines.

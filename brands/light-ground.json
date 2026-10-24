@@ -1,0 +1,22 @@
+{
+  "_comment": "A fixture for scripts/check-brands.mjs: a pale ground. It deliberately leaves onGround at its white default, which would be white text on cream; the check proves the app swaps it for ink.",
+
+  "name": "Light ground",
+
+  "colors": {
+    "groundFrom": "#faf8f2",
+    "ground": "#f2efe6",
+    "groundTo": "#e6e1d4",
+    "glow": "#f2efe6",
+    "face": "#ffffff",
+    "accent": "#c2410c",
+    "ink": "#1a1a17",
+    "ink2": "#4a4a44",
+    "panel": "#1a1a17"
+  },
+
+  "fonts": {
+    "body": "Georgia, 'Times New Roman', serif",
+    "stylesheet": null
+  }
+}

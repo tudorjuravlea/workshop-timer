@@ -1,0 +1,26 @@
+# The checks every pull request has to pass. Same commands as CONTRIBUTING.md,
+# plus the brand guarantees in scripts/check-brands.mjs.
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # 24 runs scripts/check-brands.mjs, which imports TypeScript directly.
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run check:brands
+      # Build before typecheck: the build writes next-env.d.ts and the route
+      # types that tsconfig includes.
+      - run: npm run build
+      - run: npm run typecheck

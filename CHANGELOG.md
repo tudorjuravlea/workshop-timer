@@ -8,6 +8,21 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## Unreleased
+
+**For hosts**
+
+- Files: added `brands/light-ground.json`, `brands/saturated-ground.json`,
+  `brands/accent-only.json`, `scripts/check-brands.mjs`,
+  `.github/workflows/check.yml`. Nothing for a host to copy; the fixtures and
+  the check stay upstream.
+- `npm run check:brands` (Node 24) checks every brand file: text on the ground
+  at 4.5:1, the digits at 3:1 on whatever is behind them, the plate exactly
+  where the fixture expects it, named fonts kept, and one version in
+  `package.json`, `version.ts` and this file. It runs on every pull request.
+- Docs: the comment in `brands/example.json` no longer mentions the backlight
+  ring, which v1.0.0 removed.
+
 ## v1.1.0 (2026-10-24)
 
 **In the room**

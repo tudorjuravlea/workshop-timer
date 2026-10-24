@@ -5,5 +5,6 @@
 // app that copies these files into its own tree has its OWN package.json, and
 // an import would quietly report that app's version instead of this one. The
 // literal travels with the copy. Bump it with package.json, in the same commit
-// as the release's CHANGELOG entry.
+// as the release's CHANGELOG entry; `npm run check:brands` fails if the three
+// disagree.
 export const TIMER_VERSION = "1.1.0"
