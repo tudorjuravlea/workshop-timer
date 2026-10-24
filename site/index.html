@@ -607,6 +607,41 @@
   .pbtn-ghost:hover { border-color: var(--accent); }
   @media (prefers-reduced-motion: reduce) { .pbtn, .pbtn::before, .pbtn-disc svg { transition: none; } }
   @media (max-width: 760px) { .ctas .pbtn { justify-content: space-between; } }
+
+  /* Customise: two cards built the same way, so they balance */
+  .cz-grid { margin-top: 48px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+  .cz-card { display: flex; flex-direction: column; padding: 32px; }
+  .cz-card h3 { margin-top: 12px; }
+  .cz-card > .body { margin-top: 10px; font-size: 16px; line-height: 1.55; }
+  .card.dark.cz-card > .body { color: var(--soft-on-dark); }
+  .cz-prompt { margin-top: 20px; font-size: 15px; line-height: 1.7; padding: 22px 22px 60px; }
+  .cz-tools { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .cz-tools span:not(.cz-label) { font-size: 12px; padding: 5px 10px; border-radius: var(--r-pill); border: 1px solid var(--line-on-dark); color: var(--paper-on-dark); }
+  .cz-tools .cz-label { margin-right: 4px; }
+  .cz-vis { margin-top: auto; padding-top: 24px; display: grid; gap: 10px; }
+  .cz-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .card.dark .cz-label { color: var(--accent-lift); }
+  .cz-browser { border-radius: 14px; overflow: hidden; border: 1px solid var(--line-on-dark); background: #0d0d0f; box-shadow: 0 24px 40px -24px rgba(0,0,0,.6); }
+  .cz-browser .chrome { height: 28px; gap: 10px; }
+  .cz-browser .lights i { width: 8px; height: 8px; }
+  .cz-browser .url { height: 18px; font-size: 10px; max-width: 220px; }
+  .cz-browser .url svg { width: 8px; height: 8px; }
+  .cz-browser img { display: block; width: 100%; height: auto; }
+  .cz-editor { margin-top: 20px; border-radius: 14px; overflow: hidden; background: #141416; box-shadow: var(--shadow-smooth); }
+  .cz-tabbar { height: 38px; display: flex; align-items: flex-end; gap: 14px; padding: 0 12px; background: #1f1f22; }
+  .cz-tabbar .lights { align-self: center; }
+  .cz-tabbar .lights i { width: 8px; height: 8px; }
+  .cz-tab { font-family: var(--mono); font-size: 12px; color: #f3f3f1; background: #141416; padding: 7px 14px 8px; border-radius: 9px 9px 0 0; }
+  .cz-code { padding: 16px 16px 18px 0; font-family: var(--mono); font-size: 12px; line-height: 1.85; color: #f3f3f1; counter-reset: ln; overflow-x: hidden; }
+  .cz-code .ln { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 12px; }
+  .cz-code .ln::before { counter-increment: ln; content: counter(ln); text-align: right; color: rgba(243,243,241,.25); }
+  .cz-code .t { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .j-k { color: var(--accent); }
+  .j-s { color: #f3f3f1; }
+  .j-p { color: rgba(243,243,241,.45); }
+  .sw8 { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 7px; vertical-align: -1px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+  @media (max-width: 1000px) { .cz-grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 760px) { .cz-card { padding: 22px; } .cz-code { font-size: 11.5px; } }
 </style>
 
 </head>
@@ -725,21 +760,47 @@
   <div class="head"><div class="eyebrow">Customise</div>
   <h2 style="margin-top:14px">Your colours, your fonts, <span class="serif">your logo.</span></h2>
   <p class="sub">Everything a brand can change lives in one small file. You never touch the code.</p></div>
-  <div class="grid2">
-    <div class="card dark">
+  <div class="cz-grid">
+    <div class="card dark cz-card">
       <div class="eyebrow">Ask your assistant</div>
       <h3>Describe your brand in plain words.</h3>
-      <div class="prompt"><span class="prompt-text">Rebrand my workshop timer: accent #2c5bff, a near-black background, the font Inter, and the logo in ./logo.svg. Make a brand file for it and check it passes npm run check:brands.</span><button class="copybtn" type="button">Copy</button></div>
-      <div class="shot"><img src="assets/brand-reel.gif" width="800" height="450" alt="The same timer in five brands, one after another: black and orange, navy and blue, forest green with a serif font, light cream and violet, and dark brown with amber"></div>
+      <p class="body">Paste this into your AI assistant, opened in your timer's folder.</p>
+      <div class="prompt cz-prompt"><span class="prompt-text">Rebrand my workshop timer: accent #2c5bff, a near-black background, the font Inter, and the logo in ./logo.svg. Make a brand file for it and check it passes npm run check:brands.</span><button class="copybtn" type="button">Copy</button></div>
+      <div class="cz-tools"><span class="cz-label">Works in</span><span>Claude</span><span>Claude Code</span><span>Codex</span><span>Gemini CLI</span><span>Antigravity</span></div>
+      <div class="cz-vis">
+        <div class="cz-label">The same timer, five brands</div>
+        <div class="cz-browser"><div class="chrome"><span class="lights"><i></i><i></i><i></i></span><span class="url"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 4.5V3a2.5 2.5 0 015 0v1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="currentColor"/></svg>yourwebsite.com/timer</span></div><img src="assets/brand-reel.gif" width="800" height="450" alt="The same timer in five brands, one after another: black and orange, navy and blue, forest green with a serif font, light cream and violet, and dark brown with amber"></div>
+      </div>
     </div>
-    <div class="card">
+    <div class="card cz-card">
       <div class="eyebrow">Or edit the file</div>
       <h3>One JSON file per brand.</h3>
       <p class="body">Copy <span class="mono">brands/example.json</span>, change the values, and point the timer at it.</p>
-      <div class="code"><span class="c"># reads brands/acme.json</span>
-<span class="k">TIMER_BRAND</span>=acme npm run dev</div>
-      <p class="body" style="margin-top:18px">For a one-off, put it in the link instead:</p>
-      <div class="code">/?accent=%23ff3b00&amp;ground=%23101010&amp;name=Acme</div>
+      <div class="cz-editor">
+        <div class="cz-tabbar"><span class="lights"><i></i><i></i><i></i></span><span class="cz-tab">brands/acme.json</span></div>
+        <div class="cz-code"><span class="ln"><span class="t"><span class="j-p">{</span></span></span>
+<span class="ln"><span class="t">  <span class="j-k">"name"</span><span class="j-p">: </span><span class="j-s">"Acme"</span><span class=j-p>,</span></span></span>
+<span class="ln"><span class="t">  <span class="j-k">"colors"</span><span class="j-p">: </span><span class="j-p">{</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"ground"</span><span class="j-p">: </span><i class="sw8" style="background:#101012"></i><span class="j-s">"#101012"</span><span class=j-p>,</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"face"</span><span class="j-p">: </span><i class="sw8" style="background:#ffffff"></i><span class="j-s">"#ffffff"</span><span class=j-p>,</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"accent"</span><span class="j-p">: </span><i class="sw8" style="background:#2c5bff"></i><span class="j-s">"#2c5bff"</span><span class=j-p>,</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"ink"</span><span class="j-p">: </span><i class="sw8" style="background:#15181d"></i><span class="j-s">"#15181d"</span></span></span>
+<span class="ln"><span class="t">  <span class="j-p">},</span></span></span>
+<span class="ln"><span class="t">  <span class="j-k">"fonts"</span><span class="j-p">: </span><span class="j-p">{</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"display"</span><span class="j-p">: </span><span class="j-s">"Inter, sans-serif"</span><span class=j-p>,</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"body"</span><span class="j-p">: </span><span class="j-s">"Inter, sans-serif"</span><span class=j-p>,</span></span></span>
+<span class="ln"><span class="t">    <span class="j-k">"stylesheet"</span><span class="j-p">:</span></span></span>
+<span class="ln"><span class="t">      <span class="j-s">"https://fonts.googleapis.com/css2?family=Inter"</span></span></span>
+<span class="ln"><span class="t">  <span class="j-p">},</span></span></span>
+<span class="ln"><span class="t">  <span class="j-k">"logo"</span><span class="j-p">: </span><span class="j-p">{ </span><span class="j-k">"src"</span><span class="j-p">: </span><span class="j-s">"/logo.svg"</span><span class="j-p">, </span><span class="j-k">"alt"</span><span class="j-p">: </span><span class="j-s">"Acme"</span><span class="j-p"> }</span></span></span>
+<span class="ln"><span class="t"><span class="j-p">}</span></span></span></div>
+      </div>
+      <div class="cz-vis">
+        <div class="cz-label">Run it with that brand</div>
+        <div class="cmd"><span class="cmd-text">TIMER_BRAND=acme npm run dev</span><button class="copybtn" type="button">Copy</button></div>
+        <div class="cz-label">Or for a one-off, in the link</div>
+        <div class="cmd"><span class="cmd-text">/?accent=%232c5bff&amp;ground=%23101012&amp;name=Acme</span><button class="copybtn" type="button">Copy</button></div>
+      </div>
     </div>
   </div>
   <div class="rules-head"><span class="eyebrow">Three rules every brand keeps</span></div>
@@ -792,7 +853,7 @@
     </article>
     <article class="step-row">
       <div class="step-text"><span class="step-n">04</span><h3>Everyone hears it.</h3><p class="body">A quiet tick speeds up in the last minutes, then a gong. Mute it with one button.</p></div>
-      <div class="step-img"><img src="assets/step-finish-2.webp" alt="Time's up in lime on a white disc, with lime and white confetti bursting around it" loading="lazy"></div>
+      <div class="step-img"><img src="assets/step-finish-3.webp" alt="Time's up in black on a white disc, with lime and white confetti bursting around it" loading="lazy"></div>
     </article>
   </div>
 </div></section>
