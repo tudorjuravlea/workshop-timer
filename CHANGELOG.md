@@ -8,6 +8,23 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.5.0 (2026-10-24)
+
+**In the room**
+
+- Nothing changes on screen.
+
+**For hosts**
+
+- `docs/DOWNSTREAM.md` covers rendering one component on its own, such as a
+  `TimerDial` in a preview image: put `brandVars(brand)` on an element around
+  it. Without it the component silently draws from the fallbacks.
+- In development, `BrandProvider` warns once in the console when the page
+  reached it with no `--brand-*` set, which means the first paint used the
+  fallbacks. Production builds are silent.
+- Files changed: `src/components/brand-provider.tsx`. Nothing moved or
+  renamed; no dependencies.
+
 ## v2.4.0 (2026-10-24)
 
 **In the room**

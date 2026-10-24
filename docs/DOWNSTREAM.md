@@ -32,6 +32,27 @@ first paint: the brand's custom properties on `:root` (`brandCss`), the
 optional pre-paint script for URL colours, and the brand's font stylesheet.
 Your own layout does those, or the subset you use.
 
+## A component on its own
+
+The pages put the brand on `:root`. A component rendered somewhere else, a
+`TimerDial` in a preview image or on a page of your own, needs the brand on an
+element around it instead. `brandVars(brand)` returns exactly that set of
+custom properties:
+
+```tsx
+import { TimerDial } from "@/components/timer-dial"
+import { brandVars } from "@/lib/brand"
+
+<div style={brandVars(brand) as React.CSSProperties}>
+  <TimerDial fraction={0.5} durationSeconds={600} />
+</div>
+```
+
+Load the brand's `fonts.stylesheet` on that page too. Without either, the
+component is not broken but wrong: it draws from the fallbacks in `timer.css`,
+the built-in colours and `system-ui`, and nothing reports it. In development,
+`BrandProvider` warns in the console when a page reaches it with no brand set.
+
 ## Styles
 
 Import `timer.css` from your own global stylesheet, after Tailwind:
