@@ -1,5 +1,5 @@
 {
-  "_comment": "A worked example to copy. Note the one relationship the instrument depends on: `face` must be clearly BRIGHTER than `ground`, because the dial is read from the back of a room and the backlight behind it is light escaping past the rim. A pale ground under a white face gives you neither.",
+  "_comment": "A worked example to copy. Note the one relationship the instrument depends on: `face` must be clearly BRIGHTER than `ground`, because the dial is read from the back of a room. A pale ground under a white face leaves the clock nothing to stand out from.",
 
   "name": "Workshop Timer",
 

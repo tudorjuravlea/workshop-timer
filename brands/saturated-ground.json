@@ -1,0 +1,14 @@
+{
+  "_comment": "A fixture for scripts/check-brands.mjs: a saturated ground under a saturated accent, at under 2:1. The check proves the plate behind the digits appears, and that the accent reads on it.",
+
+  "name": "Saturated ground",
+
+  "colors": {
+    "groundFrom": "#2f4fe0",
+    "ground": "#1f3fd1",
+    "groundTo": "#162fa8",
+    "glow": "#1f3fd1",
+    "accent": "#e04f00",
+    "panel": "#0f1f6b"
+  }
+}

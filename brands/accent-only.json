@@ -1,0 +1,7 @@
+{
+  "_comment": "A fixture for scripts/check-brands.mjs: the commonest brand there is, one colour. Everything else must come from the built-in brand.",
+
+  "colors": {
+    "accent": "#2563eb"
+  }
+}
