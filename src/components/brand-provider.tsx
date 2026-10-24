@@ -77,6 +77,25 @@ function warn(problem: string): void {
   console.warn(`[brand] from the URL: ${problem}`)
 }
 
+let warnedUnbranded = false
+
+/** In development, say so when the document arrived with no brand on it.
+ *
+ *  The provider writes the brand onto the root itself, so the timer still ends
+ *  up right; but it does so after the first paint, and every frame before that
+ *  was drawn from the fallbacks in `timer.css`: the built-in colours and
+ *  `system-ui`. That is a flash on a projector, and nothing else would ever
+ *  report it. Checked once, before the provider's own write, on `--brand-ground`,
+ *  which every brand sets. */
+function warnIfUnbranded(): void {
+  if (process.env.NODE_ENV === "production" || warnedUnbranded) return
+  warnedUnbranded = true
+  if (getComputedStyle(document.documentElement).getPropertyValue("--brand-ground").trim()) return
+  console.warn(
+    "[brand] no --brand-* properties were set before the first paint, so it was drawn from the fallbacks. Render brandCss(brand) on :root in your layout, or brandVars(brand) on the element around the timer; see docs/DOWNSTREAM.md."
+  )
+}
+
 export function BrandProvider({
   brand,
   allowUrl,
@@ -123,6 +142,9 @@ export function BrandProvider({
     const base = file === null ? brand : parseBrand(file, brand, warn)
     return brandFromParams(params, base, warn) ?? base
   }, [brand, file, params])
+
+  // Before anything is written, so it sees what the server rendered.
+  React.useEffect(warnIfUnbranded, [])
 
   // The only side effect: tell the document. `applyVars` writes the custom
   // properties the whole app reads its colours from, and the pre-paint script
