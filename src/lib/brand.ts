@@ -184,6 +184,24 @@ export function isBrandColor(value: unknown): value is string {
  *  declaration. */
 const FONT_STACK = /^[A-Za-z0-9 ,'"_-]{1,200}$/
 
+/** One family in a stack may instead name a custom property, bare:
+ *  `var(--font-sans)`. Some font tooling only exposes a face that way, under a
+ *  generated name. Nothing nested and no fallback argument, so the value still
+ *  cannot leave its declaration. The property has to be defined where the
+ *  brand's own properties are (`:root`): defined lower, on `body` say, the
+ *  browser drops the WHOLE stack, named fallbacks included, for `system-ui`. */
+const FONT_FAMILY = /^[A-Za-z0-9 '"_-]+$/
+const FONT_VAR = /^var\(--[A-Za-z0-9_-]+\)$/
+
+function isFontStack(value: string): boolean {
+  if (FONT_STACK.test(value)) return true
+  if (value.length > 200) return false
+  return value.split(",").every((part) => {
+    const family = part.trim()
+    return FONT_FAMILY.test(family) || FONT_VAR.test(family)
+  })
+}
+
 /** An http(s) address or a same-origin path. Enough to reject `javascript:`
  *  and `data:` before either reaches an `href` or a `src`. */
 function isSafeUrl(value: unknown): value is string {
@@ -276,7 +294,7 @@ export function parseBrand(
   for (const key of ["body", "display", "mono"] as const) {
     const value = rawFonts[key]
     if (value === undefined) continue
-    if (typeof value === "string" && FONT_STACK.test(value.trim())) fonts[key] = value.trim()
+    if (typeof value === "string" && isFontStack(value.trim())) fonts[key] = value.trim()
     else onProblem(`fonts.${key} is not a plain font-family stack, ignoring it`)
   }
   if ("stylesheet" in rawFonts) {

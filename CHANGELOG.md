@@ -8,6 +8,26 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.4.0 (2026-10-24)
+
+**In the room**
+
+- Nothing changes on screen.
+
+**For hosts**
+
+- A brand's font stack may now name a custom property, bare:
+  `var(--font-display), Georgia, serif`. Nothing nested and no fallback
+  argument, so the value still cannot leave its declaration. Before this, such
+  a stack was rejected and the default face used, with only a console warning.
+- The property must be defined on `:root`; defined lower, the browser drops the
+  whole stack for `system-ui`. See "Naming your own faces" in
+  `docs/DOWNSTREAM.md`.
+- `brands/light-ground.json` names its display face this way, and
+  `check:brands` now also checks nine stacks that must be accepted or rejected.
+- Files changed: `src/lib/brand.ts`. Nothing moved or renamed; no
+  dependencies.
+
 ## v2.3.0 (2026-10-24)
 
 **This release changes what some brands look like.** Only brands whose accent

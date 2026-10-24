@@ -1,5 +1,5 @@
 {
-  "_comment": "A fixture for scripts/check-brands.mjs: a pale ground. It deliberately leaves onGround at its white default, which would be white text on cream; the check proves the app swaps it for ink.",
+  "_comment": "A fixture for scripts/check-brands.mjs: a pale ground. It deliberately leaves onGround at its white default, which would be white text on cream; the check proves the app swaps it for ink. Its display face names a custom property, as some font tooling requires, and the check proves the name survives.",
 
   "name": "Light ground",
 
@@ -19,6 +19,7 @@
 
   "fonts": {
     "body": "Georgia, 'Times New Roman', serif",
+    "display": "var(--font-display), Georgia, serif",
     "stylesheet": null
   }
 }
