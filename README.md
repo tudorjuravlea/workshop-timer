@@ -163,6 +163,10 @@ stops either way, and one press of `R` opens a new room. If you need it to
 survive either, keep the shape of the view in `src/lib/timer-room.ts` and change
 only where the map lives.
 
+**Copying the code into another app** instead of deploying it? See
+[`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for what to copy and what each
+release tells you.
+
 **Framing is allowed from anywhere**, so the clock can live inside Notion, Miro
 or a Google Site. `Permissions-Policy` deliberately leaves `fullscreen` and
 `screen-wake-lock` alone, because the timer needs both: it keeps the laptop from

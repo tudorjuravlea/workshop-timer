@@ -10,6 +10,7 @@ import { useTimerRemote } from "@/components/use-timer-remote"
 import { Watermark } from "@/components/watermark"
 import { playGong, playTick, tickFor } from "@/lib/timer-audio"
 import { needsPlinth } from "@/lib/brand"
+import { TIMER_VERSION } from "@/lib/version"
 import {
   DEFAULT_MINUTES,
   MAX_SECONDS,
@@ -400,6 +401,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
 
   return (
     <main
+      data-timer-version={TIMER_VERSION}
       className={cn(
         "relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to",
         // The pointer goes with the controls. On a projector a parked mouse
