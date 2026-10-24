@@ -53,7 +53,7 @@ for (const file of files) {
   const c = brand.colors
 
   // Every property the components read is set, whatever the file left out.
-  const expected = COLOR_KEYS.length + 3 // the colours, then three font stacks
+  const expected = COLOR_KEYS.length + 5 // the colours, three font stacks, two radii
   if (Object.keys(vars).length !== expected) {
     fail(where, `${Object.keys(vars).length} custom properties, expected ${expected}`)
   }
@@ -86,6 +86,11 @@ for (const file of files) {
       fail(where, `fonts.${key} was named but did not survive parsing`)
     }
   }
+
+  // The panel's corner stays concentric with its controls' (see `radius`).
+  const control = parseFloat(vars["--brand-radius-control"])
+  const panel = parseFloat(vars["--brand-radius-panel"])
+  if (panel - control !== 8) fail(where, `panel radius ${panel}px is not control ${control}px + 8px`)
 
   console.log(
     `${where.padEnd(30)} text ${text.toFixed(2)}:1  digits ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}`

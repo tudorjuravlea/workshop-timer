@@ -2,7 +2,7 @@
 //
 // Everything a brand can change is a CSS custom property, and every component
 // reads those properties through Tailwind theme tokens (`bg-brand-face`,
-// `fill-brand-accent`, and so on — see `app/globals.css`). That is the whole
+// `fill-brand-accent`, and so on — see `app/timer.css`). That is the whole
 // mechanism: nothing in `components/` knows which brand it is wearing, so a
 // new brand is a JSON file and never a patch.
 //
@@ -82,6 +82,13 @@ export type Brand = {
   logo: BrandLogo | null
   watermark: BrandWatermark | null
   fonts: BrandFonts
+  /** The corner of a control, in px. The panel that holds the controls takes
+   *  this plus the 8px it insets them by, so its corner runs CONCENTRIC with
+   *  theirs instead of merely enclosing them: a tighter radius outside turns
+   *  the corner sharper than the button inside it and leaves a wedge of fill
+   *  at each one. Derived rather than a second setting, so no brand can get
+   *  the pair out of step. 0 gives square corners throughout. */
+  radius: number
 }
 
 /** The built-in brand: deliberately not anybody's.
@@ -131,7 +138,12 @@ export const DEFAULT_BRAND: Brand = {
     stylesheet:
       "https://cdn.jsdelivr.net/npm/@sarap422/font-overused-grotesk@1.1.5/font-face.css",
   },
+  radius: 12,
 }
+
+/** How far the panel insets its controls (`p-2`), which is what makes its
+ *  corner concentric at `radius + PANEL_INSET`. */
+const PANEL_INSET = 8
 
 /** Which CSS property each colour becomes. Spelled out rather than derived
  *  from the key by casing rules, so renaming a colour cannot silently rename a
@@ -273,7 +285,14 @@ export function parseBrand(
     else onProblem("fonts.stylesheet is not an http(s) URL, keeping the current one")
   }
 
-  return { name: text(raw.name, base.name), colors, logo, watermark, fonts }
+  let radius = base.radius
+  if ("radius" in raw) {
+    const r = raw.radius
+    if (typeof r === "number" && Number.isFinite(r) && r >= 0 && r <= 32) radius = r
+    else onProblem("radius is not a number of px from 0 to 32, ignoring it")
+  }
+
+  return { name: text(raw.name, base.name), colors, logo, watermark, fonts, radius }
 }
 
 /** The text colour for the few words set directly on the ground, CHECKED
@@ -304,6 +323,8 @@ export function brandVars(brand: Brand): Record<string, string> {
   vars["--brand-font-body"] = brand.fonts.body
   vars["--brand-font-display"] = brand.fonts.display
   vars["--brand-font-mono"] = brand.fonts.mono
+  vars["--brand-radius-control"] = `${brand.radius}px`
+  vars["--brand-radius-panel"] = `${brand.radius + PANEL_INSET}px`
   return vars
 }
 

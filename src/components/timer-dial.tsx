@@ -217,7 +217,7 @@ function TimerDial({
           dominantBaseline="central"
           fontSize="9"
           fontWeight="600"
-          className="fill-brand-ink font-sans"
+          className="fill-brand-ink timer-font-body"
         >
           {n.label}
         </text>

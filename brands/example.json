@@ -19,6 +19,8 @@
     "receiptEdge": "#d3c7b9"
   },
 
+  "radius": 12,
+
   "logo": null,
   "watermark": null,
 

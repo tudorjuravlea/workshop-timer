@@ -31,9 +31,9 @@ import { cn } from "@/lib/utils"
  *  so nothing in here competes with the clock. `min-h-11` holds a 44px tap
  *  target, which is the smallest a finger reliably hits. */
 const CONTROL =
-  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors hover:bg-brand-on-panel/10 focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none"
+  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[var(--brand-radius-control,12px)] px-3.5 py-2 text-sm font-semibold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-brand-on-panel/10 focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none"
 
-/** The app's one caption treatment (`globals.css`), in ink: a label over a
+/** The app's one caption treatment (`timer.css`), in ink: a label over a
  *  value being read off an instrument. */
 const CAPTION = "timer-label text-brand-ink-2"
 
@@ -181,7 +181,7 @@ function TimerChrome({
       aria-pressed={p * 60 === durationSeconds}
       aria-label={`${p} ${p === 1 ? "minute" : "minutes"}`}
       className={cn(
-        "min-h-11 min-w-11 rounded-lg px-3 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
+        "min-h-11 min-w-11 rounded-[var(--brand-radius-control,12px)] px-3 text-sm font-bold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
         p * 60 === durationSeconds
           ? "bg-brand-face text-brand-ink"
           : "text-brand-on-panel hover:bg-brand-on-panel/15"
@@ -210,7 +210,7 @@ function TimerChrome({
       // Tab, and never fades at all under reduced motion.
       data-timer-controls=""
       className={cn(
-        "pointer-events-none absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-center px-4 transition-opacity duration-300 ease-out",
+        "pointer-events-none absolute inset-x-0 top-1/2 z-20 flex -translate-y-1/2 justify-center px-4 transition-opacity duration-300 ease-[cubic-bezier(0,0,0.2,1)]",
         awake ? "opacity-100" : "opacity-0"
       )}
     >
@@ -234,14 +234,14 @@ function TimerChrome({
         <div
           className={cn(
             "flex max-w-full flex-col items-center gap-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20",
-            // Rounded, and concentric with the controls inside it (see the
-            // radius scale in `globals.css`). The foot goes SQUARE the moment
+            // Rounded, and concentric with the controls inside it (see
+            // `radius` in `lib/brand.ts`). The foot goes SQUARE the moment
             // a receipt is out: the paper is a sibling directly below, not a
             // layer behind, so a rounded bottom edge would leave the two
             // corners open and show the bright dial through them, right above
             // the sheet's own straight top edge. Flat there makes the join a
             // slot, which is what paper actually comes out of.
-            remote.code ? "rounded-t-2xl" : "rounded-2xl"
+            remote.code ? "rounded-t-[var(--brand-radius-panel,20px)]" : "rounded-[var(--brand-radius-panel,20px)]"
           )}
         >
           {/* The lengths get a row of their own, above the controls: every
@@ -351,7 +351,7 @@ function TimerChrome({
         {remote.code && (
           <div
             className={cn(
-              "overflow-hidden rounded-b-2xl",
+              "overflow-hidden rounded-b-[var(--brand-radius-panel,20px)]",
               // WHERE THERE IS ROOM, THE BAR DOES NOT MOVE. In flow, the
               // receipt makes this column taller, and a column centred with
               // `-translate-y-1/2` re-centres itself, so the controls jumped up
@@ -432,7 +432,7 @@ function TimerChrome({
                         right margin takes back the letter-space the tracking
                         adds AFTER the last character, which otherwise sits the
                         code visibly off its own left edge. */}
-                    <p className="mt-1 font-mono text-4xl font-bold tracking-[0.25em] text-brand-ink [margin-right:-0.25em]">
+                    <p className="mt-1 timer-font-mono text-4xl font-bold tracking-[0.25em] text-brand-ink [margin-right:-0.25em]">
                       {remote.code}
                     </p>
                   </div>
@@ -505,7 +505,7 @@ function TimerHints({ fullscreen, remote }: TimerHintsProps) {
  *  and the only thing that has to carry here is which letter to press. The
  *  contrast step between the key and its description does that on its own. */
 function Key({ children }: { children: React.ReactNode }) {
-  return <kbd className="font-sans text-brand-on-ground/90">{children}</kbd>
+  return <kbd className="timer-font-body text-brand-on-ground/90">{children}</kbd>
 }
 
 export { TimerChrome, TimerHints }
