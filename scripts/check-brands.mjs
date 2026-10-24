@@ -97,6 +97,26 @@ for (const file of files) {
   )
 }
 
+// A font stack may name a custom property, bare, and nothing more: anything
+// that could carry a second argument, a nested call or punctuation out of the
+// declaration stays rejected.
+const STACKS = {
+  "var(--font-sans)": true,
+  "var(--font-geist-sans), system-ui, sans-serif": true,
+  "'Inter', var(--x_1)": true,
+  "var(--x, red)": false,
+  "var(--x);color:red": false,
+  "var(--x)}body{": false,
+  "var(var(--x))": false,
+  "url(evil)": false,
+  "var(--)": false,
+}
+for (const [stack, ok] of Object.entries(STACKS)) {
+  const accepted = parseBrand({ fonts: { body: stack } }).fonts.body === stack
+  if (accepted !== ok) fail("fonts", `${JSON.stringify(stack)} ${accepted ? "accepted" : "rejected"}, expected the opposite`)
+}
+console.log(`${Object.keys(STACKS).length} font stacks accepted or rejected as expected`)
+
 // One version, written three times.
 const pkg = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).version
 const changelog = readFileSync(path.join(root, "CHANGELOG.md"), "utf8").match(/^## v(\S+)/m)?.[1]

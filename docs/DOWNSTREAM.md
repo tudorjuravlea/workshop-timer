@@ -65,6 +65,16 @@ not edits:
 | `logo` | `TimerScreen` | your own mark in place of the brand's; `null` for none |
 | `watermark` | both | your own watermark in place of the brand's; `null` for none |
 
+## Naming your own faces
+
+A brand's `fonts` may name a custom property instead of a family, bare:
+`"display": "var(--font-display), Georgia, serif"`. That is for font tooling
+that only exposes a face under a generated property name. One rule: the
+property must be defined on `:root` (the `<html>` element), where the brand's
+own properties are. Defined lower, on `body` for example, the browser discards
+the brand's entire stack, fallbacks included, and the timer shows `system-ui`.
+So put the class or style that defines it on `<html>`.
+
 ## Checking your own brand
 
 The rules this project holds its own brands to are one function,
