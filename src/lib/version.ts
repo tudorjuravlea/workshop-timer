@@ -7,4 +7,4 @@
 // literal travels with the copy. Bump it with package.json, in the same commit
 // as the release's CHANGELOG entry; `npm run check:brands` fails if the three
 // disagree.
-export const TIMER_VERSION = "2.1.0"
+export const TIMER_VERSION = "2.2.0"

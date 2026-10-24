@@ -65,6 +65,21 @@ not edits:
 | `logo` | `TimerScreen` | your own mark in place of the brand's; `null` for none |
 | `watermark` | both | your own watermark in place of the brand's; `null` for none |
 
+## Checking your own brand
+
+The rules this project holds its own brands to are one function,
+`checkBrand` in `src/lib/brand.ts`. It takes a brand as written (the parsed
+JSON of a brand file, or the object you build) and returns the problems it
+finds, so an empty list means the brand keeps every promise: text on the
+ground and the digits readable, every property set, every named face kept.
+Run it in your own tests:
+
+```ts
+import { checkBrand } from "@/lib/brand"
+
+expect(checkBrand(myBrand)).toEqual([])
+```
+
 ## Which version you have
 
 Each release is a git tag (`v1.1.0`) and an entry in `CHANGELOG.md`. Record the

@@ -1,4 +1,7 @@
 // The promises a brand relies on, checked against every file in `brands/`.
+// The rules themselves are `checkBrand` in `src/lib/brand.ts`; this script adds
+// what only makes sense for the fixtures (which branch of the plate rule each
+// one proves) and checks that the version agrees in three places.
 //
 //   npm run check:brands
 //
@@ -20,8 +23,8 @@ import { fileURLToPath } from "node:url"
 
 import {
   COLOR_KEYS,
-  DEFAULT_BRAND,
   brandVars,
+  checkBrand,
   contrastRatio,
   needsPlinth,
   parseBrand,
@@ -48,50 +51,27 @@ if (files.length < 4) fail("brands/", `expected at least 4 fixtures, found ${fil
 for (const file of files) {
   const where = `brands/${file}`
   const raw = JSON.parse(readFileSync(path.join(root, "brands", file), "utf8"))
-  const brand = parseBrand(raw, DEFAULT_BRAND, (problem) => fail(where, `rejected: ${problem}`))
-  const vars = brandVars(brand)
-  const c = brand.colors
+  for (const problem of checkBrand(raw)) fail(where, problem)
 
-  // Every property the components read is set, whatever the file left out.
+  // Every property the components read is emitted, and namespaced.
+  const brand = parseBrand(raw)
+  const vars = brandVars(brand)
   const expected = COLOR_KEYS.length + 5 // the colours, three font stacks, two radii
   if (Object.keys(vars).length !== expected) {
     fail(where, `${Object.keys(vars).length} custom properties, expected ${expected}`)
   }
-  for (const [name, value] of Object.entries(vars)) {
+  for (const name of Object.keys(vars)) {
     if (!name.startsWith("--brand-")) fail(where, `${name} is not namespaced --brand-*`)
-    if (!value) fail(where, `${name} is empty`)
   }
 
-  // Text set on the ground reads, whatever `onGround` the file declared.
-  const onGround = vars["--brand-on-ground"]
-  const text = contrastRatio(onGround, c.ground)
-  if (text < 4.5) fail(where, `text on the ground is ${text.toFixed(2)}:1, needs 4.5:1`)
-
-  // The digits read: on the ground when there is no plate, on the face when
-  // there is one. Large text, so 3:1.
+  // Which branch of the plate rule this fixture is here to prove.
   const plate = needsPlinth(brand)
-  const behind = plate ? c.face : c.ground
-  const digits = contrastRatio(c.accent, behind)
-  if (digits < 3) {
-    fail(where, `the digits are ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}, need 3:1`)
-  }
   if (!(file in PLATE)) fail(where, "not in the PLATE table: say whether it should get a plate")
   else if (PLATE[file] !== plate) fail(where, `plate ${plate}, expected ${PLATE[file]}`)
 
-  // A face the file names is the face that ships: never dropped back to a
-  // default by validation.
-  const fonts = raw.fonts ?? {}
-  for (const key of ["body", "display", "mono"]) {
-    if (typeof fonts[key] === "string" && vars[`--brand-font-${key}`] !== fonts[key].trim()) {
-      fail(where, `fonts.${key} was named but did not survive parsing`)
-    }
-  }
-
-  // The panel's corner stays concentric with its controls' (see `radius`).
-  const control = parseFloat(vars["--brand-radius-control"])
-  const panel = parseFloat(vars["--brand-radius-panel"])
-  if (panel - control !== 8) fail(where, `panel radius ${panel}px is not control ${control}px + 8px`)
-
+  const c = brand.colors
+  const text = contrastRatio(vars["--brand-on-ground"], c.ground)
+  const digits = contrastRatio(c.accent, plate ? c.face : c.ground)
   console.log(
     `${where.padEnd(30)} text ${text.toFixed(2)}:1  digits ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}`
   )

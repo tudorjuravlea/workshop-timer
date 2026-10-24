@@ -463,3 +463,55 @@ export function brandFromParams(
     onProblem
   )
 }
+
+/** The promises a brand relies on, checked: an empty list means it keeps them.
+ *
+ *  Takes the brand as it is written — the parsed JSON of a brand file, or the
+ *  object a host builds — because one of the promises is about that input: a
+ *  face the brand names must be the face that ships, never dropped back to a
+ *  default by validation. `npm run check:brands` runs this over every file in
+ *  `brands/`, and an app that copies the timer can run the same function on its
+ *  own brand in its own tests, so there is one set of rules and not two. */
+export function checkBrand(input: unknown, base: Brand = DEFAULT_BRAND): string[] {
+  const problems: string[] = []
+  const brand = parseBrand(input, base, (problem) => problems.push(`rejected: ${problem}`))
+  const vars = brandVars(brand)
+  const c = brand.colors
+
+  // Every property the components read is set, whatever the input left out.
+  for (const [name, value] of Object.entries(vars)) {
+    if (!value) problems.push(`${name} is empty`)
+  }
+
+  // Text set on the ground reads, whatever `onGround` was declared.
+  const text = contrastRatio(vars[COLOR_VARS.onGround], c.ground)
+  if (text < 4.5) problems.push(`text on the ground is ${text.toFixed(2)}:1, needs 4.5:1`)
+
+  // The digits read: on the ground when there is no plate, on the face when
+  // there is one. Display size is large text, so 3:1.
+  const plate = needsPlinth(brand)
+  const digits = contrastRatio(c.accent, plate ? c.face : c.ground)
+  if (digits < 3) {
+    problems.push(
+      `the digits are ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}, need 3:1`
+    )
+  }
+
+  // A face that was named is the face that ships.
+  const fonts = asRecord(asRecord(input).fonts)
+  for (const key of ["body", "display", "mono"] as const) {
+    const named = fonts[key]
+    if (typeof named === "string" && vars[`--brand-font-${key}`] !== named.trim()) {
+      problems.push(`fonts.${key} was named but did not survive parsing`)
+    }
+  }
+
+  // The panel's corner stays concentric with its controls' (see `radius`).
+  const control = parseFloat(vars["--brand-radius-control"])
+  const panel = parseFloat(vars["--brand-radius-panel"])
+  if (panel - control !== PANEL_INSET) {
+    problems.push(`panel radius ${panel}px is not control ${control}px + ${PANEL_INSET}px`)
+  }
+
+  return problems
+}
