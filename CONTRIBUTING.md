@@ -68,6 +68,20 @@ bit identical between Node and the browser, so an unrounded tick mark
 serialises differently on each side and React discards the whole tree with a
 hydration mismatch that names an attribute rather than the cause.
 
+## Releases
+
+Other apps copy this code file for file (see
+[`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md)), so a release is written for them
+as much as for people in the room.
+
+- **Paths are the interface.** Add files freely; move or rename one only as the
+  headline of its own release.
+- **Keep the diff narrow** and **one concern per pull request**: a rename, a
+  new dependency and a behaviour change are three PRs.
+- **Every release** bumps the version in `package.json` and
+  `src/lib/version.ts` together, adds a `CHANGELOG.md` entry with both of its
+  parts, and is tagged (`vX.Y.Z`) on the merge commit.
+
 ## Reporting something
 
 Issues are welcome, especially with the browser and the device. If it is about

@@ -12,6 +12,7 @@ import { type RelayResult, readRoom, writeRoom } from "@/lib/timer-relay-client"
 // for a browser. Keep this an `import type`.
 import type { TimerAction, TimerRoomView } from "@/lib/timer-room"
 import { cn } from "@/lib/utils"
+import { TIMER_VERSION } from "@/lib/version"
 
 // The phone half of the remote. The facilitator stands with the room and still
 // starts, pauses, extends and retimes the clock on the projector.
@@ -232,6 +233,7 @@ function TimerRemote() {
   return (
     <main
       id="main"
+      data-timer-version={TIMER_VERSION}
       className="relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to select-none"
     >
       {/* The same ground as the screen it drives. Sized by HEIGHT, not by a

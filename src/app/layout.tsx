@@ -24,6 +24,12 @@ import "./globals.css"
 // is resolved once per process and cached. The countdown itself stays entirely
 // client-side, and the duration still travels in the URL fragment rather than
 // a search parameter, so nothing here reads the request either.
+//
+// FOR AN APP THAT COPIES THESE FILES: this line exists only because the brand
+// is read from `TIMER_BRAND` at runtime. A host that compiles one brand in has
+// no reason to keep it, and keeping it costs that host static rendering of the
+// timer pages without any error to say so. A host that DOES read the brand per
+// deployment must keep it, or the variable silently does nothing.
 export const dynamic = "force-dynamic"
 
 export async function generateMetadata(): Promise<Metadata> {
