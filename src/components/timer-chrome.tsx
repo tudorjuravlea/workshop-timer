@@ -31,7 +31,10 @@ import { cn } from "@/lib/utils"
  *  so nothing in here competes with the clock. `min-h-11` holds a 44px tap
  *  target, which is the smallest a finger reliably hits. */
 const CONTROL =
-  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[var(--brand-radius-control,12px)] px-3.5 py-2 text-sm font-semibold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-brand-on-panel/10 focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none"
+  // Measured in `em`, so the whole control scales with the panel's own font
+  // size (`--timer-chrome`) instead of being fixed pixels. 3.15em is the 44px
+  // minimum tap target at the scale's 14px floor.
+  "inline-flex min-h-[3.15em] shrink-0 items-center gap-[0.571em] rounded-[var(--brand-radius-control,12px)] px-[1em] py-[0.571em] font-semibold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] hover:bg-brand-on-panel/10 focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none"
 
 /** The app's one caption treatment (`timer.css`), in ink: a label over a
  *  value being read off an instrument. */
@@ -181,7 +184,7 @@ function TimerChrome({
       aria-pressed={p * 60 === durationSeconds}
       aria-label={`${p} ${p === 1 ? "minute" : "minutes"}`}
       className={cn(
-        "min-h-11 min-w-11 rounded-[var(--brand-radius-control,12px)] px-3 text-sm font-bold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
+        "min-h-[3.15em] min-w-[3.15em] rounded-[var(--brand-radius-control,12px)] px-[0.857em] font-bold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-panel focus-visible:ring-offset-2 focus-visible:ring-offset-brand-panel focus-visible:outline-none",
         p * 60 === durationSeconds
           ? "bg-brand-face text-brand-ink"
           : "text-brand-on-panel hover:bg-brand-on-panel/15"
@@ -234,7 +237,9 @@ function TimerChrome({
         <div
           data-timer-bar=""
           className={cn(
-            "flex max-w-full flex-col items-center gap-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20",
+            // The panel sets the scale once and every control inside it reads
+            // it through `em`, so the bar grows with the screen as one piece.
+            "flex max-w-full flex-col items-center gap-[0.286em] bg-brand-panel p-[0.571em] text-[length:var(--timer-chrome)] shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20",
             // Rounded, and concentric with the controls inside it (see
             // `radius` in `lib/brand.ts`). The foot goes SQUARE the moment
             // a receipt is out: the paper is a sibling directly below, not a
@@ -248,7 +253,7 @@ function TimerChrome({
           {/* The lengths get a row of their own, above the controls: every
               chip in it is a number of minutes, smallest first, so the row
               reads as one scale from a quick check-in to a full hour. */}
-          <div className="flex max-w-full flex-wrap items-center justify-center gap-1">
+          <div className="flex max-w-full flex-wrap items-center justify-center gap-[0.286em]">
             {PRESETS.map(presetChip)}
           </div>
 
@@ -480,17 +485,19 @@ function TimerHints({ fullscreen, remote }: TimerHintsProps) {
   return (
     <div
       className={cn(
-        "relative z-10 flex shrink-0 flex-col items-center gap-1 text-center",
+        // The same measure the countdown field above takes, so the two line up
+        // as one column rather than by eye (`--timer-measure` in `timer.css`).
+        "relative z-10 flex w-[min(var(--timer-measure),100%)] shrink-0 flex-col items-center gap-1 text-center",
         fullscreen && "hidden"
       )}
     >
-      {remote.pairing && <p className="timer-label text-brand-on-ground/60">Pairing&hellip;</p>}
+      {remote.pairing && <p className="timer-hint text-brand-on-ground/60">Pairing&hellip;</p>}
       {remote.dropped && (
-        <p className="timer-label text-brand-on-ground/60">
+        <p className="timer-hint text-brand-on-ground/60">
           Remote dropped. Press R to pair again.
         </p>
       )}
-      <p className="timer-label flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/60">
+      <p className="timer-hint flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/60">
         <span>
           <Key>Space</Key> start or pause
         </span>

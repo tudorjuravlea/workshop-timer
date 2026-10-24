@@ -39,6 +39,33 @@
   --color-brand-receipt-edge: var(--brand-receipt-edge, #c7ccdb);
 }
 
+/* ── The chrome's scale ─────────────────────────────────────────────────────
+   The instrument scales with the screen: the digits clamp on `vh`, and the dial
+   takes whatever height is left. Its chrome did not. The controls, the length
+   chips and the key hints were all fixed pixels, so on a tall screen the dial
+   grew past the bar that floats over it — 721px of dial under a 651px bar at
+   1920x1080 — while the controls stayed the size they are on a laptop, which is
+   the wrong way round for a thing operated from across a room.
+
+   One declaration fixes both halves: every control is measured in `em` from
+   this, so the bar keeps a constant relationship to the dial from a laptop to a
+   wall. The FLOOR is today's 14px, so nothing on a screen under ~850px tall
+   changes at all, and the 44px minimum tap target still holds there (3.15em of
+   14px is 44.1px). */
+:root {
+  --timer-chrome: clamp(0.875rem, 1.65vh, 1.375rem);
+
+  /* The caption step: 11px when the controls are 14px. */
+  --timer-caption: calc(var(--timer-chrome) * 11 / 14);
+
+  /* The measure the countdown field and the key hints under it SHARE, so the
+     two are equal by construction rather than by coincidence — and stay equal
+     when either changes. It is the hints' own natural width at the caption step
+     above (416px at 11px). The field keeps it when the hints are hidden in full
+     screen, which is why the field cannot simply be told to match them. */
+  --timer-measure: calc(var(--timer-chrome) * 416 / 14);
+}
+
 /* The brand's three faces, read straight from its custom properties. Both
    root elements carry `timer-font-body`, so text without a class of its own
    inherits the brand's face rather than the host's. */
@@ -58,6 +85,19 @@
 @utility timer-label {
   font-family: var(--brand-font-body, system-ui, sans-serif);
   font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* The key hints under the clock. The caption treatment, but at the chrome's
+   scale rather than a fixed 11px, so they grow with the controls they describe
+   and keep their relationship to the field above them. Deliberately NOT a
+   change to `timer-label`: that treatment is shared with the receipt and the
+   phone, both of which are read from arm's length and should stay put. */
+@utility timer-hint {
+  font-family: var(--brand-font-body, system-ui, sans-serif);
+  font-size: var(--timer-caption);
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;

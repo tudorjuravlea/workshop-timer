@@ -8,6 +8,46 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.7.0 (2026-10-24)
+
+**This release changes the size of things on screen.** Nothing changes below
+1280px wide or about 850px tall, where the scale sits on its floor; above that
+the control bar and the key hints grow with the screen.
+
+**In the room**
+
+- The countdown digits are heavier, 600 to 800. At the back of a room weight is
+  what carries, and the display face was being set lighter than the dial it
+  sits under.
+- The control bar, its length chips and the key hints grow with the screen
+  instead of staying the size they are on a laptop. The bar was a fixed width at
+  every size, so on a tall screen the dial outgrew it: at 1920x1080 the bar was
+  0.85x the width of the dial and is now 1.09x. On a projector the controls are
+  also now physically bigger, which is the point of a thing operated from across
+  a room.
+- The countdown field and the key hints under it are the same width at every
+  size, so the two read as one column instead of a short field over a long line.
+
+**For hosts**
+
+- New custom properties in `timer.css`, all namespaced and all derived from one
+  value: `--timer-chrome` is the bar's scale, `clamp(0.875rem, 1.65vh,
+  1.375rem)`; `--timer-caption` and `--timer-measure` come from it. Nothing to
+  configure, and nothing a host has to keep in step.
+- New utility `timer-hint`: the caption treatment at that scale, for the key
+  hints. `timer-label` is unchanged and still used by the receipt and the phone,
+  which are read from arm's length and should not grow with the wall.
+- Every control in the bar is measured in `em` from the bar's own font size, so
+  the bar scales as one piece. `3.15em` is the 44px minimum tap target at the
+  scale's 14px floor; checked at the floor and at the ceiling.
+- The field and the hints take `--timer-measure` rather than one being told to
+  match the other, because the hints are hidden in full screen and the field
+  has to keep its width there.
+- Files changed: `timer.css`, `timer-chrome.tsx`, `timer-screen.tsx`,
+  `timer-remote.tsx`. Nothing moved or renamed; no dependencies; no props
+  changed.
+- Visible, so a host's screenshots and link-preview card are stale.
+
 ## v2.6.0 (2026-10-24)
 
 **In the room**
