@@ -8,6 +8,38 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.1.0 (2026-10-24)
+
+**Hosts: import the new `src/app/timer.css`** after Tailwind. It holds every
+style the components need, so your own `globals.css` stays yours.
+
+**In the room**
+
+- Nothing changes on screen. Every element on both pages has the same computed
+  font, corners, colours, transitions and animations as in v2.0.0.
+
+**For hosts**
+
+- Files: added `src/app/timer.css`. `src/app/globals.css` now imports it and
+  keeps only this app's own `html` and `body` rules, none of them required.
+- The timer no longer reads Tailwind theme keys a host also owns:
+  - corners: `rounded-[var(--brand-radius-control,12px)]` and
+    `--brand-radius-panel` (20px) instead of `rounded-lg` and `rounded-2xl`;
+  - faces: new utilities `timer-font-body`, `timer-font-display`,
+    `timer-font-mono` instead of `font-sans`, `font-display`, `font-mono`,
+    and both root elements carry `timer-font-body`;
+  - motion: every transition states its duration and easing.
+- Removed from the theme: `--font-sans`, `--font-display`, `--font-mono`,
+  `--radius-lg`, `--radius-2xl`, `--radius-3xl`, `--ease-out-pm`,
+  `--default-transition-*`, `--tracking-caps`.
+- Brands gain `radius` (px, 0 to 32, default 12). The panel's corner is derived
+  from it, plus the 8px it insets its controls by, so the two stay concentric.
+  New custom properties: `--brand-radius-control`, `--brand-radius-panel`.
+- Checked by building the app with a host theme that redefines all of those
+  keys: no element on either page changed. The same theme changed 172 of 175
+  elements in v2.0.0.
+- Dependencies, props, paths: no change.
+
 ## v2.0.0 (2026-10-24)
 
 **Renamed: the three global CSS names now start with `timer-`.** A host that

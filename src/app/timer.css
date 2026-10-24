@@ -1,0 +1,112 @@
+/* Everything the timer's components need from a stylesheet, and nothing else.
+
+   An app that copies the timer imports this file after Tailwind, and keeps its
+   own `globals.css`: nothing here styles `html`, `body` or an element the
+   timer does not own, and every name is namespaced, `brand-` for the colours
+   and `timer-` for the rest. So nothing here can collide with a host's design
+   system, and nothing the components rely on is left behind in a stylesheet a
+   host cannot adopt.
+
+   Corners, faces and timing are deliberately NOT Tailwind theme keys
+   (`rounded-lg`, `font-sans`, the default transition). A host that keeps its
+   own theme would resolve those against its own scale, and Tailwind does not
+   complain: the corner is simply the wrong size. Components read
+   `--brand-radius-*` and `--brand-font-*` directly, and write their timing out
+   in full. */
+
+/* Every colour comes from a brand (see `lib/brand.ts`). The custom properties
+   themselves are written by the server, into a `<style>` element in
+   `app/layout.tsx`; the fallbacks here are only so a stylesheet that somehow
+   arrives before that one still draws an instrument rather than a black page.
+
+   The names are roles, not hues — `face`, `accent`, `panel` — which is what
+   lets a brand be a dark field with a white dial or a sage one with a cream
+   dial without a single component changing. */
+@theme inline {
+  --color-brand-ground-from: var(--brand-ground-from, #26262a);
+  --color-brand-ground: var(--brand-ground, #141416);
+  --color-brand-ground-to: var(--brand-ground-to, #08080a);
+  --color-brand-glow: var(--brand-glow, #3a2b26);
+  --color-brand-face: var(--brand-face, #fbfbf9);
+  --color-brand-accent: var(--brand-accent, #ff3b00);
+  --color-brand-ink: var(--brand-ink, #15181d);
+  --color-brand-ink-2: var(--brand-ink-2, #454c57);
+  --color-brand-panel: var(--brand-panel, #0d0d0f);
+  --color-brand-on-panel: var(--brand-on-panel, #ffffff);
+  --color-brand-on-ground: var(--brand-on-ground, #ffffff);
+  --color-brand-receipt: var(--brand-receipt, #eef0f6);
+  --color-brand-receipt-edge: var(--brand-receipt-edge, #c7ccdb);
+}
+
+/* The brand's three faces, read straight from its custom properties. Both
+   root elements carry `timer-font-body`, so text without a class of its own
+   inherits the brand's face rather than the host's. */
+@utility timer-font-body {
+  font-family: var(--brand-font-body, system-ui, sans-serif);
+}
+@utility timer-font-display {
+  font-family: var(--brand-font-display, system-ui, sans-serif);
+}
+@utility timer-font-mono {
+  font-family: var(--brand-font-mono, ui-monospace, Menlo, monospace);
+}
+
+/* The caption used over every value and under every control. Declared once
+   rather than repeated as a class string, because it is the only small-text
+   treatment in the app and the two pages must not drift apart on it. */
+@utility timer-label {
+  font-family: var(--brand-font-body, system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── The pairing receipt ────────────────────────────────────────────────────
+   Fed out from under the floating control panel the way a till feeds a
+   receipt. Transform only, and the panel's own clip is what hides it at the
+   start, so nothing in the page's layout moves while it comes out. */
+@keyframes timer-receipt-feed {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.timer-receipt-feed {
+  animation: timer-receipt-feed 0.55s cubic-bezier(0.2, 0, 0, 1) both;
+}
+
+/* ── The last minute ────────────────────────────────────────────────────────
+   The face shakes, on transforms only, and not at all for anyone who has asked
+   for less movement — at which point the clock still reads correctly, because
+   the shake carries no information the digits do not. */
+@keyframes timer-dial-shake {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(-0.5%, 0.25%) rotate(-0.35deg);
+  }
+  40% {
+    transform: translate(0.5%, -0.25%) rotate(0.35deg);
+  }
+  60% {
+    transform: translate(-0.3%, -0.3%) rotate(-0.2deg);
+  }
+  80% {
+    transform: translate(0.3%, 0.3%) rotate(0.2deg);
+  }
+}
+.timer-dial-shake {
+  animation: timer-dial-shake 0.45s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer-receipt-feed,
+  .timer-dial-shake {
+    animation: none;
+  }
+}

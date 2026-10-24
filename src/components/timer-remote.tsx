@@ -258,7 +258,7 @@ function TimerRemote({
       id={id}
       data-timer-version={TIMER_VERSION}
       className={cn(
-        "relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to select-none",
+        "timer-font-body relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to select-none",
         className
       )}
     >
@@ -299,7 +299,7 @@ function TimerRemote({
               )}
             />
             <span>{LINK_TEXT[link]}</span>
-            <span className="ml-auto font-mono font-bold text-brand-on-ground">{code}</span>
+            <span className="ml-auto timer-font-mono font-bold text-brand-on-ground">{code}</span>
           </>
         )}
       </header>
@@ -326,12 +326,12 @@ function TimerRemote({
             autoComplete="off"
             spellCheck={false}
             maxLength={CODE_LENGTH}
-            className="w-full max-w-xs bg-brand-face px-5 py-4 text-center font-display text-4xl font-bold tracking-[0.2em] text-brand-ink uppercase outline-none focus-visible:ring-4 focus-visible:ring-brand-on-ground/60"
+            className="w-full max-w-xs bg-brand-face px-5 py-4 text-center timer-font-display text-4xl font-bold tracking-[0.2em] text-brand-ink uppercase outline-none focus-visible:ring-4 focus-visible:ring-brand-on-ground/60"
           />
           <button
             type="submit"
             disabled={entry.length < CODE_LENGTH || connecting}
-            className="min-h-11 bg-brand-face px-7 py-3 text-base font-bold text-brand-ink transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none disabled:bg-brand-on-ground/20 disabled:text-brand-on-ground/50"
+            className="min-h-11 bg-brand-face px-7 py-3 text-base font-bold text-brand-ink transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none disabled:bg-brand-on-ground/20 disabled:text-brand-on-ground/50"
           >
             {connecting ? "Connecting…" : "Connect"}
           </button>
@@ -365,7 +365,7 @@ function TimerRemote({
                   aria-pressed={p * 60 === durationSeconds}
                   aria-label={`${p} ${p === 1 ? "minute" : "minutes"}`}
                   className={cn(
-                    "min-h-12 text-base font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
+                    "min-h-12 text-base font-bold transition-colors duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
                     p * 60 === durationSeconds
                       ? "bg-brand-face text-brand-ink"
                       : "text-brand-on-ground ring-1 ring-brand-on-ground/25",
@@ -385,7 +385,7 @@ function TimerRemote({
                 aria-label="Add one minute"
                 style={{ gridColumn: `span ${GRID_COLUMNS - (LENGTHS.length % GRID_COLUMNS)}` }}
                 className={cn(
-                  "min-h-12 bg-brand-on-ground/15 text-base font-bold text-brand-on-ground ring-1 ring-brand-on-ground/30 transition-[filter] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
+                  "min-h-12 bg-brand-on-ground/15 text-base font-bold text-brand-on-ground ring-1 ring-brand-on-ground/30 transition-[filter] duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
                   flash === "add" && "brightness-75"
                 )}
               >
@@ -402,7 +402,7 @@ function TimerRemote({
             <div
               className={cn(
                 "focus-within:ring-2 focus-within:ring-brand-on-ground/60",
-                needsPlinth(brand) && "rounded-lg bg-brand-face px-3 py-1",
+                needsPlinth(brand) && "rounded-[var(--brand-radius-control,12px)] bg-brand-face px-3 py-1",
                 finished && "opacity-80"
               )}
             >
@@ -468,7 +468,7 @@ function TimerRemote({
                   width: `${fieldText.length + 0.1}ch`,
                   fontSize: `min(calc((100vw - 1.5rem) / ${(fieldText.length * 0.645).toFixed(3)}), 24vh)`,
                 }}
-                className="block bg-transparent text-center font-display leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
+                className="block bg-transparent text-center timer-font-display leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
               />
             </div>
           </div>
@@ -490,7 +490,7 @@ function TimerRemote({
               type="button"
               onClick={() => send({ kind: running ? "pause" : "start" }, "run")}
               className={cn(
-                "flex min-h-24 flex-[2] items-center justify-center gap-3 bg-brand-face text-2xl font-bold text-brand-ink transition-[filter] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
+                "flex min-h-24 flex-[2] items-center justify-center gap-3 bg-brand-face text-2xl font-bold text-brand-ink transition-[filter] duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
                 flash === "run" && "brightness-75"
               )}
             >
@@ -501,7 +501,7 @@ function TimerRemote({
               type="button"
               onClick={() => send({ kind: "reset" }, "reset")}
               className={cn(
-                "flex min-h-24 flex-1 flex-col items-center justify-center gap-1 text-base font-bold text-brand-on-ground ring-1 ring-brand-on-ground/30 transition-[filter] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
+                "flex min-h-24 flex-1 flex-col items-center justify-center gap-1 text-base font-bold text-brand-on-ground ring-1 ring-brand-on-ground/30 transition-[filter] duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-visible:ring-2 focus-visible:ring-brand-on-ground focus-visible:ring-offset-2 focus-visible:ring-offset-brand-ground focus-visible:outline-none",
                 flash === "reset" && "brightness-75"
               )}
             >

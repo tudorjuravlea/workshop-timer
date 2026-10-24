@@ -1,70 +1,16 @@
 @import "tailwindcss";
+@import "./timer.css";
 
-/* Every colour and face in this app comes from a brand (see `lib/brand.ts`).
-   The custom properties themselves are written once, by the server, into a
-   `<style>` element in `app/layout.tsx`; the fallbacks here are only so a
-   stylesheet that somehow arrives before that one still draws an instrument
-   rather than a black page.
-
-   The names are roles, not hues — `face`, `accent`, `panel` — which is what
-   lets a brand be a dark field with a white dial or a sage one with a cream
-   dial without a single component changing. */
-@theme inline {
-  --color-brand-ground-from: var(--brand-ground-from, #26262a);
-  --color-brand-ground: var(--brand-ground, #141416);
-  --color-brand-ground-to: var(--brand-ground-to, #08080a);
-  --color-brand-glow: var(--brand-glow, #3a2b26);
-  --color-brand-face: var(--brand-face, #fbfbf9);
-  --color-brand-accent: var(--brand-accent, #ff3b00);
-  --color-brand-ink: var(--brand-ink, #15181d);
-  --color-brand-ink-2: var(--brand-ink-2, #454c57);
-  --color-brand-panel: var(--brand-panel, #0d0d0f);
-  --color-brand-on-panel: var(--brand-on-panel, #ffffff);
-  --color-brand-on-ground: var(--brand-on-ground, #ffffff);
-  --color-brand-receipt: var(--brand-receipt, #eef0f6);
-  --color-brand-receipt-edge: var(--brand-receipt-edge, #c7ccdb);
-
-  --font-sans: var(--brand-font-body, system-ui, sans-serif);
-  --font-display: var(--brand-font-display, system-ui, sans-serif);
-  --font-mono: var(--brand-font-mono, ui-monospace, Menlo, monospace);
-
-  /* Fixed steps rather than multiples of one base. 12px is a control, 20px is
-     the panel that holds controls, 28px and up is a sheet.
-
-     The panel's 20px is not a taste call: it is the 12px on its own buttons
-     plus the 8px of padding it insets them by, so the panel's corner runs
-     CONCENTRIC with the buttons' instead of merely enclosing them. A tighter
-     radius on the outside turns the corner sharper than the button inside it
-     and leaves a wedge of fill at each one. */
-  --radius-lg: 0.75rem;
-  --radius-2xl: 1.25rem;
-  --radius-3xl: 1.75rem;
-
-  /* One easing for the whole app, and a short default: nothing here is a
-     flourish, everything is a control appearing or a sheet feeding out. */
-  --ease-out-pm: cubic-bezier(0.2, 0, 0, 1);
-  --default-transition-duration: 150ms;
-  --default-transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
-
-  --tracking-caps: 0.15em;
-}
-
-/* The caption used over every value and under every control. Declared once
-   rather than repeated as a class string, because it is the only small-text
-   treatment in the app and the two pages must not drift apart on it. */
-@utility timer-label {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-}
-
+/* This app's own document. Everything the timer's components need is in
+   `timer.css`; what is left here styles the page around them, and an app that
+   copies the timer keeps its own instead. Nothing below is required for the
+   instrument to work: each root element paints its own ground. */
 @layer base {
   html {
-    @apply font-sans;
+    font-family: var(--brand-font-body, system-ui, sans-serif);
     /* The ground, so an overscroll bounce on a trackpad or a phone shows the
-       field rather than a white band at the edge of a projected clock. */
+       field rather than a white band at the edge of a projected clock. This
+       has to be on `html`: that is the box a bounce reveals. */
     background: var(--brand-ground, #141416);
     /* Nothing on either page scrolls. Saying so stops a phone rubber-banding
        the whole instrument when a thumb lands next to a button. */
@@ -75,54 +21,5 @@
   }
   button:not(:disabled) {
     cursor: pointer;
-  }
-}
-
-/* ── The pairing receipt ────────────────────────────────────────────────────
-   Fed out from under the floating control panel the way a till feeds a
-   receipt. Transform only, and the panel's own clip is what hides it at the
-   start, so nothing in the page's layout moves while it comes out. */
-@keyframes timer-receipt-feed {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-.timer-receipt-feed {
-  animation: timer-receipt-feed 0.55s var(--ease-out-pm) both;
-}
-
-/* ── The last minute ────────────────────────────────────────────────────────
-   The face shakes, on transforms only, and not at all for anyone who has asked
-   for less movement — at which point the clock still reads correctly, because
-   the shake carries no information the digits do not. */
-@keyframes timer-dial-shake {
-  0%,
-  100% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  20% {
-    transform: translate(-0.5%, 0.25%) rotate(-0.35deg);
-  }
-  40% {
-    transform: translate(0.5%, -0.25%) rotate(0.35deg);
-  }
-  60% {
-    transform: translate(-0.3%, -0.3%) rotate(-0.2deg);
-  }
-  80% {
-    transform: translate(0.3%, 0.3%) rotate(0.2deg);
-  }
-}
-.timer-dial-shake {
-  animation: timer-dial-shake 0.45s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .timer-receipt-feed,
-  .timer-dial-shake {
-    animation: none;
   }
 }

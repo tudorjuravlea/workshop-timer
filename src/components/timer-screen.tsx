@@ -435,7 +435,7 @@ function TimerScreen({
       id={id}
       data-timer-version={TIMER_VERSION}
       className={cn(
-        "relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to",
+        "timer-font-body relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to",
         // The pointer goes with the controls. On a projector a parked mouse
         // arrow is as loud as a button, and `cursor` inherits, so the
         // descendant variant is what actually clears it off the logo.
@@ -511,7 +511,7 @@ function TimerScreen({
                 dominantBaseline="central"
                 fontSize="30"
                 fontWeight="800"
-                className="fill-brand-accent font-sans"
+                className="fill-brand-accent timer-font-body"
               >
                 Time&rsquo;s up!
               </text>
@@ -522,7 +522,7 @@ function TimerScreen({
             durationSeconds={durationSeconds}
             urgent={urgent}
             className={cn(
-              "h-full max-h-full w-full transition-opacity duration-500",
+              "h-full max-h-full w-full transition-opacity duration-500 ease-[cubic-bezier(0.2,0,0,1)]",
               finished && "opacity-0"
             )}
           />
@@ -536,7 +536,7 @@ function TimerScreen({
               almost none. */}
           <div
             className={cn(
-              "transition-shadow focus-within:ring-2 focus-within:ring-brand-on-ground/60",
+              "transition-shadow duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-within:ring-2 focus-within:ring-brand-on-ground/60",
               plinth &&
                 "bg-brand-face px-[clamp(0.5rem,1.4vh,1rem)] py-[clamp(0.1rem,0.45vh,0.35rem)] rounded-[clamp(0.5rem,1.4vh,1rem)]",
               finished && "opacity-80"
@@ -590,7 +590,7 @@ function TimerScreen({
               // Sized to its own content so the plinth hugs the digits at every
               // clamp step; `ch` is exact here because the face is tabular.
               style={{ width: `${fieldText.length + 0.4}ch` }}
-              className="block bg-transparent text-center font-display text-[clamp(2rem,7.5vh,5.5rem)] leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
+              className="block bg-transparent text-center timer-font-display text-[clamp(2rem,7.5vh,5.5rem)] leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
             />
           </div>
           {/* The ticking number would flood a screen reader, so it is hidden

@@ -19,15 +19,35 @@ unchanged.
 | `src/components/*` | the screen, the phone, the dial, the controls, the brand context |
 | `src/lib/brand.ts`, `timer-*.ts`, `utils.ts`, `version.ts` | brand parsing, the clock, the relay, the sound |
 | `src/app/api/timer/room/**` | the pairing relay (two route files) |
+| `src/app/timer.css` | every style the components need (see below) |
 | `src/lib/brand-server.ts` | only if your brand is chosen per deployment by `TIMER_BRAND` |
 
 The two pages are one line each: render `<TimerScreen />` and `<TimerRemote />`
 wherever your app wants them. Put the phone page at the screen's path plus
 `/remote` (`/tools/timer` and `/tools/timer/remote`) and the pairing receipt
-prints the right address with no configuration. `src/app/layout.tsx` shows the three things the
-document needs before the first paint: the brand's custom properties on
-`:root` (`brandCss`), the optional pre-paint script for URL colours, and the
-brand's font stylesheet. Your own layout does those, or the subset you use.
+prints the right address with no configuration.
+
+`src/app/layout.tsx` shows the three things the document needs before the
+first paint: the brand's custom properties on `:root` (`brandCss`), the
+optional pre-paint script for URL colours, and the brand's font stylesheet.
+Your own layout does those, or the subset you use.
+
+## Styles
+
+Import `timer.css` from your own global stylesheet, after Tailwind:
+
+```css
+@import "tailwindcss";
+@import "./timer.css";
+```
+
+It styles nothing the timer does not own. Every name in it is namespaced
+(`--color-brand-*`, `timer-*`), so it cannot collide with your design system,
+and your design system cannot change the timer: corners come from
+`--brand-radius-*`, faces from `--brand-font-*`, and every transition states its
+own duration and easing, rather than resolving `rounded-lg`, `font-sans` or the
+default transition against your theme. Keep your own `globals.css`; nothing in
+this project's version of it is required.
 
 Dependencies: `canvas-confetti`, `clsx`, `lucide-react`, `tailwind-merge`, plus
 Next.js, React and Tailwind CSS v4.
@@ -105,12 +125,3 @@ relay carries state (how much time is left), never commands or absolute
 timestamps. A change to any of that is announced as the headline of its
 release, because it is the one kind of change your deployment may not be able
 to absorb.
-
-## Known gaps
-
-These still need a hand edit after copying. Each is on the list to remove.
-
-- `src/app/globals.css` is written for this app's own document. The colour,
-  font, radius and easing tokens components rely on live in its `@theme`
-  block, and corners and fonts resolve against whatever your own theme defines
-  for `rounded-lg`, `font-sans` and the like.
