@@ -25,6 +25,12 @@ export type RelayResult =
   | { ok: true; view: TimerRoomView }
   | { ok: false; reason: "gone" | "offline" }
 
+/** Where the two relay routes live: `app/api/timer/room/route.ts` and its
+ *  `[code]` child. An app that serves them somewhere else passes its own path
+ *  as `relayPath` to `TimerScreen` and `TimerRemote`, rather than editing this
+ *  file on every update. */
+export const DEFAULT_RELAY_PATH = "/api/timer/room"
+
 /** The wire shape of an action. One place, because both ends send these. */
 function actionBody(action: TimerAction): Record<string, unknown> {
   if (action.kind === "duration") return { action: "duration", durationMs: action.durationMs }
@@ -44,8 +50,11 @@ async function ask(url: string, init?: RequestInit): Promise<RelayResult> {
 }
 
 /** Open a room, seeded with what the screen is showing, and get its code. */
-export function openRoom(share: TimerShare): Promise<RelayResult> {
-  return ask("/api/timer/room", {
+export function openRoom(
+  share: TimerShare,
+  relayPath = DEFAULT_RELAY_PATH
+): Promise<RelayResult> {
+  return ask(relayPath, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(share),
@@ -53,8 +62,12 @@ export function openRoom(share: TimerShare): Promise<RelayResult> {
 }
 
 /** Read the room and record that this side is still listening. */
-export function readRoom(code: string, side: TimerSide): Promise<RelayResult> {
-  return ask(`/api/timer/room/${code}?as=${side}`)
+export function readRoom(
+  code: string,
+  side: TimerSide,
+  relayPath = DEFAULT_RELAY_PATH
+): Promise<RelayResult> {
+  return ask(`${relayPath}/${code}?as=${side}`)
 }
 
 /** Apply one change and get the result, so a caller never has to guess what
@@ -62,9 +75,10 @@ export function readRoom(code: string, side: TimerSide): Promise<RelayResult> {
 export function writeRoom(
   code: string,
   side: TimerSide,
-  action: TimerAction
+  action: TimerAction,
+  relayPath = DEFAULT_RELAY_PATH
 ): Promise<RelayResult> {
-  return ask(`/api/timer/room/${code}?as=${side}`, {
+  return ask(`${relayPath}/${code}?as=${side}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(actionBody(action)),

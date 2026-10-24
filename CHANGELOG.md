@@ -8,20 +8,40 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
-## Unreleased
+## v1.2.0 (2026-10-24)
+
+**In the room**
+
+- Nothing changes on screen.
 
 **For hosts**
 
+- The timer no longer assumes it owns the page or the URL, so most hand edits
+  after copying are gone.
+- Props, all optional, all defaulting to today's behaviour:
+  - `TimerScreen`: `remotePath`, `relayPath`, `id`, `className`, `logo`,
+    `watermark`.
+  - `TimerRemote`: `relayPath`, `id` (default `"main"`), `className`,
+    `watermark`.
+  - `TimerChrome`: new required `remotePath`, which `TimerScreen` supplies.
+  - `logo` and `watermark` replace the brand's own when given; `null` means
+    none.
+- The pairing receipt no longer prints a fixed `/remote`. It prints this page's
+  own path plus `/remote` (`/tools/timer` gives `/tools/timer/remote`), or
+  `remotePath` when given.
+- `src/lib/timer-relay-client.ts`: `openRoom`, `readRoom` and `writeRoom` take
+  an optional last argument, the relay path; `DEFAULT_RELAY_PATH` is exported.
 - Files: added `brands/light-ground.json`, `brands/saturated-ground.json`,
   `brands/accent-only.json`, `scripts/check-brands.mjs`,
-  `.github/workflows/check.yml`. Nothing for a host to copy; the fixtures and
-  the check stay upstream.
+  `.github/workflows/check.yml`. None of them is for a host to copy.
 - `npm run check:brands` (Node 24) checks every brand file: text on the ground
   at 4.5:1, the digits at 3:1 on whatever is behind them, the plate exactly
   where the fixture expects it, named fonts kept, and one version in
   `package.json`, `version.ts` and this file. It runs on every pull request.
+  (#10)
 - Docs: the comment in `brands/example.json` no longer mentions the backlight
-  ring, which v1.0.0 removed.
+  ring, which v1.0.0 removed. (#10)
+- Dependencies: none. Nothing moved or renamed.
 
 ## v1.1.0 (2026-10-24)
 

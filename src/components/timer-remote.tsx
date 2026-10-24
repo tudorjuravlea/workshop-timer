@@ -7,7 +7,12 @@ import { useBrand } from "@/components/brand-provider"
 import { Watermark } from "@/components/watermark"
 import { needsPlinth } from "@/lib/brand"
 import { DEFAULT_MINUTES, PRESETS, formatClock, parseDuration } from "@/lib/timer-clock"
-import { type RelayResult, readRoom, writeRoom } from "@/lib/timer-relay-client"
+import {
+  DEFAULT_RELAY_PATH,
+  type RelayResult,
+  readRoom,
+  writeRoom,
+} from "@/lib/timer-relay-client"
 // Type only: the relay module imports node:crypto and must never be bundled
 // for a browser. Keep this an `import type`.
 import type { TimerAction, TimerRoomView } from "@/lib/timer-room"
@@ -51,7 +56,25 @@ function cleanCode(raw: string): string {
   return raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, CODE_LENGTH)
 }
 
-function TimerRemote() {
+export type TimerRemoteProps = {
+  /** Where the relay routes are served, when not at `/api/timer/room`. */
+  relayPath?: string
+  /** On the root `<main>`. The id defaults to "main", a skip link's target. */
+  id?: string
+  /** Merged onto the root `<main>`, last, so it can undo a host's own rules
+   *  for `main` elements. */
+  className?: string
+  /** Replaces the brand's watermark. Leave it out for the default; pass null
+   *  for none. */
+  watermark?: React.ReactNode
+}
+
+function TimerRemote({
+  relayPath = DEFAULT_RELAY_PATH,
+  id = "main",
+  className,
+  watermark,
+}: TimerRemoteProps = {}) {
   const brand = useBrand()
 
   const [code, setCode] = React.useState<string | null>(null)
@@ -95,12 +118,12 @@ function TimerRemote() {
       if (!code) return
       setFlash(tag)
       window.setTimeout(() => setFlash(null), 180)
-      void writeRoom(code, "phone", action).then((result) => {
+      void writeRoom(code, "phone", action, relayPath).then((result) => {
         if (result.ok) absorb(result.view)
         else setLink(result.reason)
       })
     },
-    [code, absorb]
+    [code, absorb, relayPath]
   )
 
   /** Take whatever is in the field. Unparseable input silently reverts to the
@@ -141,12 +164,12 @@ function TimerRemote() {
       const next = cleanCode(raw)
       if (next.length !== CODE_LENGTH) return
       setConnecting(true)
-      void readRoom(next, "phone").then((result) => {
+      void readRoom(next, "phone", relayPath).then((result) => {
         setConnecting(false)
         land(next, result)
       })
     },
-    [land]
+    [land, relayPath]
   )
 
   // Reconnect from the fragment on open, so a code typed once survives the
@@ -155,13 +178,13 @@ function TimerRemote() {
     const fromHash = cleanCode(window.location.hash.slice(1))
     if (fromHash.length !== CODE_LENGTH) return
     let live = true
-    void readRoom(fromHash, "phone").then((result) => {
+    void readRoom(fromHash, "phone", relayPath).then((result) => {
       if (live) land(fromHash, result)
     })
     return () => {
       live = false
     }
-  }, [land])
+  }, [land, relayPath])
 
   // One poll per tick while paired, with a busy flag so a reply slower than the
   // interval cannot stack requests on a weak venue network, and nothing at all
@@ -172,7 +195,7 @@ function TimerRemote() {
     const beat = async () => {
       if (busy || document.hidden) return
       busy = true
-      const result = await readRoom(code, "phone")
+      const result = await readRoom(code, "phone", relayPath)
       busy = false
       if (result.ok) absorb(result.view)
       else if (result.reason === "gone") {
@@ -191,7 +214,7 @@ function TimerRemote() {
       window.clearInterval(id)
       document.removeEventListener("visibilitychange", onVisible)
     }
-  }, [code, absorb])
+  }, [code, absorb, relayPath])
 
   // The same deadline-driven tick as the screen, at a quarter of the rate:
   // there is no wedge here to keep smooth, only digits that change once a
@@ -232,9 +255,12 @@ function TimerRemote() {
 
   return (
     <main
-      id="main"
+      id={id}
       data-timer-version={TIMER_VERSION}
-      className="relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to select-none"
+      className={cn(
+        "relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to select-none",
+        className
+      )}
     >
       {/* The same ground as the screen it drives. Sized by HEIGHT, not by a
           width percentage: a phone is a tall narrow band, so a watermark whose
@@ -243,7 +269,7 @@ function TimerRemote() {
           bleeds top and bottom at any aspect ratio, and a mark wider than it
           is tall then runs off the sides for free. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <Watermark className="h-[120dvh] w-auto" />
+        {watermark === undefined ? <Watermark className="h-[120dvh] w-auto" /> : watermark}
       </div>
 
       <h1 className="sr-only">{brand.name} remote</h1>
