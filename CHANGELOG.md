@@ -8,6 +8,20 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.2.0 (2026-10-24)
+
+**In the room**
+
+- Nothing changes on screen.
+
+**For hosts**
+
+- New export: `checkBrand(input, base?)` in `src/lib/brand.ts` returns the
+  problems a brand has, as a list of strings; empty means it keeps every
+  promise. Run it on your own brand in your own tests. `npm run check:brands`
+  is now a thin script over it, so there is one set of rules.
+- Files, props, CSS, dependencies: no change. Nothing moved or renamed.
+
 ## v2.1.0 (2026-10-24)
 
 **Hosts: import the new `src/app/timer.css`** after Tailwind. It holds every
