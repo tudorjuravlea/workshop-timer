@@ -346,7 +346,48 @@ function TimerChrome({
             nothing but a shadow holding its lower edge, and a shadow is not
             structure. Ink text on it, always. */}
         {remote.code && (
-          <div className="overflow-hidden rounded-b-2xl">
+          <div
+            className={cn(
+              "overflow-hidden rounded-b-2xl",
+              // WHERE THERE IS ROOM, THE BAR DOES NOT MOVE. In flow, the
+              // receipt makes this column taller, and a column centred with
+              // `-translate-y-1/2` re-centres itself, so the controls jumped up
+              // by half the receipt's height the instant a phone was paired —
+              // 87px on a laptop, 141px on a phone. Taking the receipt OUT of
+              // flow leaves the column the height of the bar alone, so the bar
+              // stays exactly where the eye left it and the paper feeds down
+              // from under it.
+              //
+              // `top-full` is required and not an optimisation. In BLOCK
+              // layout an absolutely positioned box with `top: auto` falls at
+              // its static position, which would be directly under the bar —
+              // but in a FLEX container the static position of an absolutely
+              // positioned child is the container's own start corner, so the
+              // receipt landed on top of the bar and hid it completely. The
+              // column is the height of the bar alone, so `top: 100%` is
+              // exactly its underside and needs no number.
+              //
+              // The media query is the part that is measured rather than
+              // guessed. Pinned, the receipt's foot lands at
+              // `50dvh + barH/2 + receiptH`, and that fits with room to spare
+              // on every real screen EXCEPT two: a narrow phone, where the
+              // length chips wrap to three rows and the bar grows to ~252px,
+              // and anything short, like a phone held sideways at 390px. Below
+              // either threshold the old behaviour is the right one — a bar
+              // that shifts beats a URL with its end cut off — so it stays.
+              // Measured 2026-10-24: 1024x768 fits with 148px spare, 768x1024
+              // with 276px, 640x800 with 116px; 375x812 and 844x390 do not.
+              //
+              // The underscores are load-bearing: Tailwind copies the bracket
+              // out verbatim, so writing a literal space is impossible and
+              // omitting one emits `)and(`, which is invalid CSS. That failure
+              // passes lint, passes typecheck and still prints a green build —
+              // it only shows up as a 500 when the page is actually loaded.
+              "[@media(min-width:480px)_and_(min-height:480px)]:absolute",
+              "[@media(min-width:480px)_and_(min-height:480px)]:top-full",
+              "[@media(min-width:480px)_and_(min-height:480px)]:inset-x-0"
+            )}
+          >
             <div className="receipt-feed border-b-4 border-brand-receipt-edge bg-brand-receipt px-5 pt-4 pb-5">
               {/* One sentence of why, then the two things somebody actually
                   reads off the screen, each under its own label.
