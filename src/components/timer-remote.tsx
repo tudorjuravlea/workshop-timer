@@ -400,6 +400,7 @@ function TimerRemote({
               guesses. */}
           <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center px-3">
             <div
+              data-timer-plate={needsPlinth(brand) ? "on" : "off"}
               className={cn(
                 "focus-within:ring-2 focus-within:ring-brand-on-ground/60",
                 needsPlinth(brand) && "rounded-[var(--brand-radius-control,12px)] bg-brand-face px-3 py-1",
@@ -413,6 +414,7 @@ function TimerRemote({
                   one reading on either page allowed to take a brand colour:
                   it is an instrument's value, not emphasis on prose. */}
               <input
+                data-timer-digits=""
                 value={fieldText}
                 onChange={(e) => setDraft(e.target.value)}
                 onFocus={(e) => {

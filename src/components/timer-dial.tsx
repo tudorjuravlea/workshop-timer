@@ -165,6 +165,7 @@ function TimerDial({
   const { ticks, numerals } = dialScale(durationSeconds)
   return (
     <svg
+      data-timer-dial=""
       viewBox="0 0 200 200"
       aria-hidden
       className={cn(

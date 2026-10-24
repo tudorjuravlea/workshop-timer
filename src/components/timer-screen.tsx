@@ -535,6 +535,7 @@ function TimerScreen({
               page, which is one less object in a composition that should have
               almost none. */}
           <div
+            data-timer-plate={plinth ? "on" : "off"}
             className={cn(
               "transition-shadow duration-150 ease-[cubic-bezier(0.2,0,0,1)] focus-within:ring-2 focus-within:ring-brand-on-ground/60",
               plinth &&
@@ -543,6 +544,7 @@ function TimerScreen({
             )}
           >
             <input
+              data-timer-digits=""
               value={fieldText}
               onChange={(e) => setDraft(e.target.value)}
               onFocus={(e) => {

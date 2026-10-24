@@ -8,6 +8,24 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.6.0 (2026-10-24)
+
+**In the room**
+
+- Nothing changes on screen.
+
+**For hosts**
+
+- New test handles, kept stable from now on: `data-timer-bar`,
+  `data-timer-receipt`, `data-timer-dial`, `data-timer-digits` (screen and
+  phone), and `data-timer-plate` (screen and phone, `on` or `off`). The full
+  list, with the existing `data-timer-version` and `data-timer-controls`, is in
+  `docs/DOWNSTREAM.md`.
+- `docs/DOWNSTREAM.md` says why `watermark.tsx` is in the copy even for a host
+  that always passes its own watermark: both pages import it.
+- Files changed: `timer-chrome.tsx`, `timer-dial.tsx`, `timer-screen.tsx`,
+  `timer-remote.tsx`. Nothing moved or renamed; no dependencies.
+
 ## v2.5.0 (2026-10-24)
 
 **In the room**
