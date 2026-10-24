@@ -491,12 +491,29 @@ function TimerHints({ fullscreen, remote }: TimerHintsProps) {
         fullscreen && "hidden"
       )}
     >
-      {remote.pairing && <p className="timer-hint text-brand-on-ground/60">Pairing&hellip;</p>}
-      {remote.dropped && (
-        <p className="timer-hint text-brand-on-ground/60">
-          Remote dropped. Press R to pair again.
-        </p>
-      )}
+      {/* The remote's status sits OUT OF FLOW, above the keys.
+
+          In flow it resized the clock. The dial is the one flexible row in an
+          `h-dvh` column, so it absorbs every height change below it: pressing
+          Phone added a "Pairing…" line, the hints grew 21px and the dial gave
+          up 20.2px, then both snapped back a few frames later when the code
+          arrived. It read as the dial flinching when the receipt opened —
+          never in full screen, where this whole block is hidden, and never on
+          close, because there is no pairing phase then.
+
+          Same shape as the control bar that used to jump when the receipt fed
+          out, and the same fix: a transient thing next to the flexible element
+          must not be in flow with it. Anchored to this block's top edge rather
+          than given reserved space, because reserving a line for a message
+          that is usually absent would cost the dial that height permanently. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-full flex flex-col items-center gap-1">
+        {remote.pairing && <p className="timer-hint text-brand-on-ground/60">Pairing&hellip;</p>}
+        {remote.dropped && (
+          <p className="timer-hint text-brand-on-ground/60">
+            Remote dropped. Press R to pair again.
+          </p>
+        )}
+      </div>
       <p className="timer-hint flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/60">
         <span>
           <Key>Space</Key> start or pause

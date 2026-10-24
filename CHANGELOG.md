@@ -8,6 +8,33 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.7.2 (2026-10-24)
+
+**In the room**
+
+- The dial no longer flinches when a phone is paired. Pressing Phone put a
+  transient "Pairing…" line into the flow of the column the clock is measured
+  against, so the dial contracted by about 20px and sprang back a few frames
+  later when the code arrived. Reported from a host, and only on opening the
+  receipt: never in full screen, where the hints are hidden, and never on
+  closing, where there is no pairing phase.
+
+**For hosts**
+
+- The remote's status lines ("Pairing…", "Remote dropped…") are positioned out
+  of flow, anchored above the key hints. No space is reserved for them:
+  reserving a line for a message that is usually absent would cost the dial
+  that height permanently.
+- Same shape as the control bar that jumped in v1.1.0, and the same fix. The
+  dial is the one flexible row in an `h-dvh` column, so anything transient
+  beside it must be out of flow or it resizes the clock.
+- Checked at 1920x1080, 1440x900, 1024x768, 768x1024, 390x844 and 844x390,
+  including the longest status line forced visible: the drawn dial's width does
+  not change by a single pixel through a pairing, the message fits one line at
+  every size, and it clears the field at all of them.
+- Files changed: `timer-chrome.tsx`. Nothing moved or renamed; no props, no
+  CSS, no dependencies.
+
 ## v2.7.1 (2026-10-24)
 
 **In the room**
