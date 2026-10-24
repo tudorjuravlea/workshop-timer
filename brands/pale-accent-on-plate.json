@@ -1,0 +1,13 @@
+{
+  "_comment": "A fixture for scripts/check-brands.mjs: a pale accent on a mid-tone ground. It earns the plate (1.84:1 on the ground) and is still unreadable on it, so the check proves the wedge and the plated digits get a deeper shade of it.",
+
+  "name": "Pale accent on a plate",
+
+  "colors": {
+    "groundFrom": "#979ca6",
+    "ground": "#8a8f99",
+    "groundTo": "#7b808a",
+    "glow": "#8a8f99",
+    "accent": "#ffb27a"
+  }
+}

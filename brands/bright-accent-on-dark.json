@@ -1,0 +1,9 @@
+{
+  "_comment": "A fixture for scripts/check-brands.mjs: a bright accent on the dark default ground. It reads so well on the ground that it never needs a plate, and the wedge, always on the white face, would all but disappear; the check proves the wedge gets a deeper shade while the digits keep the accent.",
+
+  "name": "Bright accent on dark",
+
+  "colors": {
+    "accent": "#ffd400"
+  }
+}
