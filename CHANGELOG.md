@@ -8,6 +8,25 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.7.1 (2026-10-24)
+
+**In the room**
+
+- Nothing changes in the app. The README's pictures are re-shot from v2.7.0,
+  so they show what people actually see: heavier digits, and the countdown
+  field as wide as the key hints under it.
+
+**For hosts**
+
+- Re-shot: `docs/at-rest.png`, `controls.png`, `pairing.png`, `remote.png`,
+  `rebranded.png`, `finish.png`, `lengths.png`. Kept: `social-preview.png`
+  (it shows no readout and no bar, and is the copy uploaded to the repo's
+  settings) and `live-product-makers.png` (it shows a host's own deployment).
+- The desktop pictures are taken at 1280x720. Since v2.7.0 the bar scales with
+  viewport height, and 1280x720 sits on the scale's floor: the bar as it looks
+  on a laptop. On a taller screen it is bigger.
+- Code, CSS, props, dependencies: no change.
+
 ## v2.7.0 (2026-10-24)
 
 **This release changes the size of things on screen.** Nothing changes below
