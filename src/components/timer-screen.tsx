@@ -42,7 +42,36 @@ import { cn } from "@/lib/utils"
 // live in a panel that appears when you move and leaves when you stop, which
 // is why there is no separate full-screen layout: see `timer-chrome.tsx`.
 
-function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: number }) {
+export type TimerScreenProps = {
+  /** The length it opens at, when the address names none. */
+  defaultMinutes?: number
+  /** Where the phone page is, as printed on the pairing receipt. Leave it out
+   *  and it is this page's own path plus `/remote`, which is where the phone
+   *  page sits in this app (`/` -> `/remote`) and in any app that mounts both
+   *  pages side by side (`/tools/timer` -> `/tools/timer/remote`). */
+  remotePath?: string
+  /** Where the relay routes are served, when not at `/api/timer/room`. */
+  relayPath?: string
+  /** On the root `<main>`. */
+  id?: string
+  /** Merged onto the root `<main>`, last, so it can undo a host's own rules
+   *  for `main` elements. */
+  className?: string
+  /** Replace the brand's mark (top left) or its watermark. Leave either out
+   *  for the default; pass null for none. */
+  logo?: React.ReactNode
+  watermark?: React.ReactNode
+}
+
+function TimerScreen({
+  defaultMinutes = DEFAULT_MINUTES,
+  remotePath,
+  relayPath,
+  id,
+  className,
+  logo,
+  watermark,
+}: TimerScreenProps = {}) {
   const brand = useBrand()
 
   const [durationMs, setDurationMs] = React.useState(defaultMinutes * 60_000)
@@ -64,6 +93,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
   // exist during the server render, and putting a value in the markup that the
   // server cannot know is a hydration mismatch.
   const [host, setHost] = React.useState("")
+  const [phonePath, setPhonePath] = React.useState("/remote")
 
   const finished = remainingMs <= 0
 
@@ -93,7 +123,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
     }
   }, [])
 
-  const remote = useTimerRemote({ onAdopt: adopt })
+  const remote = useTimerRemote({ onAdopt: adopt, relayPath })
   // Pulled out because it is the one part of `remote` that never changes
   // identity, which is what lets the hash listener below stay registered once
   // and still reach the phone.
@@ -320,8 +350,9 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
     // gesture, or the gong at zero would never be allowed to sound.
     ensureAudio()
     setHost(window.location.host)
+    setPhonePath(remotePath ?? `${window.location.pathname.replace(/\/+$/, "")}/remote`)
     remote.pair({ durationMs, remainingMs, running })
-  }, [remote, ensureAudio, durationMs, remainingMs, running])
+  }, [remote, ensureAudio, durationMs, remainingMs, running, remotePath])
 
   // Fullscreen is tracked from the event, never from the button, because Esc
   // and the browser's own chrome can leave it without going through us.
@@ -401,13 +432,15 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
 
   return (
     <main
+      id={id}
       data-timer-version={TIMER_VERSION}
       className={cn(
         "relative flex h-dvh flex-col overflow-hidden bg-linear-135 from-brand-ground-from from-0% via-brand-ground via-40% to-brand-ground-to",
         // The pointer goes with the controls. On a projector a parked mouse
         // arrow is as loud as a button, and `cursor` inherits, so the
         // descendant variant is what actually clears it off the logo.
-        !chrome.awake && "cursor-none [&_*]:cursor-none"
+        !chrome.awake && "cursor-none [&_*]:cursor-none",
+        className
       )}
     >
       {/* A bare instrument: the dial carries the meaning and a visible title
@@ -423,7 +456,11 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
           the lightest part of the field behind the top of the dial, which is
           where every reading on this face starts. */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <Watermark className="h-[140%] w-auto min-w-[180%] object-cover" />
+        {watermark === undefined ? (
+          <Watermark className="h-[140%] w-auto min-w-[180%] object-cover" />
+        ) : (
+          watermark
+        )}
       </div>
       {/* Over the ground and under everything else, so the paper comes from
           behind the dial rather than across it. */}
@@ -435,7 +472,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
           name set quietly in the caption treatment, so a white-label
           deployment still says whose room this is without shipping an asset. */}
       <header className="relative z-10 flex min-h-11 shrink-0 items-start p-6 md:p-8">
-        <BrandMark />
+        {logo === undefined ? <BrandMark /> : logo}
       </header>
 
       {/* The dial is the ONLY flexible row: it takes whatever height the fixed
@@ -597,6 +634,7 @@ function TimerScreen({ defaultMinutes = DEFAULT_MINUTES }: { defaultMinutes?: nu
         }}
         onToggleRemote={toggleRemote}
         remoteHost={host}
+        remotePath={phonePath}
       />
     </main>
   )

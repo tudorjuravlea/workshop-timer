@@ -22,13 +22,28 @@ unchanged.
 | `src/lib/brand-server.ts` | only if your brand is chosen per deployment by `TIMER_BRAND` |
 
 The two pages are one line each: render `<TimerScreen />` and `<TimerRemote />`
-wherever your app wants them. `src/app/layout.tsx` shows the three things the
+wherever your app wants them. Put the phone page at the screen's path plus
+`/remote` (`/tools/timer` and `/tools/timer/remote`) and the pairing receipt
+prints the right address with no configuration. `src/app/layout.tsx` shows the three things the
 document needs before the first paint: the brand's custom properties on
 `:root` (`brandCss`), the optional pre-paint script for URL colours, and the
 brand's font stylesheet. Your own layout does those, or the subset you use.
 
 Dependencies: `canvas-confetti`, `clsx`, `lucide-react`, `tailwind-merge`, plus
 Next.js, React and Tailwind CSS v4.
+
+## Fitting it into your page
+
+Both components take optional props, so the common adjustments are props and
+not edits:
+
+| Prop | On | What it is for |
+| --- | --- | --- |
+| `id`, `className` | both | on the root `<main>`, merged last, so a skip link can target it and your own rules for `main` can be undone |
+| `remotePath` | `TimerScreen` | the phone page's path, when it is not the screen's path plus `/remote` |
+| `relayPath` | both | where the two relay routes are served, when not at `/api/timer/room` |
+| `logo` | `TimerScreen` | your own mark in place of the brand's; `null` for none |
+| `watermark` | both | your own watermark in place of the brand's; `null` for none |
 
 ## Which version you have
 
@@ -95,9 +110,6 @@ to absorb.
 
 These still need a hand edit after copying. Each is on the list to remove.
 
-- The pairing receipt prints `/remote` after the host name
-  (`timer-chrome.tsx`), and the relay client calls `/api/timer/room`. Mounted
-  anywhere else, both need editing.
 - The global class names `label`, `receipt-feed` and `dial-shake`, and their
   keyframes, are unprefixed.
 - `src/app/globals.css` is written for this app's own document. The colour,

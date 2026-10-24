@@ -146,6 +146,8 @@ export type TimerChromeProps = {
   /** Host for the pairing line, read on the client so it is right on
    *  localhost, behind a reverse proxy and on a public domain alike. */
   remoteHost: string
+  /** The phone page's path, printed after the host. */
+  remotePath: string
 }
 
 function Divider() {
@@ -169,6 +171,7 @@ function TimerChrome({
   remote,
   onToggleRemote,
   remoteHost,
+  remotePath,
 }: TimerChromeProps) {
   const presetChip = (p: number) => (
     <button
@@ -418,7 +421,7 @@ function TimerChrome({
                     <p className="mt-1 text-lg font-bold text-brand-ink [overflow-wrap:anywhere]">
                       {remoteHost}
                       <wbr />
-                      /remote
+                      {remotePath}
                     </p>
                   </div>
 

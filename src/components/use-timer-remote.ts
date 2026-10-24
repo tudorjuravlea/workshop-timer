@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import {
+  DEFAULT_RELAY_PATH,
   type TimerShare,
   openRoom,
   readRoom,
@@ -53,10 +54,13 @@ export type TimerRemote = {
 
 export function useTimerRemote({
   onAdopt,
+  relayPath = DEFAULT_RELAY_PATH,
 }: {
   /** A change that came from the phone. Called with the relay's state, never
    *  with the echo of something this screen just published. */
   onAdopt: (state: TimerShare) => void
+  /** Where the relay routes are served. */
+  relayPath?: string
 }): TimerRemote {
   const [code, setCode] = React.useState<string | null>(null)
   const [pairing, setPairing] = React.useState(false)
@@ -108,7 +112,7 @@ export function useTimerRemote({
   const pair = React.useCallback((share: TimerShare) => {
     setDropped(false)
     setPairing(true)
-    void openRoom(share).then((result) => {
+    void openRoom(share, relayPath).then((result) => {
       setPairing(false)
       if (!result.ok) {
         setDropped(true)
@@ -119,13 +123,13 @@ export function useTimerRemote({
       setCode(result.view.code)
       setOnline(true)
     })
-  }, [])
+  }, [relayPath])
 
   const publish = React.useCallback(
     (action: TimerAction) => {
       const current = codeRef.current
       if (!current) return
-      void writeRoom(current, "screen", action).then((result) => {
+      void writeRoom(current, "screen", action, relayPath).then((result) => {
         if (!result.ok) {
           setOnline(false)
           return
@@ -136,7 +140,7 @@ export function useTimerRemote({
         absorb(result.view, false)
       })
     },
-    [absorb]
+    [absorb, relayPath]
   )
 
   // One poll per tick while paired. An interval rather than a chain of
@@ -150,7 +154,7 @@ export function useTimerRemote({
     const beat = async () => {
       if (busy || document.hidden) return
       busy = true
-      const result = await readRoom(code, "screen")
+      const result = await readRoom(code, "screen", relayPath)
       busy = false
       if (result.ok) {
         absorb(result.view, true)
@@ -175,7 +179,7 @@ export function useTimerRemote({
       window.clearInterval(id)
       document.removeEventListener("visibilitychange", onVisible)
     }
-  }, [code, absorb, unpair])
+  }, [code, absorb, unpair, relayPath])
 
   return { code, pairing, online, phoneHere, dropped, pair, unpair, publish }
 }
