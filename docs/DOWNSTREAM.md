@@ -110,8 +110,6 @@ to absorb.
 
 These still need a hand edit after copying. Each is on the list to remove.
 
-- The global class names `label`, `receipt-feed` and `dial-shake`, and their
-  keyframes, are unprefixed.
 - `src/app/globals.css` is written for this app's own document. The colour,
   font, radius and easing tokens components rely on live in its `@theme`
   block, and corners and fonts resolve against whatever your own theme defines
