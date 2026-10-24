@@ -232,6 +232,7 @@ function TimerChrome({
             the ground, because it floats over the brightest surface on the
             page: a tint reads as a smear once the thing behind it is white. */}
         <div
+          data-timer-bar=""
           className={cn(
             "flex max-w-full flex-col items-center gap-1 bg-brand-panel p-2 shadow-[0_14px_36px_rgb(0_0_0/0.3)] ring-1 ring-brand-on-panel/20",
             // Rounded, and concentric with the controls inside it (see
@@ -391,7 +392,10 @@ function TimerChrome({
               "[@media(min-width:480px)_and_(min-height:480px)]:inset-x-0"
             )}
           >
-            <div className="timer-receipt-feed border-b-4 border-brand-receipt-edge bg-brand-receipt px-5 pt-4 pb-5">
+            <div
+              data-timer-receipt=""
+              className="timer-receipt-feed border-b-4 border-brand-receipt-edge bg-brand-receipt px-5 pt-4 pb-5"
+            >
               {/* One sentence of why, then the two things somebody actually
                   reads off the screen, each under its own label.
 

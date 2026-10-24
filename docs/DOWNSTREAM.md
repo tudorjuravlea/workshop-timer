@@ -16,7 +16,7 @@ unchanged.
 
 | Path | What it is |
 | --- | --- |
-| `src/components/*` | the screen, the phone, the dial, the controls, the brand context |
+| `src/components/*` | the screen, the phone, the dial, the controls, the brand context; `watermark.tsx` too, even if you always pass your own `watermark`, because both pages import it |
 | `src/lib/brand.ts`, `timer-*.ts`, `utils.ts`, `version.ts` | brand parsing, the clock, the relay, the sound |
 | `src/app/api/timer/room/**` | the pairing relay (two route files) |
 | `src/app/timer.css` | every style the components need (see below) |
@@ -110,6 +110,22 @@ import { checkBrand } from "@/lib/brand"
 
 expect(checkBrand(myBrand)).toEqual([])
 ```
+
+## Finding the pieces in a test
+
+Each piece a host's checks usually need carries a `data-timer-*` attribute, so
+a test never has to find it by class name or by its position in the tree.
+These are kept stable across releases:
+
+| Attribute | On | Value |
+| --- | --- | --- |
+| `data-timer-version` | both root `<main>` elements | the release, `2.6.0` |
+| `data-timer-controls` | the screen's floating control layer | (empty) |
+| `data-timer-bar` | the control bar inside it | (empty) |
+| `data-timer-receipt` | the pairing receipt, while a phone is paired | (empty) |
+| `data-timer-dial` | the dial's `<svg>` | (empty) |
+| `data-timer-digits` | the countdown field, screen and phone | (empty) |
+| `data-timer-plate` | the box around the digits, screen and phone | `on` when the plate shows, `off` when it does not |
 
 ## Which version you have
 
