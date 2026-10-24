@@ -1,6 +1,6 @@
 {
   "name": "workshop-timer",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "private": true,
   "description": "A white-label countdown for the front of a room, with a phone remote.",
   "license": "MIT",

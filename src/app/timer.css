@@ -49,11 +49,18 @@
 
    One declaration fixes both halves: every control is measured in `em` from
    this, so the bar keeps a constant relationship to the dial from a laptop to a
-   wall. The FLOOR is today's 14px, so nothing on a screen under ~850px tall
-   changes at all, and the 44px minimum tap target still holds there (3.15em of
-   14px is 44.1px). */
+   wall. The FLOOR is 14px, where the 44px minimum tap target still holds (3.15em
+   of 14px is 44.1px), and it is what a phone gets.
+
+   It grows with HEIGHT but is CAPPED BY WIDTH, because width is what limits it:
+   the bar is about 46 times this value wide, and once that passes the viewport
+   (less the 32px of page padding) the length chips wrap to a second row. Height
+   alone gave every portrait tablet a scale its width could not carry, and
+   wrapped them all (v2.7.0, measured: 768x1024 at 16.9px, a 736px bar). 2vw
+   keeps the bar inside the width at any size, so the cap never wraps a row the
+   floor did not already. */
 :root {
-  --timer-chrome: clamp(0.875rem, 1.65vh, 1.375rem);
+  --timer-chrome: clamp(0.875rem, min(2.2vh, 2vw), 1.75rem);
 
   /* The caption step: 11px when the controls are 14px. */
   --timer-caption: calc(var(--timer-chrome) * 11 / 14);

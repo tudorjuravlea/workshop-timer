@@ -8,6 +8,37 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.8.0 (2026-10-24)
+
+**This release changes the size of the controls on laptops, tablets and
+projectors.** Phones are unchanged.
+
+**In the room**
+
+- The control bar, its length chips and the key hints are bigger: about a third
+  wider on a laptop (644 to 729px at 1280x720) and on a projector (820 to
+  1094px at 1920x1080), with every tap target growing with them.
+- Portrait tablets get their length chips back on one row. Since v2.7.0 the bar
+  grew with screen height alone, so a tall narrow screen got a bar wider than
+  it could hold and the chips wrapped.
+
+**For hosts**
+
+- `--timer-chrome` in `timer.css` is now
+  `clamp(0.875rem, min(2.2vh, 2vw), 1.75rem)`: it grows with height, is capped
+  by width, and its ceiling is 28px. `--timer-caption` and `--timer-measure`
+  follow it. The v2.7.0 note said nothing under about 850px tall would change;
+  laptops at 720 to 800px tall now do.
+- Measured at nine viewports from 390x844 to 1920x1080: the chips are on one
+  row everywhere except a phone, which keeps its two rows exactly as before.
+- The README pictures are re-shot (the bar is bigger at the 1280x720 they are
+  taken at); `remote.png` is kept, since phones are unchanged.
+- Known, and older than this release: on screens 720 to 800px tall the pairing
+  receipt, pinned below the bar, reaches the digits while it is out. It already
+  overlapped by 4px at 1280x720 in v2.7.2; the bigger bar makes that 13px.
+- Files changed: `timer.css`. Nothing moved or renamed; no props, no
+  dependencies.
+
 ## v2.7.2 (2026-10-24)
 
 **In the room**
