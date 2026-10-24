@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workshop Timer · A free countdown timer for workshops and trainings</title>
+<meta name="description" content="A free, open-source workshop countdown timer for facilitators and trainers, with a phone remote. Projector-sized and white-label: set it up with Claude, Codex, Gemini or Antigravity, or with npm, and give it your logo, colours and fonts.">
+<link rel="canonical" href="https://tudorjuravlea.github.io/workshop-timer/">
+<meta name="theme-color" content="#fafafa">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Workshop Timer">
+<meta property="og:title" content="Workshop Timer · A free countdown timer for workshops and trainings">
+<meta property="og:description" content="A free, open-source workshop countdown timer for facilitators and trainers, with a phone remote. Projector-sized and white-label: set it up with Claude, Codex, Gemini or Antigravity, or with npm, and give it your logo, colours and fonts.">
+<meta property="og:url" content="https://tudorjuravlea.github.io/workshop-timer/">
+<meta property="og:image" content="https://tudorjuravlea.github.io/workshop-timer/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="600">
+<meta property="og:image:alt" content="The Workshop Timer dial beside the line: a workshop countdown timer with a phone remote.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Workshop Timer · A free countdown timer for workshops and trainings">
+<meta name="twitter:description" content="A free, open-source workshop countdown timer for facilitators and trainers, with a phone remote. Projector-sized and white-label: set it up with Claude, Codex, Gemini or Antigravity, or with npm, and give it your logo, colours and fonts.">
+<meta name="twitter:image" content="https://tudorjuravlea.github.io/workshop-timer/assets/social-card.png">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "SoftwareApplication",
+   "name": "Workshop Timer",
+   "url": "https://tudorjuravlea.github.io/workshop-timer/",
+   "description": "A free, open-source workshop countdown timer for facilitators and trainers, with a phone remote. Projector-sized and white-label: set it up with Claude, Codex, Gemini or Antigravity, or with npm, and give it your logo, colours and fonts.",
+   "applicationCategory": "BusinessApplication",
+   "operatingSystem": "Any (runs in a web browser)",
+   "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+   },
+   "license": "https://opensource.org/licenses/MIT",
+   "image": "https://tudorjuravlea.github.io/workshop-timer/assets/social-card.png",
+   "author": {
+    "@type": "Person",
+    "name": "Tudor Juravlea",
+    "sameAs": [
+     "https://www.linkedin.com/in/tudorjuravlea/"
+    ]
+   },
+   "sameAs": [
+    "https://github.com/tudorjuravlea/workshop-timer"
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Is it really free?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. It is open source under the MIT licence: use it, change it, and use it for paid work, with no account and no subscription."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I need to know how to code?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. Paste the prompt from the Install section into Claude, Codex, Gemini CLI or Antigravity and the assistant does the setup. If you would rather type, it is three commands."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Which AI assistants work?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Any assistant that can work in a folder on your computer: the Claude desktop app's Code tab, Claude Code, Codex, Gemini CLI and Antigravity."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can I put it on my own website?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. It needs a Node host such as Railway, Render, Fly or a small server, because the phone remote runs through it. Run exactly one copy, since live pairings are kept in memory."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Will it lose time if I switch windows?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. It counts down to a deadline and recomputes from the wall clock every tick, so a background tab cannot slow it."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can I turn the sound off?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, with the sound button. Movement also stops for anyone whose device asks for reduced motion."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How do I add my logo and fonts?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Both go in the brand file next to your colours. Copy brands/example.json to see every field, or ask your assistant to make one for you."
+     }
+    }
+   ]
+  }
+ ]
+}
+</script>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Portfolio tokens, copied as-is */
+  :root {
+    --paper: #fafafa; --paper-2: #efefed; --ink: #1e1e1e; --ink-soft: #616161; --ink-heading: #121212;
+    --line: rgba(30,30,30,.13); --line-strong: rgba(30,30,30,.32);
+    --forest: #121212; --paper-on-dark: #f3f3f1; --soft-on-dark: rgba(243,243,241,.66); --line-on-dark: rgba(243,243,241,.14);
+    --dark-grad: linear-gradient(315deg, #3a3a3a -10%, #242424 82%);
+    --shadow-smooth: 0 .8px .5px rgba(0,0,0,.08), 0 2px 1.2px rgba(0,0,0,.08), 0 3.6px 2.2px rgba(0,0,0,.08), 0 6px 3.6px rgba(0,0,0,.08), 0 9.7px 5.8px rgba(0,0,0,.08), 0 16px 9.6px rgba(0,0,0,.08), 0 27.5px 16.5px rgba(0,0,0,.08), 0 50px 30px rgba(0,0,0,.08);
+    --shadow-whisper: 0 1px 2px rgba(24,27,16,.04), 0 4px 18px rgba(24,27,16,.05);
+    --accent: #cdff38; --on-accent: #121212;
+    --accent-lift: color-mix(in srgb, var(--accent) 70%, #fff);
+    --accent-deep: color-mix(in srgb, var(--accent) 45%, #000);
+    --font: "Satoshi", -apple-system, sans-serif; --serif: "Instrument Serif", serif; --mono: "JetBrains Mono", Menlo, monospace;
+    --r-card: 24px; --r-media: 12px; --r-btn: 10px; --r-pill: 999px;
+    --max-w: 1160px; --gutter: clamp(20px, 4vw, 48px);
+    --ease-out: cubic-bezier(.22,.61,.36,1);
+    /* The timer's own brand, live-swappable */
+    --t-accent: #cdff38;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--gutter); }
+  .serif { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
+  .mono { font-family: var(--mono); }
+  .eyebrow { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); }
+
+  /* dotted canvas + lime blooms, as the portfolio header */
+  .canvas { position: relative; overflow: hidden;
+    background-image: radial-gradient(color-mix(in srgb, var(--accent-deep) 25%, transparent) 1px, transparent 1px);
+    background-size: 12px 12px; }
+  .canvas::after { content: ""; position: absolute; inset: auto -10% -30% -10%; height: 60%;
+    background: radial-gradient(50% 60% at 15% 100%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%),
+                radial-gradient(45% 60% at 90% 100%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 70%);
+    pointer-events: none; }
+
+  .btn-dark { display: inline-flex; align-items: center; gap: 12px; background: var(--forest); color: #fff; font-weight: 500; font-size: 15px;
+    padding: 6px 6px 6px 18px; border-radius: var(--r-pill); text-decoration: none; white-space: nowrap; }
+  .disc { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-weight: 700; }
+  .btn-ghost { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line-strong); color: var(--ink);
+    padding: 11px 16px; border-radius: var(--r-pill); font-size: 14px; }
+  .btn-ghost .copy { font-family: var(--font); font-size: 12px; font-weight: 700; color: var(--ink-soft); border-left: 1px solid var(--line); padding-left: 10px; }
+
+  /* hero */
+  .hero { display: grid; grid-template-columns: 1fr 1.08fr; gap: 56px; align-items: center; padding: 72px 0 96px; position: relative; z-index: 1; }
+  h1 { font-size: clamp(2.5rem, 5.6vw, 4.6rem); line-height: 1.02; font-weight: 500; letter-spacing: -.035em; color: var(--ink-heading); }
+  h1 .serif { font-size: 1.08em; }
+  .lead { margin-top: 22px; font-size: 18px; line-height: 1.55; color: var(--ink-soft); max-width: 40ch; }
+  .ctas { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* role cursors, the portfolio signature */
+  .cursor { position: absolute; display: flex; align-items: flex-start; gap: 2px; z-index: 3; animation: drift 7s var(--ease-out) infinite alternate; }
+  .cursor span { background: var(--forest); color: #fff; font-size: 12px; font-weight: 500; padding: 4px 9px; border-radius: 7px; margin-top: 14px; box-shadow: var(--shadow-whisper); }
+  .cursor.lime span { background: var(--accent); color: var(--on-accent); }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(10px,-8px); } }
+
+  /* the room: dark-grad card holding the live timer */
+  .room { position: relative; border-radius: var(--r-card); background: var(--dark-grad); box-shadow: var(--shadow-smooth); aspect-ratio: 16 / 11;
+    overflow: hidden; color: #fff; }
+  .room::before { content: ""; position: absolute; width: 70%; height: 70%; left: -15%; top: 20%; background: radial-gradient(circle, rgba(58,43,38,.7), transparent 65%); }
+  .room-label { position: absolute; left: 24px; top: 20px; font-size: 11px; font-weight: 700; letter-spacing: .16em; color: rgba(255,255,255,.7); }
+  .room-live { position: absolute; right: 18px; top: 16px; font-family: var(--mono); font-size: 11px; color: rgba(255,255,255,.6); display: flex; gap: 6px; align-items: center; }
+  .room-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--t-accent); animation: pulse 1s steps(2) infinite; }
+  @keyframes pulse { 50% { opacity: .25; } }
+  .stage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4%; padding-top: 3%; }
+  #dial { width: 58%; filter: drop-shadow(0 20px 50px rgba(0,0,0,.35)); }
+  #dial .wedge { fill: var(--t-accent); transition: fill .5s; }
+  .digits { font-weight: 900; font-size: clamp(30px, 4.2vw, 54px); letter-spacing: -.01em; color: var(--t-accent); font-variant-numeric: tabular-nums; transition: color .5s; line-height: 1; }
+  .digits b { font-weight: 900; padding: 0 .08em; position: relative; top: -.06em; }
+  .keys { font-size: 10px; font-weight: 700; letter-spacing: .14em; color: rgba(255,255,255,.55); display: flex; gap: 22px; }
+  .keys em { font-style: normal; color: #fff; }
+
+  .swatches { margin-top: 16px; display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+  .swatches .eyebrow { margin-right: 4px; }
+  .sw { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line-strong); cursor: pointer; transition: transform .15s; }
+  .sw:hover { transform: scale(1.12); }
+  .sw.on { box-shadow: 0 0 0 2px var(--ink); }
+
+  /* works-with strip (the portfolio's "trusted by" row) */
+  .strip { position: relative; z-index: 1; border-top: 1px solid var(--line); padding: 26px 0 30px; text-align: center; }
+  .strip .row { margin-top: 14px; display: flex; justify-content: center; gap: 48px; font-weight: 700; font-size: 17px; color: #9a9a9a; }
+
+  /* bento: two ways in */
+  section.ways { padding: 112px 0; }
+  h2 { font-size: clamp(2rem, 4.2vw, 3.25rem); line-height: 1.05; font-weight: 500; letter-spacing: -.03em; color: var(--ink-heading); }
+  .sub { margin-top: 14px; font-size: 18px; color: var(--ink-soft); max-width: 56ch; line-height: 1.55; }
+  .bento { margin-top: 48px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; }
+  .card { border-radius: var(--r-card); background: #fff; border: 1px solid var(--line); padding: 28px; box-shadow: var(--shadow-whisper); }
+  .card.dark { background: var(--dark-grad); color: var(--paper-on-dark); border: 0; box-shadow: var(--shadow-smooth); }
+  .card h3 { font-size: 24px; font-weight: 500; letter-spacing: -.02em; margin-top: 10px; }
+  .card.dark .eyebrow { color: var(--accent-lift); }
+  .tabs { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tab { font-size: 13px; font-weight: 500; padding: 7px 12px; border-radius: var(--r-pill); border: 1px solid var(--line-on-dark); color: var(--soft-on-dark); cursor: pointer; }
+  .tab.on { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .where { margin-top: 18px; font-size: 14px; color: var(--soft-on-dark); line-height: 1.5; }
+  .where b { color: #fff; font-weight: 500; }
+  .prompt { margin-top: 12px; border-radius: 14px; background: rgba(0,0,0,.28); border: 1px solid var(--line-on-dark); padding: 16px 18px; font-family: var(--mono); font-size: 13.5px; line-height: 1.65; color: #fff; position: relative; }
+  .prompt .copybtn { position: absolute; right: 10px; bottom: 10px; font-family: var(--font); font-size: 12px; font-weight: 700; background: var(--accent); color: var(--on-accent); padding: 6px 10px; border-radius: 8px; }
+  .steps { margin-top: 20px; display: grid; gap: 10px; }
+  .step { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+  .num { width: 30px; height: 30px; border-radius: 50%; background: var(--paper-2); display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+  .step p { font-size: 14px; color: var(--ink-soft); margin-bottom: 6px; }
+  .cmd { font-family: var(--mono); font-size: 13px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; color: var(--ink); }
+  .note { margin-top: 16px; font-size: 13px; color: var(--ink-soft); }
+  .annot { margin-top: 40px; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); border: 1px dashed var(--line-strong); border-radius: 12px; padding: 14px 16px; line-height: 1.6; }
+  html { scroll-behavior: smooth; }
+  section[id] { scroll-margin-top: 96px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  .band { padding: 120px 0; }
+  .band.alt { background: var(--paper-2); }
+  .head { max-width: 760px; }
+  .grid3 { margin-top: 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid2 { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card p.body { margin-top: 10px; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+  .card.dark p.body { color: var(--soft-on-dark); }
+  .shot { margin-top: 20px; border-radius: var(--r-media); overflow: hidden; border: 1px solid var(--line); }
+  .shot img { display: block; width: 100%; height: auto; }
+  .card.dark .shot { border-color: var(--line-on-dark); }
+  .span2 { grid-column: span 2; }
+  .big { font-size: 40px; font-weight: 500; letter-spacing: -.03em; color: var(--accent-lift); margin-top: 6px; }
+
+  /* customise */
+  .code { margin-top: 14px; font-family: var(--mono); font-size: 13px; line-height: 1.7; background: var(--forest); color: #e9e9e6; border-radius: 12px; padding: 14px 16px; overflow-x: auto; white-space: pre; }
+  .code .c { color: #8a8a8a; }
+  .code .k { color: var(--accent); }
+  .rules { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* use */
+  .flow { margin-top: 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: f; }
+  .flow .card { position: relative; padding-top: 64px; }
+  .flow .card::before { counter-increment: f; content: counter(f, decimal-leading-zero); position: absolute; top: 24px; left: 28px; font-family: var(--mono); font-size: 13px; color: var(--ink-soft); }
+  .kbd { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 8px; border-radius: 8px; background: #fff; border: 1px solid var(--line-strong); box-shadow: 0 2px 0 var(--line-strong); font-family: var(--mono); font-size: 12px; font-weight: 500; margin-right: 4px; }
+  .keyrow { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--ink-soft); }
+
+  /* use cases */
+  .case { display: flex; flex-direction: column; }
+  .case .tag { align-self: flex-start; font-family: var(--mono); font-size: 12px; background: var(--accent); color: var(--on-accent); padding: 4px 10px; border-radius: var(--r-pill); }
+  .case h3 { margin-top: 16px; }
+  .case .len { margin-top: auto; padding-top: 18px; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+  .case .len b { color: var(--ink); font-weight: 500; }
+
+  /* faq */
+  .faq { margin-top: 40px; border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 0; font-size: 20px; font-weight: 500; letter-spacing: -.01em; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--paper-2); display: grid; place-items: center; font-size: 18px; transition: transform .2s var(--ease-out), background .2s; }
+  .faq details[open] summary::after { transform: rotate(45deg); background: var(--accent); }
+  .faq details p { padding: 0 0 28px; font-size: 18px; line-height: 1.7; color: var(--ink); max-width: none; letter-spacing: .005em; }
+  .faq code { font-family: var(--mono); font-size: .88em; background: #fff; border: 1px solid var(--line); padding: 1px 7px; border-radius: 6px; color: var(--ink-heading); }
+
+  /* footer: the portfolio's dark chapter */
+  footer { background: var(--dark-grad); color: var(--paper-on-dark); padding: 96px 0 40px; }
+  footer h2 { color: var(--paper-on-dark); }
+  footer .row2 { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line-on-dark); display: flex; justify-content: space-between; font-size: 14px; color: var(--soft-on-dark); }
+  footer .ctas { margin-top: 28px; }
+  footer .btn-ghost { background: transparent; color: #fff; border-color: var(--line-on-dark); }
+
+  /* laptop + browser frame around the live timer */
+  .laptop { position: relative; filter: drop-shadow(0 40px 50px rgba(0,0,0,.22)); }
+  .lid { position: relative; background: #0f0f10; border-radius: 18px 18px 6px 6px; padding: 16px 14px 18px; box-shadow: inset 0 0 0 1.5px #3a3a3c, inset 0 0 0 3px #0f0f10; }
+  .cam { position: absolute; top: 6px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: #2b2d33; box-shadow: inset 0 0 0 1px #1a1b1f; }
+  .browser { border-radius: 6px; overflow: hidden; background: #1c1c1e; }
+  .chrome { display: flex; align-items: center; gap: 12px; height: 30px; padding: 0 12px; background: #2a2a2d; border-bottom: 1px solid #000; }
+  .lights { display: flex; gap: 6px; }
+  .lights i { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; }
+  .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+  .url { flex: 1; max-width: 300px; margin: 0 auto; height: 20px; border-radius: 6px; background: #1c1c1e; color: rgba(255,255,255,.62); font-family: var(--mono); font-size: 10.5px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .tabdot { width: 51px; }
+  .laptop .room { border-radius: 0; box-shadow: none; aspect-ratio: 16 / 10; }
+  .base { position: relative; height: 16px; margin: 0 -7%; background: linear-gradient(#d6d6d8, #a9a9ad 70%, #8d8d92); border-radius: 2px 2px 14px 14px / 2px 2px 10px 10px; }
+  .base .notch { position: absolute; top: 0; left: 50%; width: 16%; height: 6px; transform: translateX(-50%); background: #b9b9bd; border-radius: 0 0 8px 8px; box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
+  .swatches { margin-top: 26px; }
+  .laptop #dial { width: 50%; }
+  .canvas { padding-top: 76px; }
+  .laptop .stage { gap: 3.5%; padding-top: 0; }
+
+  /* menu button, phones only */
+  .cmd { overflow-wrap: anywhere; }
+  .bento > *, .grid2 > *, .grid3 > *, .flow > *, .hero > * { min-width: 0; }
+  html, body { overflow-x: clip; }
+
+  @media (max-width: 1000px) {
+    .hero { grid-template-columns: 1fr; gap: 48px; padding: 56px 0 72px; }
+    .lead { max-width: 52ch; }
+    .bento, .grid2 { grid-template-columns: 1fr; }
+    .grid3 { grid-template-columns: 1fr 1fr; }
+    .flow { grid-template-columns: 1fr 1fr; }
+    .rules { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+  }
+  @media (max-width: 760px) {
+    .cursor { display: none; }
+    .band { padding: 80px 0; }
+    section.ways { padding: 80px 0; }
+    .grid3, .flow { grid-template-columns: 1fr; }
+    .span2 { grid-column: auto; }
+    .card { padding: 22px; }
+    .strip .row { flex-wrap: wrap; gap: 14px 26px; font-size: 15px; }
+    .keys { gap: 10px; font-size: 7px; letter-spacing: .1em; }
+    .room-label { left: 14px; top: 12px; font-size: 8px; }
+    .base { margin: 0 -4%; height: 12px; }
+    .lid { padding: 10px 8px 12px; border-radius: 14px 14px 5px 5px; }
+    .chrome { height: 24px; gap: 8px; padding: 0 8px; }
+    .lights i { width: 7px; height: 7px; }
+    .url { font-size: 9.5px; height: 17px; }
+    .tabdot { display: none; }
+    .faq summary { font-size: 18px; }
+    .faq details p { font-size: 17px; }
+    footer .row2 { flex-direction: column; gap: 8px; }
+    .ctas .btn-dark, .ctas .btn-ghost { justify-content: center; }
+  }
+
+  /* phone in front of the laptop, showing the remote */
+  .devices { position: relative; padding-bottom: 6%; }
+  .phone { position: absolute; right: -5%; bottom: 0; width: 27%; aspect-ratio: 9 / 19.5; z-index: 4; container-type: inline-size;
+    background: #0b0b0c; border-radius: 15% / 7%; padding: 3.2%; box-shadow: inset 0 0 0 1.5px #3b3b3e, 0 30px 50px -10px rgba(0,0,0,.45), 0 8px 18px rgba(0,0,0,.25); }
+  .ph-screen { position: relative; height: 100%; border-radius: 12% / 5.6%; overflow: hidden; background: linear-gradient(#1d1d20, #0c0c0e); color: #fff;
+    padding: 18cqw 6cqw 6cqw; display: flex; flex-direction: column; font-family: var(--font); }
+  .ph-island { position: absolute; top: 3.5cqw; left: 50%; width: 30cqw; height: 8.5cqw; transform: translateX(-50%); background: #000; border-radius: 99px; }
+  .ph-top { display: flex; justify-content: space-between; align-items: center; font-size: 5.2cqw; }
+  .ph-top span { display: flex; align-items: center; gap: 2.4cqw; color: rgba(255,255,255,.82); }
+  .ph-top i { width: 3.4cqw; height: 3.4cqw; border-radius: 50%; background: #fff; }
+  .ph-top b { font-weight: 900; letter-spacing: .02em; }
+  .ph-label { margin-top: 5cqw; font-size: 4.2cqw; font-weight: 700; letter-spacing: .14em; color: rgba(255,255,255,.55); }
+  .ph-grid { margin-top: 2.6cqw; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5cqw; }
+  .ph-grid .p { display: grid; place-items: center; height: 12cqw; border: 1px solid rgba(255,255,255,.18); font-size: 5.4cqw; font-weight: 900; }
+  .ph-grid .p.on { background: #fbfbf9; color: #15181d; border-color: #fbfbf9; }
+  .ph-grid .p.plus { grid-column: span 3; background: #3a3a3c; }
+  .ph-digits { margin: auto 0; text-align: center; font-weight: 900; font-size: 21cqw; letter-spacing: -.02em; color: var(--t-accent); font-variant-numeric: tabular-nums; line-height: 1; }
+  .ph-digits b { font-weight: 900; position: relative; top: -.06em; padding: 0 .04em; }
+  .ph-actions { display: grid; grid-template-columns: 1.8fr 1fr; gap: 3cqw; }
+  .ph-start { height: 22cqw; display: flex; align-items: center; justify-content: center; gap: 2.5cqw; background: #fbfbf9; color: #15181d; font-weight: 900; font-size: 7cqw; }
+  .ph-reset { height: 22cqw; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5cqw; border: 1px solid rgba(255,255,255,.25); font-weight: 900; font-size: 5.6cqw; }
+  .ph-reset svg { font-size: 7cqw; }
+  @media (max-width: 760px) { .phone { right: -2%; width: 29%; } }
+
+  /* mouse parallax: the phone is "closer", so it travels further than the laptop */
+  .devices { --px: 0; --py: 0; }
+  .laptop { transform: translate(calc(var(--px) * -10px), calc(var(--py) * -7px)); }
+  .phone { transform: translate(calc(var(--px) * 26px), calc(var(--py) * 18px)) rotate(calc(var(--px) * 1.5deg)); }
+
+  .c-fac { left: 100%; top: -6px; margin-left: -6px; z-index: 6; }
+  .c-aud { left: 30%; bottom: -22px; z-index: 6; animation-delay: -3s; }
+  /* No room past the phone on narrower screens: mirror the tag so it points at the same corner from inside. */
+  @media (max-width: 1000px) {
+    .phone { right: -2%; }
+    .c-fac { left: auto; right: 2px; margin-left: 0; flex-direction: row-reverse; }
+    .c-fac svg { transform: scaleX(-1); }
+  }
+
+  /* assistant names with their marks: grey like the rest of the strip, own colour on hover */
+  .strip .row { align-items: center; }
+  .ai { display: inline-flex; align-items: center; gap: 9px; white-space: nowrap; transition: color .2s; }
+  .ai svg { width: 22px; height: 22px; flex: none; }
+  .ai:hover { color: var(--b); }
+  @media (max-width: 760px) { .ai svg { width: 18px; height: 18px; } .ai { gap: 7px; } }
+
+  /* ---------- nav: copied from the portfolio (Portfolio/site/src/styles/base.css) ---------- */
+  :root { --nav-h: 76px; --z-nav: 200; --s-2: 8px; --s-4: 16px; --s-5: 24px; --text-body: 1rem; --text-lead: 1.125rem; --text-ui: .875rem; --t-hover-exit: 200ms; }
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-nav);
+    background: color-mix(in oklab, var(--paper) 86%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line); color: var(--ink);
+    transition: background-color 250ms var(--ease-out), border-color 250ms var(--ease-out); }
+  .nav-inner { width: 100%; max-width: var(--max-w); margin-inline: auto; padding-inline: var(--gutter); height: var(--nav-h);
+    display: flex; align-items: center; gap: var(--s-5); border: 1px solid transparent; border-radius: 0;
+    transition: width 450ms cubic-bezier(0.3,1.16,0.6,1), height 450ms cubic-bezier(0.3,1.16,0.6,1), margin 450ms cubic-bezier(0.3,1.16,0.6,1),
+      padding 450ms cubic-bezier(0.3,1.16,0.6,1), border-radius 450ms cubic-bezier(0.3,1.16,0.6,1),
+      background-color 300ms var(--ease-out), border-color 300ms var(--ease-out), box-shadow 450ms var(--ease-out); }
+  .nav.scrolled { background: transparent; border-bottom-color: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .nav.scrolled .nav-inner { width: calc(min(var(--max-w), 100%) - 2 * var(--gutter) + 2px); height: 56px; margin-top: 10px; padding-inline: 1px;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-color: var(--line); border-radius: 28px; box-shadow: 0 10px 30px -8px rgba(18,18,18,.12); }
+  .nav-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; font-weight: 700; white-space: nowrap; }
+  .nav-brand-mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; background: var(--accent); overflow: hidden;
+    transition: width 450ms cubic-bezier(0.3,1.16,0.6,1), height 450ms cubic-bezier(0.3,1.16,0.6,1); }
+  .nav.scrolled .nav-brand-mark { width: 52px; height: 52px; }
+  .nav-brand-mark svg { width: 55%; height: 55%; }
+  .nav-links { flex: 1; display: flex; justify-content: space-evenly; gap: var(--s-4); }
+  .nav-links a { text-decoration: none; font-size: var(--text-body); font-weight: 500; color: var(--ink-heading);
+    transition: color var(--t-hover-exit) var(--ease-out), font-size 450ms cubic-bezier(0.3,1.16,0.6,1); }
+  .nav.scrolled .nav-links a { font-size: var(--text-lead); }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--ink); font-weight: 600; }
+  .nav-cta { --disc: 44px; position: relative; overflow: hidden; text-decoration: none; white-space: nowrap; font-size: var(--text-body); font-weight: 500;
+    display: inline-flex; align-items: center; gap: 12px; height: 52px; padding: 0 3px 0 22px; border-radius: 999px; border: 1px solid transparent;
+    background: var(--ink); color: var(--paper);
+    transition: height 450ms cubic-bezier(0.3,1.16,0.6,1), padding 450ms cubic-bezier(0.3,1.16,0.6,1), gap 450ms cubic-bezier(0.3,1.16,0.6,1),
+      color 300ms var(--ease-out), border-color var(--t-hover-exit) var(--ease-out); }
+  .nav-cta::before { content: ''; position: absolute; top: 50%; right: 3px; width: var(--disc); height: var(--disc); border-radius: 999px; background: var(--accent);
+    transform: translateY(-50%); transition: transform 300ms var(--ease-out), width 450ms cubic-bezier(0.3,1.16,0.6,1), height 450ms cubic-bezier(0.3,1.16,0.6,1); }
+  .nav-cta:hover { color: var(--on-accent); border-color: var(--accent); }
+  .nav-cta:hover::before { transform: translateY(-50%) scale(12); }
+  .nav-cta:hover .nav-cta-label { font-weight: 700; }
+  .nav-cta-label, .nav-cta-disc { position: relative; z-index: 1; }
+  .nav-cta-disc { display: grid; place-items: center; width: var(--disc); height: var(--disc); border-radius: 999px; background: var(--accent); color: var(--on-accent);
+    transition: width 450ms cubic-bezier(0.3,1.16,0.6,1), height 450ms cubic-bezier(0.3,1.16,0.6,1); }
+  .nav-cta-disc svg { width: 20px; height: 20px; }
+
+  /* Content lines up with the logo's left edge and the button's right edge: those sit 1px inside the bar's border. */
+  .wrap { padding-inline: calc(var(--gutter) + 1px); }
+  /* The phone used to hang past the content's right edge; now the laptop steps in and the phone ends on the edge. */
+  .laptop { width: 94%; }
+  .base { margin-inline: -6%; }
+  .phone, .devices .phone { right: 0; }
+  @media (max-width: 1000px) { .devices .phone { right: 0; } .laptop { width: 88%; margin-left: 5.5%; } }
+  @media (max-width: 760px) { .devices .phone { right: 0; } .base { margin-inline: -4%; } }
+
+  /* Five links do not fit a phone, so below 900px they fold behind a menu button (the portfolio has three and keeps them). */
+  .menu-btn { display: none; flex: none; width: 52px; height: 52px; border: 0; border-radius: 50%; background: var(--paper-2); cursor: pointer;
+    flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--ink); border-radius: 2px; transition: transform .2s var(--ease-out); }
+  .nav.open .menu-btn span:first-child { transform: translateY(3.5px) rotate(45deg); }
+  .nav.open .menu-btn span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+  @media (max-width: 900px) {
+    .nav-inner { gap: var(--s-2); }
+    .nav-brand { margin-right: auto; }
+    .nav-links { display: none; }
+    .nav-cta-label { display: none; }
+    .nav-cta { padding: 0 3px; }
+    .menu-btn { display: flex; }
+    .nav.open { background: var(--paper); }
+    .nav.open .nav-links { display: flex; flex-direction: column; position: absolute; left: 0; right: 0; top: 100%; gap: 0;
+      background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: 0 24px 40px -20px rgba(18,18,18,.18); padding: 8px calc(var(--gutter) + 1px) 16px; }
+    .nav.open .nav-links a { font-size: var(--text-lead); padding: 12px 0; }
+    .nav.scrolled.open .nav-links { top: calc(100% + 8px); left: calc(var(--gutter) - 1px); right: calc(var(--gutter) - 1px); border: 1px solid var(--line); border-radius: 24px; padding: 8px 22px 16px; }
+  }
+
+  /* the hero line under the headline: two set lines on wide screens, normal wrapping on narrow ones */
+  .lead .ln { display: block; }
+  .hero .lead { max-width: none; }
+  @media (max-width: 760px) { .lead .ln { display: inline; } }
+
+  /* the shout always starts its own line, under "Stop shouting" */
+  h1 .shout { display: block; }
+  /* two set rows, like the hero line; the head column is widened so the longer row fits */
+  #why .head { max-width: none; }
+  .sub.two-rows { max-width: none; }
+  .sub.two-rows .ln { display: block; }
+  @media (max-width: 900px) { .sub.two-rows .ln { display: inline; } }
+  /* these two rows are short enough to stay set on tablets; phones still flow them */
+  @media (min-width: 761px) and (max-width: 900px) { .sub.two-rows.short .ln { display: block; } }
+
+  /* Why: four black step cards with a picture each */
+  .steps4 .card { display: flex; flex-direction: column; }
+  .steps4 .card::before { color: var(--accent-lift); }
+  .steps4 h3 { margin-top: 0; }
+  .steps4 .body { margin-bottom: 20px; }
+  .vis { margin-top: auto; aspect-ratio: 4 / 3; border-radius: var(--r-media); overflow: hidden; background: #0d0d0f; border: 1px solid var(--line-on-dark); }
+  .vis > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .term { height: 100%; display: flex; flex-direction: column; background: #111113; }
+  .term-bar { height: 22px; display: flex; align-items: center; padding: 0 9px; background: #1d1d20; border-bottom: 1px solid #000; }
+  .term .lights i, .mini-browser .lights i { width: 7px; height: 7px; }
+  .term-body { padding: 10px 12px; font-family: var(--mono); font-size: 10.5px; line-height: 1.5; display: grid; gap: 3px; align-content: start; overflow-wrap: anywhere; }
+  .term-body .u { color: #fff; }
+  .term-body .a { color: rgba(255,255,255,.5); }
+  .term-body .ok { color: var(--accent); }
+  .mini-browser { height: 100%; display: flex; flex-direction: column; }
+  .mini-browser .chrome { height: 22px; padding: 0 8px; gap: 6px; flex: none; }
+  .mini-browser .url { height: 15px; font-size: 8.5px; max-width: 70%; gap: 4px; }
+  .mini-browser .url svg { width: 7px; height: 7px; }
+  .mini-browser img { flex: 1; min-height: 0; width: 100%; object-fit: cover; display: block; }
+  .vis-phone { display: grid; place-items: start center; padding-top: 16px; background: radial-gradient(80% 70% at 50% 100%, #2a2a2d, #0d0d0f); }
+  .phone.mini { position: relative; right: auto; bottom: auto; width: 62%; transform: none; box-shadow: inset 0 0 0 1.5px #3b3b3e, 0 -10px 30px rgba(0,0,0,.4); }
+  .phone.mini .cursor { display: none; }
+
+  /* copy buttons are real buttons now */
+  .prompt .copybtn { border: 0; cursor: pointer; transition: background .15s, transform .1s; }
+  .prompt .copybtn:hover { background: var(--accent-lift); }
+  .prompt .copybtn:active { transform: scale(.96); }
+  .prompt .copybtn.done { background: #fff; }
+  .prompt { padding-bottom: 52px; }
+  .prompt-tall { min-height: 190px; font-size: 15px; line-height: 1.7; padding: 22px 22px 60px; }
+
+  /* copy buttons inside the command boxes */
+  .cmd { display: flex; align-items: center; gap: 10px; }
+  .cmd-text { flex: 1; min-width: 0; }
+  .cmd .copybtn { flex: none; border: 0; cursor: pointer; font-family: var(--font); font-size: 12px; font-weight: 700; padding: 5px 9px; border-radius: 7px;
+    background: var(--accent); color: var(--on-accent); transition: background .15s, transform .1s; }
+  .cmd .copybtn:hover { background: var(--accent-hot, var(--accent)); }
+  .cmd .copybtn:active { transform: scale(.96); }
+  .cmd .copybtn.done { background: var(--ink); color: #fff; }
+
+  /* brand rules: three cards, each with a small picture of the rule */
+  .rules-head { margin-top: 56px; }
+  .rules { margin-top: 16px; }
+  .rule-card { background: #fff; border: 1px solid var(--line); border-radius: var(--r-card); padding: 14px 14px 24px; box-shadow: var(--shadow-whisper); display: flex; flex-direction: column; }
+  .rule-card b { display: block; margin: 8px 10px 0; font-size: 19px; font-weight: 500; letter-spacing: -.01em; line-height: 1.3; color: var(--ink-heading); }
+  .rule-body { display: block; margin: 8px 10px 0; font-size: 15px; color: var(--ink-soft); line-height: 1.55; }
+  .rule-n { align-self: flex-start; margin: 18px 10px 0; font-family: var(--mono); font-size: 12px; padding: 3px 9px; border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); }
+  .rule-vis { height: 168px; border-radius: 16px; background: var(--paper-2); overflow: hidden; }
+  .rule-vis.two { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px; }
+  .tile { position: relative; border-radius: 11px; background: var(--g); display: grid; place-items: center; }
+  .mini-dial { width: 72px; height: 72px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.22)); }
+  .tile { box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+  .dig { font-weight: 900; font-size: 30px; letter-spacing: -.01em; font-variant-numeric: tabular-nums; line-height: 1; padding: 6px 10px; border-radius: 10px; }
+  .dig.plate { background: #fbfbf9; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+  .verdict { position: absolute; left: 8px; right: 8px; bottom: 8px; text-align: center; font-size: 11px; font-weight: 700; padding: 4px 6px; border-radius: 7px; }
+  .verdict.ok { background: var(--accent); color: var(--on-accent); }
+  .verdict.no { background: #fff; color: #b42318; }
+  .rule-vis.chips { display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 18px 22px; }
+  .chip { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 13px; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+  .chip i { width: 16px; height: 16px; border-radius: 5px; flex: none; }
+  .chip em { margin-left: auto; font-style: normal; font-family: var(--font); font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; }
+  .chip.good em { background: var(--accent); color: var(--on-accent); }
+  .chip.bad { color: var(--ink-soft); }
+  .chip.bad em { background: #fde8e7; color: #b42318; }
+  .rules { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 1000px) { .rules { grid-template-columns: repeat(3, minmax(0, 1fr)); } .verdict { font-size: 10px; left: 5px; right: 5px; padding: 4px; } .mini-dial { width: 60px; height: 60px; } .dig { font-size: 24px; } }
+  @media (max-width: 900px) { .rules { grid-template-columns: minmax(0, 1fr); } .verdict { font-size: 11px; } .mini-dial { width: 72px; height: 72px; } .dig { font-size: 30px; } }
+
+  /* Use: four full-width step rows, picture alternating right / left */
+  .step-rows { margin-top: 48px; display: grid; gap: 20px; }
+  .step-row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r-card); padding: 28px 28px 28px 48px; box-shadow: var(--shadow-whisper); }
+  .step-row:nth-child(even) { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); padding: 28px 48px 28px 28px; }
+  .step-row:nth-child(even) .step-img { order: -1; }
+  .step-n { display: inline-block; font-family: var(--mono); font-size: 13px; padding: 4px 10px; border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); }
+  .step-row h3 { margin-top: 18px; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.08; font-weight: 500; letter-spacing: -.03em; color: var(--ink-heading); }
+  .step-row .body { margin-top: 14px; font-size: 18px; line-height: 1.55; max-width: 34ch; }
+  .step-row .keyrow { margin-top: 18px; font-size: 17px; gap: 12px; }
+  .step-img { border-radius: 16px; overflow: hidden; background: #0d0d0f; aspect-ratio: 16 / 9; }
+  .step-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 900px) {
+    .step-row, .step-row:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 22px; padding: 14px 14px 26px; }
+    .step-row .step-img, .step-row:nth-child(even) .step-img { order: -1; }
+    .step-text { padding: 0 10px; }
+  }
+
+  /* Walk the room: the phone you pair, standing in front of the screen */
+  .step-img.has-phone { position: relative; overflow: visible; }
+  .step-img.has-phone > img { border-radius: 16px; }
+  .phone.over { position: absolute; z-index: 2; right: 5%; bottom: -7%; width: 23%; transform: rotate(4deg);
+    box-shadow: inset 0 0 0 1.5px #3b3b3e, 0 24px 40px -8px rgba(0,0,0,.5), 0 8px 16px rgba(0,0,0,.25); }
+  @media (max-width: 900px) { .phone.over { width: 27%; right: 4%; bottom: -5%; } }
+
+  /* the phone in the Walk the room picture is a real capture of the remote */
+  .ph-screen.shot-screen { padding: 0; background: #101012; }
+  .ph-screen.shot-screen > img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.4); }
+  .phone.over { width: 27%; right: 4%; transform: none; }
+  @media (max-width: 900px) { .phone.over { width: 25%; right: 2%; } }
+  .ph-screen.shot-screen .ph-island { z-index: 1; }
+
+  /* the phone's on-screen keyboard (the browser capture cannot include it, so it is drawn) */
+  .ph-screen.with-kb { display: flex; flex-direction: column; }
+  .with-kb .shot-top { flex: 1; min-height: 0; overflow: hidden; }
+  .with-kb .shot-top img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; transform: scale(1.3); display: block; }
+  .ios-kb { flex: none; background: #2c2c2e; padding: 2.4cqw 1.2cqw 7cqw; display: grid; gap: 2.4cqw; }
+  .kr { display: flex; justify-content: center; gap: 1.3cqw; }
+  .kr.r2 { padding: 0 4.5cqw; }
+  .ios-kb .k { flex: 1; height: 9.6cqw; border-radius: 1.6cqw; background: #6b6b70; color: #fff; display: grid; place-items: center;
+    font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; font-size: 4.6cqw; font-weight: 400; box-shadow: 0 .4cqw 0 rgba(0,0,0,.45); }
+  .ios-kb .k.fn { background: #46464a; font-size: 3.8cqw; flex: 1.4; }
+  .ios-kb .k.w2 { flex: 2.4; }
+  .ios-kb .k.sp { flex: 5.5; font-size: 3.6cqw; }
+  .ios-kb .k.go { background: #0a84ff; }
+  .ios-kb .k.hit { background: #9a9aa0; }
+
+  /* use cases: every card the same size, whichever row it is in */
+  #use-cases .grid3 { grid-auto-rows: 1fr; }
+
+  /* footer: connect on LinkedIn, next to the credit */
+  footer .made { display: inline-flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  /* same capsule as the Star on GitHub button; a hairline so it reads on the dark footer */
+  footer .li-cta { border-color: var(--line-on-dark); }
+  footer .li-cta:hover { border-color: var(--accent); }
+  @media (max-width: 900px) { footer .li-cta { padding: 0 3px 0 22px; } footer .li-cta .nav-cta-label { display: inline; } }
+</style>
+
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#top"><span class="nav-brand-mark"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="94" fill="#121212"/><path d="M100 100 L100 20 A80 80 0 1 1 30.7 140 Z" fill="#cdff38"/></svg></span><span class="nav-brand-name">Workshop Timer</span></a>
+    <nav class="nav-links" aria-label="Main"><a href="#install">Install</a><a href="#customise">Customise</a><a href="#use">Use</a><a href="#use-cases">Use cases</a><a href="#faq">FAQ</a></nav>
+    <a class="nav-cta" href="https://github.com/tudorjuravlea/workshop-timer"><span class="nav-cta-label">Star on GitHub</span><span class="nav-cta-disc"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span></a>
+    <button class="menu-btn" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
+<div class="canvas">
+
+  <div class="wrap" style="position:relative" id="top">
+
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Free &amp; open source · for facilitators and trainers</div>
+        <h1 style="margin-top:18px">Stop shouting <span class="serif shout">“Only 2 mooore miiiiinuutees!”</span></h1>
+        <p class="lead"><span class="ln">A workshop countdown timer for facilitators and trainers,</span> <span class="ln">with a phone remote. Adapt it to your brand.</span></p>
+        <div class="ctas">
+          <a class="btn-dark" href="#install">Make it yours <span class="disc">↓</span></a>
+          <a class="btn-ghost" href="https://productmakers.ro/timer.html" style="text-decoration:none">Try it live ↗</a>
+        </div>
+      </div>
+      <div>
+        <div class="devices"><div class="cursor lime c-aud"><svg width="16" height="18" viewBox="0 0 16 18"><path d="M1 1l13 7-6 1.5L5 16z" fill="#121212"/></svg><span>Audience</span></div><div class="laptop">
+          <div class="lid"><div class="cam"></div>
+            <div class="browser">
+              <div class="chrome"><span class="lights"><i></i><i></i><i></i></span><span class="url"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2.5 4.5V3a2.5 2.5 0 015 0v1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="currentColor"/></svg>yourwebsite.com/timer</span><span class="tabdot"></span></div>
+              <div class="room" id="room">
+                <div class="room-label">WORKSHOP TIMER</div>
+                <div class="stage">
+                  <svg id="dial" viewBox="0 0 200 200" aria-hidden="true"></svg>
+                  <div class="digits" id="digits">10<b>:</b>00</div>
+                  <div class="keys"><span><em>SPACE</em> START OR PAUSE</span><span><em>F</em> FULL SCREEN</span><span><em>R</em> PHONE REMOTE</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="base"><span class="notch"></span></div>
+        </div>
+        <div class="phone" aria-hidden="true"><div class="cursor c-fac"><svg width="16" height="18" viewBox="0 0 16 18"><path d="M1 1l13 7-6 1.5L5 16z" fill="#121212"/></svg><span>Facilitator</span></div><div class="ph-screen">
+          <div class="ph-island"></div>
+          <div class="ph-top"><span><i></i>Connected to the screen</span><b>K7MPX</b></div>
+          <div class="ph-label">MINUTES</div>
+          <div class="ph-grid"><span class="p">1′</span><span class="p">2′</span><span class="p">4′</span><span class="p">6′</span><span class="p">8′</span><span class="p on">10′</span><span class="p">14′</span><span class="p">20′</span><span class="p">30′</span><span class="p">40′</span><span class="p">50′</span><span class="p">60′</span><span class="p">90′</span><span class="p plus">+1′</span></div>
+          <div class="ph-digits" id="ph-digits">10<b>:</b>00</div>
+          <div class="ph-actions"><span class="ph-start">Pause <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg></span><span class="ph-reset"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset</span></div>
+        </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip wrap">
+    <div class="eyebrow">Set it up with the assistant you already use</div>
+    <div class="row"><span class="ai" style="--b:#D97757"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg>Claude</span><span class="ai" style="--b:#121212"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4" width="19" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 9.5l3 2.5-3 2.5M12.5 15H17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Claude Code</span><span class="ai" style="--b:#121212"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"/></svg>Codex</span><span class="ai" style="--b:#8E75B2"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg>Gemini CLI</span><span class="ai" style="--b:#4285F4" title="Placeholder until an official mark is sourced"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M4 20c0-6 3.6-14 8-14s8 8 8 14"/></svg>Antigravity</span><span class="ai mono" style="--b:#CB3837;font-weight:500"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456L12.04 19.17H5.113z"/></svg>npm</span></div>
+  </div>
+</div>
+
+<!-- WHY -->
+<section class="band" id="why"><div class="wrap">
+  <div class="head"><div class="eyebrow">Why I built this timer</div>
+  <h2 style="margin-top:14px">Stop paying for timers. <span class="serif">Free yourself.</span></h2>
+  <p class="sub two-rows"><span class="ln">Most software and desk timers are either paid, ad supported or plain ugly. They don't look yours.</span> <span class="ln">They also keep you staring at the timer, instead of paying attention to your participants.</span></p></div>
+  <div class="flow steps4">
+    <div class="card dark"><h3>Get it with your AI</h3><p class="body">Paste one prompt into Claude, Codex, Gemini or Antigravity. It downloads, installs and starts the timer for you.</p>
+      <div class="vis"><div class="term"><div class="term-bar"><span class="lights"><i></i><i></i><i></i></span></div><div class="term-body">
+        <p class="u">&gt; Set up the workshop timer from GitHub and start it.</p>
+        <p class="a">Cloning the repository…</p><p class="a">Installing…</p><p class="ok">✓ Timer running at localhost:3000</p></div></div></div></div>
+    <div class="card dark"><h3>Give it your logo, colors and fonts</h3><p class="body">Describe your brand in plain words, or change one small file. No code to touch.</p>
+      <div class="vis"><img src="assets/rebranded.webp" alt="The timer in cream and deep orange"></div></div>
+    <div class="card dark"><h3>Put it on your website</h3><p class="body">Host it at your own address, next to your site, so it looks like part of your event.</p>
+      <div class="vis"><div class="mini-browser"><div class="chrome"><span class="lights"><i></i><i></i><i></i></span><span class="url"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2.5 4.5V3a2.5 2.5 0 015 0v1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="currentColor"/></svg>yourwebsite.com/timer</span></div><img src="assets/at-rest.webp" alt="The timer in a browser window"></div></div></div>
+    <div class="card dark"><h3>Control it from your phone</h3><p class="body">Press R, type the five-character code on your phone, and run the clock while you walk the room.</p>
+      <div class="vis vis-phone"><div class="phone mini" aria-hidden="true"><div class="ph-screen">
+          <div class="ph-island"></div>
+          <div class="ph-top"><span><i></i>Connected to the screen</span><b>K7MPX</b></div>
+          <div class="ph-label">MINUTES</div>
+          <div class="ph-grid"><span class="p">1′</span><span class="p">2′</span><span class="p">4′</span><span class="p">6′</span><span class="p">8′</span><span class="p on">10′</span><span class="p">14′</span><span class="p">20′</span><span class="p">30′</span><span class="p">40′</span><span class="p">50′</span><span class="p">60′</span><span class="p">90′</span><span class="p plus">+1′</span></div>
+          <div class="ph-digits">10<b>:</b>00</div>
+          <div class="ph-actions"><span class="ph-start">Start <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><path d="M7 4.5v15l12-7.5z"/></svg></span><span class="ph-reset"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Reset</span></div>
+        </div></div></div></div>
+  </div>
+</div></section>
+
+<!-- INSTALL -->
+<section class="band alt" id="install"><div class="wrap">
+  <div class="head"><div class="eyebrow">Install</div>
+  <h2 style="margin-top:14px">Two ways to install. <span class="serif">Pick one.</span></h2>
+  <p class="sub">Simply ask any AI assistant to do it for you, ask it to customize it with your branding and then guide you through the steps of installing it on your website.</p></div>
+  <div class="bento">
+    <div class="card dark">
+      <div class="eyebrow">The easy way · ask your assistant</div>
+      <h3>Paste this, and let it do the rest.</h3>
+      <p class="where">Open your AI assistant in an empty folder, and paste:</p>
+      <div class="prompt prompt-tall"><span class="prompt-text">Set up the workshop timer from github.com/tudorjuravlea/workshop-timer in this folder, start it, and open it in my browser.</span><button class="copybtn" type="button">Copy</button></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Or type it yourself in the Terminal</div>
+      <h3>Three commands.</h3>
+      <div class="steps">
+        <div class="step"><span class="num">1</span><div><p>Get the code</p><div class="cmd"><span class="cmd-text">git clone https://github.com/tudorjuravlea/workshop-timer</span><button class="copybtn" type="button">Copy</button></div></div></div>
+        <div class="step"><span class="num">2</span><div><p>Install, once</p><div class="cmd"><span class="cmd-text">cd workshop-timer &amp;&amp; npm install</span><button class="copybtn" type="button">Copy</button></div></div></div>
+        <div class="step"><span class="num">3</span><div><p>Run it</p><div class="cmd"><span class="cmd-text">npm run dev</span><button class="copybtn" type="button">Copy</button></div></div></div>
+      </div>
+      <p class="note">Opens at localhost:3000. Needs Node 20.9 or newer. No database, no accounts, no API keys.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- CUSTOMISE -->
+<section class="band" id="customise"><div class="wrap">
+  <div class="head"><div class="eyebrow">Customise</div>
+  <h2 style="margin-top:14px">Your colours, your fonts, <span class="serif">your logo.</span></h2>
+  <p class="sub">Everything a brand can change lives in one small file. You never touch the code.</p></div>
+  <div class="grid2">
+    <div class="card dark">
+      <div class="eyebrow">Ask your assistant</div>
+      <h3>Describe your brand in plain words.</h3>
+      <div class="prompt"><span class="prompt-text">Rebrand my workshop timer: accent #2c5bff, a near-black background, the font Inter, and the logo in ./logo.svg. Make a brand file for it and check it passes npm run check:brands.</span><button class="copybtn" type="button">Copy</button></div>
+      <div class="shot"><img src="assets/brand-reel.gif" width="800" height="450" alt="The same timer in five brands, one after another: black and orange, navy and blue, forest green with a serif font, light cream and violet, and dark brown with amber"></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Or edit the file</div>
+      <h3>One JSON file per brand.</h3>
+      <p class="body">Copy <span class="mono">brands/example.json</span>, change the values, and point the timer at it.</p>
+      <div class="code"><span class="c"># reads brands/acme.json</span>
+<span class="k">TIMER_BRAND</span>=acme npm run dev</div>
+      <p class="body" style="margin-top:18px">For a one-off, put it in the link instead:</p>
+      <div class="code">/?accent=%23ff3b00&amp;ground=%23101010&amp;name=Acme</div>
+    </div>
+  </div>
+  <div class="rules-head"><span class="eyebrow">Three rules every brand keeps</span></div>
+  <div class="rules">
+    <div class="rule-card">
+      <div class="rule-vis two">
+        <div class="tile" style="--g:#141416"><svg class="mini-dial" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="94" fill="#fbfbf9"/><line x1="100.00" y1="22.00" x2="100.00" y2="10.00" stroke="#15181d" stroke-opacity="0.7" stroke-width="3"/><line x1="141.00" y1="28.99" x2="145.00" y2="22.06" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="171.01" y1="59.00" x2="177.94" y2="55.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="182.00" y1="100.00" x2="190.00" y2="100.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="171.01" y1="141.00" x2="177.94" y2="145.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="141.00" y1="171.01" x2="145.00" y2="177.94" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="100.00" y1="182.00" x2="100.00" y2="190.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="59.00" y1="171.01" x2="55.00" y2="177.94" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="28.99" y1="141.00" x2="22.06" y2="145.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="18.00" y1="100.00" x2="10.00" y2="100.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="28.99" y1="59.00" x2="22.06" y2="55.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="59.00" y1="28.99" x2="55.00" y2="22.06" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><path d="M 100 100 L 100 20 A 80 80 0 1 1 45.44 158.51 Z" fill="#ff3b00"/><circle cx="100" cy="100" r="7" fill="#15181d"/></svg><span class="verdict ok">✓ Reads from the back</span></div>
+        <div class="tile" style="--g:#eeeeec"><svg class="mini-dial" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="94" fill="#f7f7f5"/><line x1="100.00" y1="22.00" x2="100.00" y2="10.00" stroke="#15181d" stroke-opacity="0.7" stroke-width="3"/><line x1="141.00" y1="28.99" x2="145.00" y2="22.06" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="171.01" y1="59.00" x2="177.94" y2="55.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="182.00" y1="100.00" x2="190.00" y2="100.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="171.01" y1="141.00" x2="177.94" y2="145.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="141.00" y1="171.01" x2="145.00" y2="177.94" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="100.00" y1="182.00" x2="100.00" y2="190.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="59.00" y1="171.01" x2="55.00" y2="177.94" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="28.99" y1="141.00" x2="22.06" y2="145.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="18.00" y1="100.00" x2="10.00" y2="100.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="28.99" y1="59.00" x2="22.06" y2="55.00" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><line x1="59.00" y1="28.99" x2="55.00" y2="22.06" stroke="#15181d" stroke-opacity="0.45" stroke-width="2"/><path d="M 100 100 L 100 20 A 80 80 0 1 1 45.44 158.51 Z" fill="#ff3b00"/><circle cx="100" cy="100" r="7" fill="#15181d"/></svg><span class="verdict no">✕ The dial disappears</span></div>
+      </div>
+      <span class="rule-n">Rule 1</span>
+      <b>The dial must be brighter than the background.</b><span class="rule-body">It is read from the back of a room.</span>
+    </div>
+    <div class="rule-card">
+      <div class="rule-vis two">
+        <div class="tile" style="--g:#101014"><span class="dig" style="color:#22307a">06:30</span><span class="verdict no">✕ Too dark to read</span></div>
+        <div class="tile" style="--g:#101014"><span class="dig plate" style="color:#22307a">06:30</span><span class="verdict ok">✓ Plate added for you</span></div>
+      </div>
+      <span class="rule-n">Rule 2</span>
+      <b>Your accent carries the time.</b><span class="rule-body">If it is hard to read, the timer adds a plate behind the digits by itself.</span>
+    </div>
+    <div class="rule-card">
+      <div class="rule-vis chips">
+        <span class="chip good"><i style="background:#ff3b00"></i>#ff3b00<em>✓</em></span>
+        <span class="chip bad">orange<em>✕</em></span>
+        <span class="chip bad">rgb(255, 59, 0)<em>✕</em></span>
+      </div>
+      <span class="rule-n">Rule 3</span>
+      <b>Colours are hex codes.</b><span class="rule-body">Like #ff3b00. Nothing else is accepted, which keeps the page safe.</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- USE -->
+<section class="band alt" id="use"><div class="wrap">
+  <div class="head"><div class="eyebrow">Use</div>
+  <h2 style="margin-top:14px">Use your <span class="serif">workshop timer.</span></h2>
+  <p class="sub">How to use it in a session, step by step.</p></div>
+  <div class="step-rows">
+    <article class="step-row">
+      <div class="step-text"><span class="step-n">01</span><h3>Pick a length.</h3><p class="body">Tap a preset, type into the readout, or put it in the link: <span class="mono">/#25</span> or <span class="mono">/#7:30</span>. It opens at ten minutes.</p></div>
+      <div class="step-img"><img src="assets/step-controls.webp" alt="The control bar with length presets from 1 to 90 minutes, Start, Reset and plus one minute" loading="lazy"></div>
+    </article>
+    <article class="step-row">
+      <div class="step-text"><span class="step-n">02</span><h3>Start it.</h3><div class="keyrow"><span><span class="kbd">Space</span> start or pause</span><span><span class="kbd">F</span> full screen</span></div></div>
+      <div class="step-img"><img src="assets/step-running.webp" alt="The timer running full screen: a large dial two thirds lime, reading 06:30" loading="lazy"></div>
+    </article>
+    <article class="step-row">
+      <div class="step-text"><span class="step-n">03</span><h3>Walk the room.</h3><p class="body"><span class="kbd">R</span> shows an address and a five-character code. Open it on your phone, type the code, and drive the clock from anywhere.</p></div>
+      <div class="step-img has-phone"><div class="phone over" aria-hidden="true"><div class="ph-screen shot-screen with-kb"><div class="ph-island"></div><div class="shot-top"><img src="assets/walk-phone.webp" alt=""></div><div class="ios-kb"><div class="kr"><span class="k">Q</span><span class="k">W</span><span class="k">E</span><span class="k">R</span><span class="k">T</span><span class="k">Y</span><span class="k">U</span><span class="k">I</span><span class="k">O</span><span class="k">P</span></div><div class="kr r2"><span class="k">A</span><span class="k">S</span><span class="k">D</span><span class="k">F</span><span class="k">G</span><span class="k">H</span><span class="k hit">J</span><span class="k">K</span><span class="k">L</span></div><div class="kr"><span class="k fn">⇧</span><span class="k">Z</span><span class="k">X</span><span class="k">C</span><span class="k">V</span><span class="k">B</span><span class="k">N</span><span class="k">M</span><span class="k fn">⌫</span></div><div class="kr"><span class="k fn w2">123</span><span class="k sp">space</span><span class="k fn go w2">Go</span></div></div></div></div><img src="assets/walk-screen.webp" alt="The timer with a lime dial, its pairing code CKPGJ on screen, waiting for the phone; in front, a phone with CKPGJ typed into the remote" loading="lazy"></div>
+    </article>
+    <article class="step-row">
+      <div class="step-text"><span class="step-n">04</span><h3>Let the room hear the end.</h3><p class="body">A quiet tick speeds up in the last minutes, then a gong. Mute it with one button.</p></div>
+      <div class="step-img"><img src="assets/step-finish.webp" alt="Time's up in lime on a dark disc, with lime confetti bursting around it" loading="lazy"></div>
+    </article>
+  </div>
+</div></section>
+
+<!-- USE CASES -->
+<section class="band" id="use-cases"><div class="wrap">
+  <div class="head"><div class="eyebrow">Use cases</div>
+  <h2 style="margin-top:14px">Use wherever <span class="serif">time matters.</span></h2></div>
+  <div class="grid3">
+    <div class="card case"><span class="tag">Workshops</span><h3>Timeboxed exercises</h3><p class="body">Silent brainstorms, dot voting, crazy eights. Everyone in the room sees the same clock, so nobody has to ask how much time is left.</p></div>
+    <div class="card case"><span class="tag">Trainings</span><h3>Exercises and breaks</h3><p class="body">Put the break on the screen and people come back on time, because they can see exactly how long they have, even from the corridor.</p></div>
+    <div class="card case"><span class="tag">Pomodoro</span><h3>Productive time</h3><p class="body">Work in focused rounds: 25 minutes on one task, then a 5-minute break, and a longer one after four rounds. Open it at <span class="mono">/#25</span> or <span class="mono">/#5</span>.</p></div>
+    <div class="card case"><span class="tag">Pitch nights</span><h3>Pitch rounds</h3><p class="body">The speaker sees the time from the stage while the host runs the clock from a phone in the crowd. Every pitch gets the same minutes.</p></div>
+    <div class="card case"><span class="tag">Jams</span><h3>Design and game jams</h3><p class="body">One phone pairing survives the gong and runs timer after timer all day, from the first sprint to the final demos. No pairing again.</p></div>
+    <div class="card case"><span class="tag">Conferences</span><h3>Talks and panels</h3><p class="body">Dressed in the event's colours and fonts, so it looks like part of the stage, not a laptop app. Speakers see their time at a glance.</p></div>
+  </div>
+</div></section>
+
+<!-- FAQ -->
+<section class="band alt" id="faq"><div class="wrap">
+  <div class="head"><div class="eyebrow">FAQ</div>
+  <h2 style="margin-top:14px">Frequently Asked <span class="serif">Questions</span></h2></div>
+  <div class="faq">
+    <details open><summary>Is it really free?</summary><p>Yes. It is open source under the MIT licence: use it, change it, and use it for paid work, with no account and no subscription.</p></details>
+    <details><summary>Do I need to know how to code?</summary><p>No. Paste the prompt from the Install section into Claude, Codex, Gemini CLI or Antigravity and the assistant does the setup. If you would rather type, it is three commands.</p></details>
+    <details><summary>Which AI assistants work?</summary><p>Any assistant that can work in a folder on your computer: the Claude desktop app's Code tab, Claude Code, Codex, Gemini CLI and Antigravity.</p></details>
+    <details><summary>Can I put it on my own website?</summary><p>Yes. It needs a Node host such as Railway, Render, Fly or a small server, because the phone remote runs through it. Run exactly one copy, since live pairings are kept in memory.</p></details>
+    <details><summary>Will it lose time if I switch windows?</summary><p>No. It counts down to a deadline and recomputes from the wall clock every tick, so a background tab cannot slow it.</p></details>
+    <details><summary>Can I turn the sound off?</summary><p>Yes, with the sound button. Movement also stops for anyone whose device asks for reduced motion.</p></details>
+    <details><summary>How do I add my logo and fonts?</summary><p>Both go in the brand file next to your colours. Copy <code>brands/example.json</code> to see every field, or ask your assistant to make one for you.</p></details>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <h2>Run your next session <span class="serif">on time.</span></h2>
+  <div class="ctas"><a class="btn-dark" href="#install" style="background:#fff;color:#121212">Set it up <span class="disc">↑</span></a><a class="btn-ghost" href="https://github.com/tudorjuravlea/workshop-timer" style="text-decoration:none">View on GitHub ↗</a></div>
+  <div class="row2"><span>Workshop Timer · MIT licence</span><span class="made">Made by Tudor Juravlea <a class="nav-cta li-cta" href="https://www.linkedin.com/in/tudorjuravlea/" target="_blank" rel="noopener"><span class="nav-cta-label">Connect on LinkedIn</span><span class="nav-cta-disc"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="5" r="2.3" fill="currentColor"/><rect x="3" y="9" width="4" height="12" rx=".6" fill="currentColor"/><path fill="currentColor" d="M9.5 9h3.8v1.7c.6-1.1 2-2 3.9-2 3.2 0 4.3 2 4.3 5V21h-4v-6.4c0-1.5-.5-2.4-1.8-2.4-1.4 0-2.2 1-2.2 2.6V21h-4z"/></svg></span></a></span></div>
+</div></footer>
+
+<script>
+// Ported from src/components/timer-dial.tsx: same scale rules, same radii.
+const round3 = v => Number(v.toFixed(3));
+const TICK_STEPS = [1,2,5,10,15,20,30,60,180,300,900];
+function numeralStep(d){ if(d<=60)return 10; if(d<=120)return 30; if(d<=14*60)return 60; if(d<=3600)return 300; return 900; }
+function formatMark(s,t){ return t<=120 ? s+'″' : (s/60)+'′'; }
+function dialScale(d){
+  const total=Math.max(1,Math.round(d)), labelStep=numeralStep(total);
+  const tickStep=TICK_STEPS.find(s=>total/s<=60 && labelStep%s===0) ?? labelStep;
+  const ang=s=>s/total*2*Math.PI, ticks=[], numerals=[];
+  for(let t=0;t<total;t+=tickStep){ const a=ang(t),sn=Math.sin(a),cs=Math.cos(a),top=t===0,major=t%labelStep===0,inner=top?78:major?81:84.5;
+    ticks.push({x1:round3(100+inner*sn),y1:round3(100-inner*cs),x2:round3(100+90*sn),y2:round3(100-90*cs),top,major}); }
+  for(let t=labelStep;t<total;t+=labelStep){ const a=ang(t); numerals.push({label:formatMark(t,total),x:round3(100+69*Math.sin(a)),y:round3(100-69*Math.cos(a))}); }
+  return {ticks,numerals};
+}
+function wedgePath(f,cx,cy,r){
+  const th=Math.min(1,Math.max(0,f))*2*Math.PI; if(th<=0) return '';
+  if(th>=2*Math.PI-1e-6) return `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx} ${cy+r} A ${r} ${r} 0 1 1 ${cx} ${cy-r} Z`;
+  const x=cx+r*Math.sin(th), y=cy-r*Math.cos(th);
+  return `M ${cx} ${cy} L ${cx} ${cy-r} A ${r} ${r} 0 ${th>Math.PI?1:0} 1 ${x.toFixed(3)} ${y.toFixed(3)} Z`;
+}
+const DUR=600, INK='#15181d', FACE='#fbfbf9';
+const svg=document.getElementById('dial'), digits=document.getElementById('digits');
+const {ticks,numerals}=dialScale(DUR);
+svg.innerHTML = `<circle cx="100" cy="100" r="94" fill="${FACE}"/>` +
+  ticks.map(t=>`<line x1="${t.x1}" y1="${t.y1}" x2="${t.x2}" y2="${t.y2}" stroke="${INK}" stroke-opacity="${t.top?.7:t.major?.45:.28}" stroke-width="${t.top?2.2:t.major?1.2:.7}"/>`).join('') +
+  `<path class="wedge" d=""/>` +
+  numerals.map(n=>`<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="600" fill="${INK}" font-family="Satoshi, sans-serif">${n.label}</text>`).join('') +
+  `<circle cx="100" cy="100" r="6" fill="${INK}"/>`;
+const wedge=svg.querySelector('.wedge'); const phDigits=document.getElementById('ph-digits');
+const fmt=s=>{ s=Math.max(0,Math.ceil(s)); return String(Math.floor(s/60)).padStart(2,'0')+'<b>:</b>'+String(s%60).padStart(2,'0'); };
+
+// A short wind-up (the wedge sweeps open, as when a length is chosen), then a real-time countdown.
+let start=null; const WIND=1400;
+function frame(ts){
+  if(start===null) start=ts;
+  const el=ts-start;
+  if(el<WIND){ const p=1-Math.pow(1-el/WIND,3); wedge.setAttribute('d',wedgePath(p,100,100,80)); digits.innerHTML=phDigits.innerHTML=fmt(DUR*p); }
+  else { const left=DUR-(el-WIND)/1000; if(left<=0){ start=null; } wedge.setAttribute('d',wedgePath(left/DUR,100,100,80)); digits.innerHTML=phDigits.innerHTML=fmt(left); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// Nav: smooth scroll is CSS; this marks the section you are in.
+const links=[...document.querySelectorAll('.nav-links a')];
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ links.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+e.target.id)); } }),{rootMargin:'-45% 0px -50% 0px'});
+document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
+const navIn=document.querySelector('.nav'), mb=document.querySelector('.menu-btn');
+const onScroll=()=>navIn.classList.toggle('scrolled', scrollY>24); onScroll(); addEventListener('scroll',onScroll,{passive:true});
+mb.addEventListener('click',()=>{ const o=navIn.classList.toggle('open'); mb.setAttribute('aria-expanded',o); });
+// Any in-page link: close the phone menu first, then scroll once the layout has settled.
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  const target=document.querySelector(a.getAttribute('href')); if(!target) return;
+  e.preventDefault(); navIn.classList.remove('open'); mb.setAttribute('aria-expanded',false);
+  target.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); history.replaceState(null,'',a.getAttribute('href'));
+}));
+// Parallax, for a real mouse only; touch screens and reduced motion keep it still.
+(()=>{
+  if(!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const dev=document.querySelector('.devices'), zone=document.querySelector('.canvas');
+  let tx=0, ty=0, x=0, y=0, raf=0;
+  const tick=()=>{ x+=(tx-x)*.08; y+=(ty-y)*.08;
+    dev.style.setProperty('--px', x.toFixed(4)); dev.style.setProperty('--py', y.toFixed(4));
+    raf = (Math.abs(tx-x)>.001 || Math.abs(ty-y)>.001) ? requestAnimationFrame(tick) : 0; };
+  const go=()=>{ if(!raf) raf=requestAnimationFrame(tick); };
+  zone.addEventListener('pointermove',e=>{ const r=dev.getBoundingClientRect();
+    tx=Math.max(-1,Math.min(1,(e.clientX-(r.left+r.width/2))/(innerWidth/2)));
+    ty=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(innerHeight/2))); go(); });
+  zone.addEventListener('pointerleave',()=>{ tx=0; ty=0; go(); });
+})();
+// Copy buttons: put the prompt on the clipboard and say so.
+document.querySelectorAll('.copybtn').forEach(b=>b.addEventListener('click', async ()=>{
+  const box=b.closest('.prompt, .cmd'), src=box.querySelector('.prompt-text, .cmd-text');
+  const text=src.textContent.trim();
+  let ok=false;
+  try { await navigator.clipboard.writeText(text); ok=true; }
+  catch { // older browsers, or a page without clipboard permission
+    const ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); try { ok=document.execCommand('copy'); } catch {} ta.remove(); }
+  if(!ok){ const r=document.createRange(); r.selectNodeContents(src); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); }
+  b.textContent = ok ? 'Copied ✓' : 'Selected: copy it';
+  b.classList.toggle('done', ok);
+  clearTimeout(b._t); b._t=setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('done'); }, 1800);
+}));
+</script>
+
+</body>
+</html>
