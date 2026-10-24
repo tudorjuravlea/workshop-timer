@@ -603,7 +603,7 @@ function TimerScreen({
                 : `Paused at ${formatClock(remainingMs)} of ${formatClock(durationMs)}.`}
           </p>
           {finished && (
-            <p className="label text-brand-on-ground">Time&rsquo;s up</p>
+            <p className="timer-label text-brand-on-ground">Time&rsquo;s up</p>
           )}
         </div>
 
@@ -651,7 +651,7 @@ function BrandMark() {
 
   if (!logo) {
     return name ? (
-      <span className="label text-brand-on-ground/65">{name}</span>
+      <span className="timer-label text-brand-on-ground/65">{name}</span>
     ) : null
   }
 

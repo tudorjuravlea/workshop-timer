@@ -169,7 +169,7 @@ function TimerDial({
       aria-hidden
       className={cn(
         "drop-shadow-[0_20px_50px_rgb(0_0_0/0.35)]",
-        urgent && "dial-shake",
+        urgent && "timer-dial-shake",
         className
       )}
     >

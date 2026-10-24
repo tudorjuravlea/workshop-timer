@@ -35,7 +35,7 @@ const CONTROL =
 
 /** The app's one caption treatment (`globals.css`), in ink: a label over a
  *  value being read off an instrument. */
-const CAPTION = "label text-brand-ink-2"
+const CAPTION = "timer-label text-brand-ink-2"
 
 /** How long the panel stays after the last movement. Long enough to cross it
  *  with a mouse, short enough that a still room goes back to being a clock. */
@@ -391,7 +391,7 @@ function TimerChrome({
               "[@media(min-width:480px)_and_(min-height:480px)]:inset-x-0"
             )}
           >
-            <div className="receipt-feed border-b-4 border-brand-receipt-edge bg-brand-receipt px-5 pt-4 pb-5">
+            <div className="timer-receipt-feed border-b-4 border-brand-receipt-edge bg-brand-receipt px-5 pt-4 pb-5">
               {/* One sentence of why, then the two things somebody actually
                   reads off the screen, each under its own label.
 
@@ -480,13 +480,13 @@ function TimerHints({ fullscreen, remote }: TimerHintsProps) {
         fullscreen && "hidden"
       )}
     >
-      {remote.pairing && <p className="label text-brand-on-ground/60">Pairing&hellip;</p>}
+      {remote.pairing && <p className="timer-label text-brand-on-ground/60">Pairing&hellip;</p>}
       {remote.dropped && (
-        <p className="label text-brand-on-ground/60">
+        <p className="timer-label text-brand-on-ground/60">
           Remote dropped. Press R to pair again.
         </p>
       )}
-      <p className="label flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/60">
+      <p className="timer-label flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-brand-on-ground/60">
         <span>
           <Key>Space</Key> start or pause
         </span>

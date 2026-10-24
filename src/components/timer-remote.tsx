@@ -350,7 +350,7 @@ function TimerRemote({
               stretches across whatever the last row has left and the block
               stays square. */}
           <div className="relative z-10 shrink-0 px-5 pb-1">
-            <p className="label mb-2 text-brand-on-ground/60">
+            <p className="timer-label mb-2 text-brand-on-ground/60">
               Minutes
             </p>
             <div

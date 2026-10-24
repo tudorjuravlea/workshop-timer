@@ -52,7 +52,7 @@
 /* The caption used over every value and under every control. Declared once
    rather than repeated as a class string, because it is the only small-text
    treatment in the app and the two pages must not drift apart on it. */
-@utility label {
+@utility timer-label {
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 600;
@@ -82,7 +82,7 @@
    Fed out from under the floating control panel the way a till feeds a
    receipt. Transform only, and the panel's own clip is what hides it at the
    start, so nothing in the page's layout moves while it comes out. */
-@keyframes receipt-feed {
+@keyframes timer-receipt-feed {
   from {
     transform: translateY(-100%);
   }
@@ -90,15 +90,15 @@
     transform: translateY(0);
   }
 }
-.receipt-feed {
-  animation: receipt-feed 0.55s var(--ease-out-pm) both;
+.timer-receipt-feed {
+  animation: timer-receipt-feed 0.55s var(--ease-out-pm) both;
 }
 
 /* ── The last minute ────────────────────────────────────────────────────────
    The face shakes, on transforms only, and not at all for anyone who has asked
    for less movement — at which point the clock still reads correctly, because
    the shake carries no information the digits do not. */
-@keyframes dial-shake {
+@keyframes timer-dial-shake {
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);
@@ -116,13 +116,13 @@
     transform: translate(0.3%, 0.3%) rotate(0.2deg);
   }
 }
-.dial-shake {
-  animation: dial-shake 0.45s ease-in-out infinite;
+.timer-dial-shake {
+  animation: timer-dial-shake 0.45s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .receipt-feed,
-  .dial-shake {
+  .timer-receipt-feed,
+  .timer-dial-shake {
     animation: none;
   }
 }

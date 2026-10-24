@@ -8,6 +8,25 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.0.0 (2026-10-24)
+
+**Renamed: the three global CSS names now start with `timer-`.** A host that
+copied the CSS has to rename them too; nothing else in this release.
+
+**In the room**
+
+- Nothing changes on screen.
+
+**For hosts**
+
+- CSS renamed, in `src/app/globals.css` and every component that uses them:
+  - utility `label` is now `timer-label`;
+  - class and keyframes `receipt-feed` are now `timer-receipt-feed`;
+  - class and keyframes `dial-shake` are now `timer-dial-shake`.
+- Why: unprefixed, they sat in a host's global stylesheet, and `label` is a
+  name most design systems already use.
+- Files, props, dependencies: no change.
+
 ## v1.2.0 (2026-10-24)
 
 **In the room**
