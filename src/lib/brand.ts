@@ -314,12 +314,49 @@ function readableOnGround(colors: BrandColors): string {
   return contrastRatio(colors.ink, colors.ground) > declared ? colors.ink : colors.onGround
 }
 
+/** Mix two hex colours, `t` of the way from `a` to `b`. */
+function mix(a: string, b: string, t: number): string {
+  const ca = channels(a)
+  const cb = channels(b)
+  return `#${ca
+    .map((v, i) => Math.round(v + (cb[i] - v) * t).toString(16).padStart(2, "0"))
+    .join("")}`
+}
+
+/** The accent wherever it sits on the FACE, CHECKED against the face rather
+ *  than taken on trust: the wedge always does, and so do the digits once the
+ *  plate is behind them.
+ *
+ *  `needsPlinth` only asks whether the accent reads on the ground, so on its
+ *  own it lets two pale accents through: one that earns the plate and is
+ *  still unreadable on it, and one so bright on a dark ground that it never
+ *  needs a plate while the wedge, on the white face, all but disappears.
+ *
+ *  So below 3:1 on the face (large text, and a graphic) the accent is stepped
+ *  towards `ink`, a twentieth at a time, until it reads: a deeper shade of the
+ *  same hue rather than a different colour, so the wedge is still the brand's.
+ *  An accent that already reads is returned untouched, which is every brand
+ *  this rule existed before. The digits on the ground keep the accent as
+ *  declared, because that is where it was chosen to read. */
+export function accentOnFace(colors: BrandColors): string {
+  const { accent, face, ink } = colors
+  if (contrastRatio(accent, face) >= 3) return accent
+  const toward =
+    contrastRatio(ink, face) >= 3 ? ink : luminance(face) > 0.18 ? "#000000" : "#ffffff"
+  for (let step = 1; step <= 20; step++) {
+    const shade = mix(accent, toward, step / 20)
+    if (contrastRatio(shade, face) >= 3) return shade
+  }
+  return toward
+}
+
 /** The custom properties a brand sets, ready to put on an element or in a
  *  rule. */
 export function brandVars(brand: Brand): Record<string, string> {
   const vars: Record<string, string> = {}
   for (const key of COLOR_KEYS) vars[COLOR_VARS[key]] = brand.colors[key]
   vars[COLOR_VARS.onGround] = readableOnGround(brand.colors)
+  vars["--brand-accent-face"] = accentOnFace(brand.colors)
   vars["--brand-font-body"] = brand.fonts.body
   vars["--brand-font-display"] = brand.fonts.display
   vars["--brand-font-mono"] = brand.fonts.mono
@@ -425,6 +462,10 @@ export function inlineParamVars(): Record<string, string[]> {
   for (const [param, keys] of Object.entries(INLINE_COLOR_PARAMS)) {
     out[param] = keys.map((key) => COLOR_VARS[key])
   }
+  // The face shade is derived, which this script cannot do; it takes the
+  // accent as given for the frame before hydration, and `accentOnFace` takes
+  // over after. For any accent that already reads on the face the two agree.
+  out.accent.push("--brand-accent-face")
   return out
 }
 
@@ -487,15 +528,20 @@ export function checkBrand(input: unknown, base: Brand = DEFAULT_BRAND): string[
   const text = contrastRatio(vars[COLOR_VARS.onGround], c.ground)
   if (text < 4.5) problems.push(`text on the ground is ${text.toFixed(2)}:1, needs 4.5:1`)
 
-  // The digits read: on the ground when there is no plate, on the face when
-  // there is one. Display size is large text, so 3:1.
+  // The digits read: the accent on the ground when there is no plate, its face
+  // shade on the plate when there is one. Display size is large text, so 3:1.
   const plate = needsPlinth(brand)
-  const digits = contrastRatio(c.accent, plate ? c.face : c.ground)
+  const onFace = vars["--brand-accent-face"]
+  const digits = plate ? contrastRatio(onFace, c.face) : contrastRatio(c.accent, c.ground)
   if (digits < 3) {
     problems.push(
       `the digits are ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}, need 3:1`
     )
   }
+
+  // The wedge, always on the face, reads as a graphic: 3:1.
+  const wedge = contrastRatio(onFace, c.face)
+  if (wedge < 3) problems.push(`the wedge is ${wedge.toFixed(2)}:1 on the face, needs 3:1`)
 
   // A face that was named is the face that ships.
   const fonts = asRecord(asRecord(input).fonts)

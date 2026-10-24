@@ -8,6 +8,37 @@ one `git diff v1.0.0..v1.1.0`. Each entry has two parts:
   redo. See [`docs/DOWNSTREAM.md`](docs/DOWNSTREAM.md) for why each line is
   there.
 
+## v2.3.0 (2026-10-24)
+
+**This release changes what some brands look like.** Only brands whose accent
+was unreadable on the white face; every brand that already read is untouched.
+
+**In the room**
+
+- An accent too pale to read on the white face (under 3:1) is drawn in a deeper
+  shade of itself wherever it sits on the face: the wedge, *Time's up!*, and the
+  digits when they are on a plate. A bright yellow on a dark ground, for
+  example, keeps its yellow digits and gets a mustard wedge. The digits on the
+  ground keep the accent exactly as chosen.
+
+**For hosts**
+
+- New custom property `--brand-accent-face`, emitted by `brandVars` and
+  `brandCss`, and a new colour `brand-accent-face` in `timer.css`. Nothing to
+  configure: it is derived from `accent`, `face` and `ink`.
+- New export `accentOnFace(colors)` in `src/lib/brand.ts`, the derivation.
+- `checkBrand` also checks the wedge at 3:1 on the face, and checks plated
+  digits with the derived shade.
+- New fixtures `brands/pale-accent-on-plate.json` and
+  `brands/bright-accent-on-dark.json`, one per branch of the gap.
+- The pre-paint script writes a URL `?accent=` to both properties; the shade is
+  derived after hydration, so a too-pale accent shows as given for one frame.
+- Files changed: `brand.ts`, `timer.css`, `timer-dial.tsx`, `timer-screen.tsx`,
+  `timer-remote.tsx`. Nothing moved or renamed; no dependencies.
+- A class name changed: the wedge is `fill-brand-accent-face`, so anything that
+  finds the dial by `fill-brand-accent` stops finding it (a test handle for the
+  dial comes in a later release).
+
 ## v2.2.0 (2026-10-24)
 
 **In the room**

@@ -205,7 +205,7 @@ function TimerDial({
       {/* The wedge reaches almost to the marks. It used to stop at r=68, which
           left a band of empty white between the colour and the rim wide enough
           to read as a mistake once the marks moved outward and got thin. */}
-      <path d={wedgePath(fraction, 100, 100, 80)} className="fill-brand-accent" />
+      <path d={wedgePath(fraction, 100, 100, 80)} className="fill-brand-accent-face" />
       {/* Drawn AFTER the wedge, so the figures stay readable where the colour
           has reached them. */}
       {numerals.map((n) => (

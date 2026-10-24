@@ -40,6 +40,20 @@ const PLATE = {
   "light-ground.json": false,
   "saturated-ground.json": true,
   "accent-only.json": false,
+  "pale-accent-on-plate.json": true,
+  "bright-accent-on-dark.json": false,
+}
+
+/** Which fixtures need a deeper shade of their accent on the face (true), and
+ *  which must keep the accent exactly as declared (false): the rule may never
+ *  touch a brand that already reads. */
+const SHADED = {
+  "example.json": false,
+  "light-ground.json": false,
+  "saturated-ground.json": false,
+  "accent-only.json": false,
+  "pale-accent-on-plate.json": true,
+  "bright-accent-on-dark.json": true,
 }
 
 const failures = []
@@ -56,7 +70,7 @@ for (const file of files) {
   // Every property the components read is emitted, and namespaced.
   const brand = parseBrand(raw)
   const vars = brandVars(brand)
-  const expected = COLOR_KEYS.length + 5 // the colours, three font stacks, two radii
+  const expected = COLOR_KEYS.length + 6 // the colours, the accent's face shade, three font stacks, two radii
   if (Object.keys(vars).length !== expected) {
     fail(where, `${Object.keys(vars).length} custom properties, expected ${expected}`)
   }
@@ -69,11 +83,17 @@ for (const file of files) {
   if (!(file in PLATE)) fail(where, "not in the PLATE table: say whether it should get a plate")
   else if (PLATE[file] !== plate) fail(where, `plate ${plate}, expected ${PLATE[file]}`)
 
+  const shaded = vars["--brand-accent-face"] !== brand.colors.accent
+  if (!(file in SHADED)) fail(where, "not in the SHADED table: say whether its accent should be shaded")
+  else if (SHADED[file] !== shaded) fail(where, `accent shaded ${shaded}, expected ${SHADED[file]}`)
+
   const c = brand.colors
   const text = contrastRatio(vars["--brand-on-ground"], c.ground)
-  const digits = contrastRatio(c.accent, plate ? c.face : c.ground)
+  const digits = plate
+    ? contrastRatio(vars["--brand-accent-face"], c.face)
+    : contrastRatio(c.accent, c.ground)
   console.log(
-    `${where.padEnd(30)} text ${text.toFixed(2)}:1  digits ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}`
+    `${where.padEnd(34)} text ${text.toFixed(2)}:1  digits ${digits.toFixed(2)}:1 on the ${plate ? "plate" : "ground"}  wedge ${contrastRatio(vars["--brand-accent-face"], c.face).toFixed(2)}:1${shaded ? " (shaded)" : ""}`
   )
 }
 

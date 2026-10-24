@@ -511,7 +511,7 @@ function TimerScreen({
                 dominantBaseline="central"
                 fontSize="30"
                 fontWeight="800"
-                className="fill-brand-accent timer-font-body"
+                className="fill-brand-accent-face timer-font-body"
               >
                 Time&rsquo;s up!
               </text>
@@ -590,7 +590,10 @@ function TimerScreen({
               // Sized to its own content so the plinth hugs the digits at every
               // clamp step; `ch` is exact here because the face is tabular.
               style={{ width: `${fieldText.length + 0.4}ch` }}
-              className="block bg-transparent text-center timer-font-display text-[clamp(2rem,7.5vh,5.5rem)] leading-none font-semibold tracking-[-0.03em] text-brand-accent tabular-nums outline-none read-only:cursor-default"
+              className={cn(
+                "block bg-transparent text-center timer-font-display text-[clamp(2rem,7.5vh,5.5rem)] leading-none font-semibold tracking-[-0.03em] tabular-nums outline-none read-only:cursor-default",
+                plinth ? "text-brand-accent-face" : "text-brand-accent"
+              )}
             />
           </div>
           {/* The ticking number would flood a screen reader, so it is hidden

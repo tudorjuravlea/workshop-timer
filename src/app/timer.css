@@ -29,6 +29,7 @@
   --color-brand-glow: var(--brand-glow, #3a2b26);
   --color-brand-face: var(--brand-face, #fbfbf9);
   --color-brand-accent: var(--brand-accent, #ff3b00);
+  --color-brand-accent-face: var(--brand-accent-face, var(--brand-accent, #ff3b00));
   --color-brand-ink: var(--brand-ink, #15181d);
   --color-brand-ink-2: var(--brand-ink-2, #454c57);
   --color-brand-panel: var(--brand-panel, #0d0d0f);
