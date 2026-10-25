@@ -690,12 +690,24 @@
     .nav-inner > .nav-cta { display: none; }
     .nav.open .nav-links .menu-cta { display: inline-flex; align-self: flex-start; margin-top: 12px; padding: 0 3px 0 22px; font-size: var(--text-body); color: var(--paper); }
     .nav.open .nav-links .menu-cta:hover { color: var(--on-accent); }
+    /* full width and centred in the panel: it steps left past the inset that lines the links up with the brand name, so both sides match */
+    .nav.open .nav-links .menu-cta { align-self: stretch; justify-content: space-between; margin-left: calc(-44px - 10px); }
+    .nav.scrolled.open .nav-links .menu-cta { margin-left: calc(22px - 1px - 52px - 10px); }
     .menu-cta .nav-cta-label { display: inline; }
   }
-  /* the hero buttons are the same width: two equal columns, as wide as the longer label; stacked and full width on phones */
+  /* the hero buttons are the same width: two equal columns, as wide as the longer label; on phones each takes half the row */
   .hero .ctas { display: grid; grid-template-columns: 1fr 1fr; width: max-content; max-width: 100%; }
   .hero .ctas .pbtn { justify-content: space-between; }
-  @media (max-width: 760px) { .hero .ctas { grid-template-columns: minmax(0, 1fr); width: auto; } }
+  @media (max-width: 760px) {
+    .hero .ctas { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: auto; gap: 10px; }
+    .hero .ctas .pbtn { --disc: 40px; padding-left: 16px; gap: 8px; }
+    .hero .ctas .pbtn-label { white-space: nowrap; }
+  }
+  /* "Make it yours" is 95px at 16px: smaller steps keep it on one line in half a narrow phone */
+  @media (max-width: 419px) { .hero .ctas .pbtn { padding-left: 14px; font-size: 15px; } }
+  @media (max-width: 374px) { .hero .ctas .pbtn { font-size: 14px; } }
+  /* below 360px the two labels cannot share a row: stack them */
+  @media (max-width: 359px) { .hero .ctas { grid-template-columns: minmax(0, 1fr); } }
   /* on phones the headline fills the column: its widest line is 5.9em (6 leaves room for the italic overhang), so the size follows the column width */
   @media (max-width: 600px) { h1 { font-size: calc((100vw - 2 * var(--gutter) - 2px) / 6); } }
   /* on phones these three headings break before their serif part, and the first part keeps to one row */
@@ -942,7 +954,7 @@
   <div class="grid3">
     <div class="card case"><span class="tag">Workshops</span><h3>Timeboxed exercises</h3><p class="body">Silent brainstorms, dot voting, crazy eights. Everyone in the room sees the same clock, so nobody has to ask how much time is left.</p></div>
     <div class="card case"><span class="tag">Trainings</span><h3>Exercises and breaks</h3><p class="body">Put the break on the screen and people come back on time, because they can see exactly how long they have, even from the corridor.</p></div>
-    <div class="card case"><span class="tag">Pomodoro</span><h3>Productive time</h3><p class="body">Work in focused rounds: 25 minutes on one task, then a 5-minute break, and a longer one after four rounds. Open it at <span class="mono">/#25</span> or <span class="mono">/#5</span>.</p></div>
+    <div class="card case"><span class="tag">Pomodoro</span><h3>Pomodoro Technique</h3><p class="body">Work in focused rounds: 25 minutes on one task, then a 5-minute break, and a longer one after four rounds. Open it at <span class="mono">/#25</span> or <span class="mono">/#5</span>.</p></div>
     <div class="card case"><span class="tag">Pitch nights</span><h3>Pitch rounds</h3><p class="body">The speaker sees the time from the stage while the host runs the clock from a phone in the crowd. Every pitch gets the same minutes.</p></div>
     <div class="card case"><span class="tag">Jams</span><h3>Design and game jams</h3><p class="body">One phone pairing survives the gong and runs timer after timer all day, from the first sprint to the final demos. No pairing again.</p></div>
     <div class="card case"><span class="tag">Conferences</span><h3>Talks and panels</h3><p class="body">Dressed in the event's colours and fonts, so it looks like part of the stage, not a laptop app. Speakers see their time at a glance.</p></div>
@@ -1023,7 +1035,10 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ link
 document.querySelectorAll('section[id]').forEach(s=>io.observe(s));
 const navIn=document.querySelector('.nav'), mb=document.querySelector('.menu-btn');
 const onScroll=()=>navIn.classList.toggle('scrolled', scrollY>24); onScroll(); addEventListener('scroll',onScroll,{passive:true});
-mb.addEventListener('click',()=>{ const o=navIn.classList.toggle('open'); mb.setAttribute('aria-expanded',o); });
+let openY=0;
+mb.addEventListener('click',()=>{ const o=navIn.classList.toggle('open'); mb.setAttribute('aria-expanded',o); openY=scrollY; });
+// The phone menu closes once the page under it scrolls; a few pixels of slack so the tap that opened it cannot close it.
+addEventListener('scroll',()=>{ if(navIn.classList.contains('open') && Math.abs(scrollY-openY)>8){ navIn.classList.remove('open'); mb.setAttribute('aria-expanded',false); } },{passive:true});
 // Any in-page link: close the phone menu first, then scroll once the layout has settled.
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   const target=document.querySelector(a.getAttribute('href')); if(!target) return;
