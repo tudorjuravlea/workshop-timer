@@ -727,6 +727,8 @@
   @media (max-width: 760px) { footer .row2 { flex-direction: row; gap: 12px; } }
   /* narrow phones: a slightly smaller button so it still fits beside the credit; below 340px it drops to its own row, still on the right */
   @media (max-width: 380px) { footer .li-cta { padding-left: 18px; gap: 10px; font-size: 14px; } }
+  /* no eyebrows above titles (2026-10-25): a card's title is now its first line, so it carries no top margin */
+  .card > h3:first-child, .cz-card > h3:first-child { margin-top: 0; }
 </style>
 
 </head>
@@ -745,8 +747,7 @@
 
     <div class="hero">
       <div>
-        <div class="eyebrow">For facilitators &amp; trainers</div>
-        <h1 style="margin-top:18px">Stop shouting <span class="serif shout">“Only 2 mooore miiiiinuutees!”</span></h1>
+        <h1>Stop shouting <span class="serif shout">“Only 2 mooore miiiiinuutees!”</span></h1>
         <p class="lead"><span class="ln">A workshop countdown timer for facilitators and trainers,</span> <span class="ln">with a phone remote.</span></p>
         <div class="ctas">
           <a class="pbtn pbtn-primary" href="#install"><span class="pbtn-label">Make it yours</span><span class="pbtn-disc" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
@@ -791,8 +792,8 @@
 
 <!-- WHY -->
 <section class="band" id="why"><div class="wrap">
-  <div class="head"><div class="eyebrow">Why I built this timer</div>
-  <h2 style="margin-top:14px">Stop paying for timers. <span class="serif">Free yourself.</span></h2>
+  <div class="head">
+  <h2>Stop paying for timers. <span class="serif">Free yourself.</span></h2>
   <p class="sub two-rows"><span class="ln">Most software and desk timers are either paid, ad supported or plain ugly. They don't look yours.</span> <span class="ln">They also keep you staring at the timer, instead of paying attention to your participants.</span></p></div>
   <div class="flow steps4">
     <div class="card dark"><h3>Get it with your AI</h3><p class="body">Paste one prompt into Claude, Codex, Gemini or Antigravity. It downloads, installs and starts the timer for you.</p>
@@ -817,18 +818,16 @@
 
 <!-- INSTALL -->
 <section class="band alt" id="install"><div class="wrap">
-  <div class="head"><div class="eyebrow">Install</div>
-  <h2 style="margin-top:14px">Two ways to install. <span class="serif">Pick one.</span></h2>
+  <div class="head">
+  <h2>Two ways to install. <span class="serif">Pick one.</span></h2>
   <p class="sub">Simply ask any AI assistant to do it for you, ask it to customize it with your branding and then guide you through the steps of installing it on your website.</p></div>
   <div class="bento">
     <div class="card dark">
-      <div class="eyebrow">The easy way · ask your assistant</div>
       <h3>Paste this, and let it do the rest.</h3>
       <p class="where">Open your AI assistant in an empty folder, and paste:</p>
       <div class="prompt prompt-tall"><span class="prompt-text">Set up the workshop timer from github.com/tudorjuravlea/workshop-timer in this folder, start it, and open it in my browser.</span><button class="copybtn" type="button">Copy</button></div>
     </div>
     <div class="card">
-      <div class="eyebrow">Or type it yourself in the Terminal</div>
       <h3>Three commands.</h3>
       <div class="steps">
         <div class="step"><span class="num">1</span><div><p>Get the code</p><div class="cmd"><span class="cmd-text">git clone https://github.com/tudorjuravlea/workshop-timer</span><button class="copybtn" type="button">Copy</button></div></div></div>
@@ -842,12 +841,11 @@
 
 <!-- CUSTOMISE -->
 <section class="band" id="customise"><div class="wrap">
-  <div class="head"><div class="eyebrow">Customise</div>
-  <h2 style="margin-top:14px">Your colors, your logo, <span class="serif">your brand.</span></h2>
+  <div class="head">
+  <h2>Your colors, your logo, <span class="serif">your brand.</span></h2>
   <p class="sub">Everything a brand can change lives in one small file. You never touch the code.</p></div>
   <div class="cz-grid">
     <div class="card dark cz-card">
-      <div class="eyebrow">Ask your assistant</div>
       <h3>Tell the AI what to change.</h3>
       <p class="body">Paste this into your AI assistant, opened in your timer's folder.</p>
       <div class="prompt cz-prompt"><span class="prompt-text">Rebrand my workshop timer: accent #2c5bff, a near-black background, the font Inter, and the logo in ./logo.svg. Make a brand file for it and check it passes npm run check:brands.</span><button class="copybtn" type="button">Copy</button></div>
@@ -858,7 +856,6 @@
       </div>
     </div>
     <div class="card cz-card">
-      <div class="eyebrow">Or edit the file</div>
       <h3>One JSON file per brand.</h3>
       <p class="body">Copy <span class="mono">brands/example.json</span>, change the values, and point the timer at it.</p>
       <div class="cz-editor">
@@ -920,8 +917,8 @@
 
 <!-- USE -->
 <section class="band alt" id="use"><div class="wrap">
-  <div class="head"><div class="eyebrow">Use</div>
-  <h2 style="margin-top:14px">Use your <span class="serif">workshop timer.</span></h2>
+  <div class="head">
+  <h2>Use your <span class="serif">workshop timer.</span></h2>
   <p class="sub">How to use it in a session, step by step.</p></div>
   <div class="step-rows">
     <article class="step-row">
@@ -949,8 +946,8 @@
 
 <!-- USE CASES -->
 <section class="band" id="use-cases"><div class="wrap">
-  <div class="head"><div class="eyebrow">Use cases</div>
-  <h2 style="margin-top:14px">Use wherever <span class="serif">time matters.</span></h2></div>
+  <div class="head">
+  <h2>Use wherever <span class="serif">time matters.</span></h2></div>
   <div class="grid3">
     <div class="card case"><span class="tag">Workshops</span><h3>Timeboxed exercises</h3><p class="body">Silent brainstorms, dot voting, crazy eights. Everyone in the room sees the same clock, so nobody has to ask how much time is left.</p></div>
     <div class="card case"><span class="tag">Trainings</span><h3>Exercises and breaks</h3><p class="body">Put the break on the screen and people come back on time, because they can see exactly how long they have, even from the corridor.</p></div>
@@ -963,8 +960,8 @@
 
 <!-- FAQ -->
 <section class="band alt" id="faq"><div class="wrap">
-  <div class="head"><div class="eyebrow">FAQ</div>
-  <h2 style="margin-top:14px">Frequently Asked <span class="serif">Questions</span></h2></div>
+  <div class="head">
+  <h2>Frequently Asked <span class="serif">Questions</span></h2></div>
   <div class="faq">
     <details open><summary>Is it really free?</summary><p>Yes. It is open source under the MIT licence: use it, change it, and use it for paid work, with no account and no subscription.</p></details>
     <details><summary>Do I need to know how to code?</summary><p>No. Paste the prompt from the Install section into Claude, Codex, Gemini CLI or Antigravity and the assistant does the setup. If you would rather type, it is three commands.</p></details>
