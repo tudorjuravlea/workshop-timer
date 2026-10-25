@@ -438,10 +438,12 @@
     background: var(--ink); color: var(--paper);
     transition: height 450ms cubic-bezier(0.3,1.16,0.6,1), padding 450ms cubic-bezier(0.3,1.16,0.6,1), gap 450ms cubic-bezier(0.3,1.16,0.6,1),
       color 300ms var(--ease-out), border-color var(--t-hover-exit) var(--ease-out); }
-  .nav-cta::before { content: ''; position: absolute; top: 50%; right: 3px; width: var(--disc); height: var(--disc); border-radius: 999px; background: var(--accent);
-    transform: translateY(-50%); transition: transform 300ms var(--ease-out), width 450ms cubic-bezier(0.3,1.16,0.6,1), height 450ms cubic-bezier(0.3,1.16,0.6,1); }
+  /* the hover fill is a circle clipped out of a full-size layer: at rest it is exactly the disc, on hover it grows to 150%
+     of the button's own diagonal, so it reaches the far end of a button of any width (a fixed scale(12) stopped at ~264px) */
+  .nav-cta::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--accent);
+    clip-path: circle(calc(var(--disc) / 2) at calc(100% - 3px - var(--disc) / 2) 50%); transition: clip-path 300ms var(--ease-out); }
   .nav-cta:hover { color: var(--on-accent); border-color: var(--accent); }
-  .nav-cta:hover::before { transform: translateY(-50%) scale(12); }
+  .nav-cta:hover::before { clip-path: circle(150% at calc(100% - 3px - var(--disc) / 2) 50%); }
   .nav-cta:hover .nav-cta-label { font-weight: 700; }
   .nav-cta-label, .nav-cta-disc { position: relative; z-index: 1; }
   .nav-cta-disc { display: grid; place-items: center; width: var(--disc); height: var(--disc); border-radius: 999px; background: var(--accent); color: var(--on-accent);
@@ -630,9 +632,9 @@
       border-color var(--t-hover-exit) var(--ease-out), color 300ms var(--ease-out); }
   .pbtn:hover { transform: translateY(-1px); color: var(--on-accent); }
   .pbtn:active { transform: translateY(0) scale(.98); }
-  .pbtn::before { content: ''; position: absolute; top: 50%; right: 3px; width: var(--disc); height: var(--disc); border-radius: 999px;
-    background: var(--accent); transform: translateY(-50%); transition: transform 300ms var(--ease-out); }
-  .pbtn:hover::before { transform: translateY(-50%) scale(12); }
+  .pbtn::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: var(--accent);
+    clip-path: circle(calc(var(--disc) / 2) at calc(100% - 3px - var(--disc) / 2) 50%); transition: clip-path 300ms var(--ease-out); }
+  .pbtn:hover::before { clip-path: circle(150% at calc(100% - 3px - var(--disc) / 2) 50%); }
   .pbtn-label, .pbtn-disc { position: relative; z-index: 1; }
   .pbtn-disc { display: grid; place-items: center; flex: none; width: var(--disc); height: var(--disc); border-radius: 999px; background: var(--accent); color: var(--on-accent); }
   .pbtn-disc svg { width: 20px; height: 20px; transition: transform 300ms var(--ease-out); }
@@ -729,6 +731,26 @@
   @media (max-width: 380px) { footer .li-cta { padding-left: 18px; gap: 10px; font-size: 14px; } }
   /* no eyebrows above titles (2026-10-25): a card's title is now its first line, so it carries no top margin */
   .card > h3:first-child, .cz-card > h3:first-child { margin-top: 0; }
+  /* glass navbar (2026-10-25), after codefronts' "High-Contrast Accessible Navbar" with the "Firefox Fallback" tier:
+     a light scrim keeps the ink text readable over anything scrolling under it (about 8:1 even over the dark cards),
+     a bright top edge and a faint lower shade make the edge read as glass, and without blur support the fill turns near-opaque */
+  .nav { background: rgba(250,250,250,.62); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,.7); }
+  .nav.scrolled { box-shadow: none; }
+  .nav.scrolled .nav-inner { background: rgba(255,255,255,.66); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-color: rgba(18,18,18,.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(18,18,18,.05), inset 0 0 0 1px rgba(255,255,255,.4), 0 10px 30px -8px rgba(18,18,18,.14); }
+  .nav-links a, .nav-brand-name { text-shadow: 0 1px 0 rgba(255,255,255,.55); }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .nav { background: rgba(250,250,250,.97); }
+    .nav.scrolled .nav-inner { background: rgba(255,255,255,.97); }
+  }
+  @media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
+    .nav { background: var(--paper); }
+    .nav.scrolled .nav-inner { background: #fff; border-color: var(--line-strong); }
+  }
+  @media (forced-colors: active) { .nav, .nav.scrolled .nav-inner { background: Canvas; border-color: CanvasText; } }
+  .nav a:focus-visible, .menu-btn:focus-visible { outline: 3px solid var(--ink-heading); outline-offset: 3px; }
 </style>
 
 </head>
