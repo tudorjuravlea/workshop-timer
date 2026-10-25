@@ -108,6 +108,38 @@
       "@type": "Answer",
       "text": "Both go in the brand file next to your colours. Copy brands/example.json to see every field, or ask your assistant to make one for you."
      }
+    },
+    {
+     "@type": "Question",
+     "name": "Can I contribute a change?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, and you do not need to know Git. Fixes, ideas and new brand files are all welcome. Describe the change to your AI assistant and it does the GitHub part for you. All you need is a free GitHub account."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What do I tell my AI?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Something like: “Contribute this change to github.com/tudorjuravlea/workshop-timer: [your idea]. Fork it, make the change on a new branch, follow CONTRIBUTING.md, run its four checks, show me the change, then open a pull request.” The rules it follows are in CONTRIBUTING.md."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What happens after I open a pull request?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "GitHub runs the same four checks on it automatically, and the change is reviewed before it goes into the timer. You can follow it, and answer questions, on the pull request's page."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can I just report a problem instead?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. Open an issue on GitHub and say which browser and device you used. If it is about the phone remote, say whether the screen and the phone were on the same network."
+     }
     }
    ]
   }
@@ -650,6 +682,39 @@
   /* a little less air between sections: 120 -> 96 on desktop, 80 -> 64 on phones */
   .band { padding: 96px 0; }
   @media (max-width: 760px) { .band { padding: 64px 0; } }
+
+  /* phone review (2026-10-25) */
+  /* the Star on GitHub button lives in the phone menu, under the links; the bar keeps only the brand and the menu button */
+  .menu-cta { display: none; }
+  @media (max-width: 900px) {
+    .nav-inner > .nav-cta { display: none; }
+    .nav.open .nav-links .menu-cta { display: inline-flex; align-self: flex-start; margin-top: 12px; padding: 0 3px 0 22px; font-size: var(--text-body); color: var(--paper); }
+    .nav.open .nav-links .menu-cta:hover { color: var(--on-accent); }
+    .menu-cta .nav-cta-label { display: inline; }
+  }
+  /* the hero buttons are the same width: two equal columns, as wide as the longer label; stacked and full width on phones */
+  .hero .ctas { display: grid; grid-template-columns: 1fr 1fr; width: max-content; max-width: 100%; }
+  .hero .ctas .pbtn { justify-content: space-between; }
+  @media (max-width: 760px) { .hero .ctas { grid-template-columns: minmax(0, 1fr); width: auto; } }
+  /* on phones the headline fills the column: its widest line is 5.9em (6 leaves room for the italic overhang), so the size follows the column width */
+  @media (max-width: 600px) { h1 { font-size: calc((100vw - 2 * var(--gutter) - 2px) / 6); } }
+  /* on phones these three headings break before their serif part, and the first part keeps to one row */
+  @media (max-width: 760px) {
+    #why h2 .serif, #customise h2 .serif, footer h2 .serif { display: block; }
+    #why h2, #customise h2, footer h2 { white-space: nowrap; font-size: min(2rem, calc((100vw - 2 * var(--gutter) - 2px) / 9.8)); }
+  }
+  .faq details p a { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  .faq details p a:hover { text-decoration-thickness: 2px; }
+  /* footer: the credit on the left, Connect on LinkedIn on the right, on one row at every width */
+  footer .row2 { align-items: center; gap: 16px; }
+  footer .row2 { flex-wrap: wrap; }
+  footer .row2 .made { display: block; }
+  footer .row2 .li-cta { flex: none; margin-left: auto; }
+  /* the credit takes two lines at every width: "Made by" over the name */
+  footer .made .nm { display: block; white-space: nowrap; }
+  @media (max-width: 760px) { footer .row2 { flex-direction: row; gap: 12px; } }
+  /* narrow phones: a slightly smaller button so it still fits beside the credit; below 340px it drops to its own row, still on the right */
+  @media (max-width: 380px) { footer .li-cta { padding-left: 18px; gap: 10px; font-size: 14px; } }
 </style>
 
 </head>
@@ -657,7 +722,7 @@
 <header class="nav">
   <div class="nav-inner">
     <a class="nav-brand" href="#top"><span class="nav-brand-mark"><svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="94" fill="#121212"/><path d="M100 100 L100 20 A80 80 0 1 1 30.7 140 Z" fill="#cdff38"/></svg></span><span class="nav-brand-name">Workshop Timer</span></a>
-    <nav class="nav-links" aria-label="Main"><a href="#install">Install</a><a href="#customise">Customise</a><a href="#use">Use</a><a href="#use-cases">Use cases</a><a href="#faq">FAQ</a></nav>
+    <nav class="nav-links" aria-label="Main"><a href="#install">Install</a><a href="#customise">Customise</a><a href="#use">Use</a><a href="#use-cases">Use cases</a><a href="#faq">FAQ</a><a class="nav-cta menu-cta" href="https://github.com/tudorjuravlea/workshop-timer"><span class="nav-cta-label">Star on GitHub</span><span class="nav-cta-disc"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span></a></nav>
     <a class="nav-cta" href="https://github.com/tudorjuravlea/workshop-timer"><span class="nav-cta-label">Star on GitHub</span><span class="nav-cta-disc"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span></a>
     <button class="menu-btn" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
   </div>
@@ -668,9 +733,9 @@
 
     <div class="hero">
       <div>
-        <div class="eyebrow">Free &amp; open source · for facilitators and trainers</div>
+        <div class="eyebrow">For facilitators &amp; trainers</div>
         <h1 style="margin-top:18px">Stop shouting <span class="serif shout">“Only 2 mooore miiiiinuutees!”</span></h1>
-        <p class="lead"><span class="ln">A workshop countdown timer for facilitators and trainers,</span> <span class="ln">with a phone remote. Adapt it to your brand.</span></p>
+        <p class="lead"><span class="ln">A workshop countdown timer for facilitators and trainers,</span> <span class="ln">with a phone remote.</span></p>
         <div class="ctas">
           <a class="pbtn pbtn-primary" href="#install"><span class="pbtn-label">Make it yours</span><span class="pbtn-disc" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
           <a class="pbtn pbtn-ghost" href="https://productmakers.ro/timer.html"><span class="pbtn-label">Try it live</span><span class="pbtn-disc" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
@@ -722,7 +787,7 @@
       <div class="vis"><div class="term"><div class="term-bar"><span class="lights"><i></i><i></i><i></i></span></div><div class="term-body">
         <p class="u">&gt; Set up the workshop timer from GitHub and start it.</p>
         <p class="a">Cloning the repository…</p><p class="a">Installing…</p><p class="ok">✓ Timer running at localhost:3000</p></div></div></div></div>
-    <div class="card dark"><h3>Give it your logo, colors and fonts</h3><p class="body">Describe your brand in plain words, or change one small file. No code to touch.</p>
+    <div class="card dark"><h3>Give it your brand's look</h3><p class="body">Describe your brand in plain words, or change one small file. No code to touch.</p>
       <div class="vis"><img src="assets/rebranded.webp" alt="The timer in cream and deep orange"></div></div>
     <div class="card dark"><h3>Put it on your website</h3><p class="body">Host it at your own address, next to your site, so it looks like part of your event.</p>
       <div class="vis"><div class="mini-browser"><div class="chrome"><span class="lights"><i></i><i></i><i></i></span><span class="url"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M2.5 4.5V3a2.5 2.5 0 015 0v1.5" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="1.5" y="4.5" width="7" height="5" rx="1" fill="currentColor"/></svg>yourwebsite.com/timer</span></div><img src="assets/at-rest.webp" alt="The timer in a browser window"></div></div></div>
@@ -771,7 +836,7 @@
   <div class="cz-grid">
     <div class="card dark cz-card">
       <div class="eyebrow">Ask your assistant</div>
-      <h3>Describe your brand in plain words.</h3>
+      <h3>Tell the AI what to change.</h3>
       <p class="body">Paste this into your AI assistant, opened in your timer's folder.</p>
       <div class="prompt cz-prompt"><span class="prompt-text">Rebrand my workshop timer: accent #2c5bff, a near-black background, the font Inter, and the logo in ./logo.svg. Make a brand file for it and check it passes npm run check:brands.</span><button class="copybtn" type="button">Copy</button></div>
       <div class="cz-tools"><span class="cz-label">Works in</span><span>Claude</span><span>Claude Code</span><span>Codex</span><span>Gemini CLI</span><span>Antigravity</span></div>
@@ -896,13 +961,17 @@
     <details><summary>Will it lose time if I switch windows?</summary><p>No. It counts down to a deadline and recomputes from the wall clock every tick, so a background tab cannot slow it.</p></details>
     <details><summary>Can I turn the sound off?</summary><p>Yes, with the sound button. Movement also stops for anyone whose device asks for reduced motion.</p></details>
     <details><summary>How do I add my logo and fonts?</summary><p>Both go in the brand file next to your colours. Copy <code>brands/example.json</code> to see every field, or ask your assistant to make one for you.</p></details>
+    <details><summary>Can I contribute a change?</summary><p>Yes, and you do not need to know Git. Fixes, ideas and new brand files are all welcome. Describe the change to your AI assistant and it does the GitHub part for you. All you need is a free GitHub account.</p></details>
+    <details><summary>What do I tell my AI?</summary><p>Something like: “Contribute this change to github.com/tudorjuravlea/workshop-timer: [your idea]. Fork it, make the change on a new branch, follow CONTRIBUTING.md, run its four checks, show me the change, then open a pull request.” The rules it follows are in <a href="https://github.com/tudorjuravlea/workshop-timer/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>.</p></details>
+    <details><summary>What happens after I open a pull request?</summary><p>GitHub runs the same four checks on it automatically, and the change is reviewed before it goes into the timer. You can follow it, and answer questions, on the pull request's page.</p></details>
+    <details><summary>Can I just report a problem instead?</summary><p>Yes. <a href="https://github.com/tudorjuravlea/workshop-timer/issues">Open an issue</a> on GitHub and say which browser and device you used. If it is about the phone remote, say whether the screen and the phone were on the same network.</p></details>
   </div>
 </div></section>
 
 <footer><div class="wrap">
   <h2>Run your next session <span class="serif">on time.</span></h2>
   <div class="ctas"><a class="btn-dark" href="#install" style="background:#fff;color:#121212">Set it up <span class="disc">↑</span></a><a class="btn-ghost" href="https://github.com/tudorjuravlea/workshop-timer" style="text-decoration:none">View on GitHub ↗</a></div>
-  <div class="row2"><span>Workshop Timer · MIT licence</span><span class="made">Made by Tudor Juravlea <a class="nav-cta li-cta" href="https://www.linkedin.com/in/tudorjuravlea/" target="_blank" rel="noopener"><span class="nav-cta-label">Connect on LinkedIn</span><span class="nav-cta-disc"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="5" r="2.3" fill="currentColor"/><rect x="3" y="9" width="4" height="12" rx=".6" fill="currentColor"/><path fill="currentColor" d="M9.5 9h3.8v1.7c.6-1.1 2-2 3.9-2 3.2 0 4.3 2 4.3 5V21h-4v-6.4c0-1.5-.5-2.4-1.8-2.4-1.4 0-2.2 1-2.2 2.6V21h-4z"/></svg></span></a></span></div>
+  <div class="row2"><span class="made">Made by <span class="nm">Tudor Juravlea</span></span><a class="nav-cta li-cta" href="https://www.linkedin.com/in/tudorjuravlea/" target="_blank" rel="noopener"><span class="nav-cta-label">Connect on LinkedIn</span><span class="nav-cta-disc"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="5" r="2.3" fill="currentColor"/><rect x="3" y="9" width="4" height="12" rx=".6" fill="currentColor"/><path fill="currentColor" d="M9.5 9h3.8v1.7c.6-1.1 2-2 3.9-2 3.2 0 4.3 2 4.3 5V21h-4v-6.4c0-1.5-.5-2.4-1.8-2.4-1.4 0-2.2 1-2.2 2.6V21h-4z"/></svg></span></a></div>
 </div></footer>
 
 <script>
