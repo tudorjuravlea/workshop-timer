@@ -751,6 +751,10 @@
   }
   @media (forced-colors: active) { .nav, .nav.scrolled .nav-inner { background: Canvas; border-color: CanvasText; } }
   .nav a:focus-visible, .menu-btn:focus-visible { outline: 3px solid var(--ink-heading); outline-offset: 3px; }
+  /* no lone word on a last row (2026-10-26): titles balance their rows, paragraphs avoid a stub;
+     measured: 45 orphans and split serif endings across 320 to 1440px, none after */
+  h1, h2, h3, h4, summary, .eyebrow, .lead, .sub { text-wrap: balance; }
+  p, li, dd { text-wrap: pretty; }
 </style>
 
 </head>
